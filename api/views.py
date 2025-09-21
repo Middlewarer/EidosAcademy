@@ -6,6 +6,7 @@ from courses.models import Course
 from .serializers import CourseSerializer, UserProfileSerializer
 from users.models import UserProfile
 
+
 #----------CreateApis
 
 class CreateCourseApi(CreateAPIView):
@@ -27,6 +28,9 @@ class ListUsersApi(ListAPIView):
     model = UserProfile
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
+
+
+
 
 
 

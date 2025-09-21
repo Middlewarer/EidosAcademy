@@ -1,0 +1,168 @@
+html, body {
+  background-color: #20202F;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Verdana", sans-serif;
+}
+/* Header-Settings */
+
+header {
+    border-bottom: 1px solid black;
+}
+
+.header__inner {
+    color: white;
+    height: 64px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header__logo a {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav__list {
+    display: flex;
+    gap: 40px;
+    text-decoration: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: 
+}
+
+.nav__list li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.main_title {
+    font-size: 24px;
+}
+
+.auth_buttons button {
+    color: white;
+    background-color: #4A7043;
+    width: 110px;
+    height: 40px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+}
+
+.auth_buttons__log-in {
+    text-decoration: underline;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.auth_buttnons__log-up  a{
+    color: white;
+    text-decoration: none;
+}
+
+.auth_buttons {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+
+/* profile__inner sets */
+
+.profile {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile__inner {
+    margin-top: 173px;
+  background-color: #1D1F35;
+  border: 1px solid black;
+  border-radius: 18px;
+  height: 200px;
+  display: flex; /* делаем flex-контейнер */
+  align-items: center; /* центрируем по вертикали */
+}
+
+.profile__inner h2 {
+  font-size: 36px;
+  color: white;
+}
+
+.main__info {
+  display: flex;
+  align-items: center; /* выравниваем элементы внутри по вертикали */
+  gap: 20px; /* расстояние между элементами */
+  color: white; /* чтобы текст был виден на тёмном фоне */
+  width: 100%;
+}
+
+.main__info p {
+  margin: 0;
+}
+
+#settings_button {
+    margin-left: auto;
+    padding-right: 74px;
+}
+
+.nameandavatar_section {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    padding-left: 74px;
+    padding-right: 60px;
+}
+
+/* profile - downpart sets*/
+
+.progress__title {
+    justify-self: center;
+    color: white;
+    font-size: 36px;
+    margin-top: 120px;
+    margin-bottom: 95px;
+}
+
+.course__studied {
+    width: 100%;
+    height: 106px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid white;
+    margin-bottom: 20px;
+}
+
+.course__studied__leftpart {
+    display: flex;
+    gap: 50px;
+}
+
+.course__studied .course__studied__leftpart .title__subinfo h2 {
+    color: white;
+}
+
+.course__studied .course__studied__leftpart .title__subinfo p {
+    font-size: 20px;
+    color: #CCCCCC;
+}
+
+.course__studied button {
+    width: 194px;
+    height: 57px;
+    color: white;
+    background-color: #4A7043;
+    border-radius: 14px;
+    font-size: 20px;
+}
