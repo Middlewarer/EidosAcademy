@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/profile_page.css' %}"> {% endblock %}
+{% block content %}
+    <main>
+      <section>
+        <div class="profile">
+        <div class="profile__inner">
+          <div class="main__info">
+            <div class="nameandavatar_section">
+            <img src="{% static 'assets/Profile.svg' %}" alt="">
+            <h2>Васильев Кирилл</h2>
+            </div>
+
+            <p>Решено задач: 321</p>
+
+            <img src="{% static 'assets/settings.svg' %}" alt="" id="settings_button">
+          </div>
+        </div>
+
+        <h2 class="progress__title">Прогресс</h2>
+
+        <div class="course__studied">
+          <div class="course__studied__leftpart">
+          <img src="{% static 'assets/ellipse.svg' %}" alt="">
+
+          <div class="title__subinfo">
+            <h2>Python|Первая ступень</h2>
+            <p>20 уроков | 250 задач</p>
+          </div>
+
+          <svg width="85" height="85" xmlns="http://www.w3.org/2000/svg"><circle cx="42.5" cy="42.5" r="41.5" fill="none" stroke="white" stroke-width="2"/></svg>
+          </div>
+
+          <button type="submit">Учиться</button>
+        </div>
+
+        <div class="course__studied">
+          <div class="course__studied__leftpart">
+          <img src="{% static 'assets/ellipse.svg' %}" alt="">
+
+          <div class="title__subinfo">
+            <h2>Python|Первая ступень</h2>
+            <p>20 уроков | 250 задач</p>
+          </div>
+
+          <svg width="85" height="85" xmlns="http://www.w3.org/2000/svg"><circle cx="42.5" cy="42.5" r="41.5" fill="none" stroke="white" stroke-width="2"/></svg>
+          </div>
+
+          <button type="submit">Учиться</button>
+        </div>
+        </div>
+
+        </div>
+
+
+
+
+      </section>
+    </main>
+{% endblock %}

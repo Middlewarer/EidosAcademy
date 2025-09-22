@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{% static 'css/sign_up.css' %}" />
+    <link rel="stylesheet" href="/css/reset.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__inner">
+        <div class="header__logo">
+          <a href="/html/landing.html">EidosAcademy</a>
+        </div>
+        <nav class="header-nav">
+          <ul class="nav__list">
+            <li class="nav__list-item"><a href="#">Главная</a></li>
+            <li class="nav__list-item"><a href="#">Курсы </a></li>
+            <li class="nav__list-item"><a href="#">Статьи</a></li>
+            <li class="nav__list-item"><a href="#">FAQ</a></li>
+          </ul>
+        </nav>
+        <div class="auth_buttons">
+          <a class="auth_buttons__log-in" href="/html/sign_in.html">войти</a>
+          <button class="auth_buttnons__log-up">
+            <a href="/html/sign_up.html">Начать</a>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="sign_in">
+        <div class="sign_in__inner">
+          <div class="sign_in__information">
+            <h1 class="sign_in__information-h1">Регистрация</h1>
+            <p class="sign_in__information-p">
+              Или <a href="sign_in.html">войди</a> в уже существующий аккаунт
+            </p>
+          </div>
+
+          <div class="login">
+            <form action="" class="login__form" method="post">
+              {% csrf_token %}
+              <label class="login-label login__username" for="username"
+                >Имя Пользователя</label
+              >
+              <input
+                class="login__input login__input--username"
+                type="text"
+                id="username"
+                placeholder=""
+                name="username"
+              />
+
+              <label class="login-label login__label-email" for="email"
+                >Введи e-mail</label
+              >
+              <input
+                class="login__input login__input--email"
+                type="email"
+                id="email"
+                placeholder=""
+                name="email"
+              />
+
+              <label class="login-label login-label-password" for="password "
+                >Пароль</label
+              >
+              <input
+                class="login__input login__input--password"
+                type="password"
+                id="password"
+                placeholder=""
+                name="password1"
+              />
+
+              <label
+                class="login-label login-label-password-confirm"
+                for="password-confirm"
+                >Подтверждение Пароля</label
+              >
+              <input
+                class="login__input login__input--password-confirm"
+                type="password"
+                id="password-confirm"
+                placeholder=""
+                name="password2"
+              />
+
+              <div class="login__options">
+                <label class="login-label login__checkbox">
+                  <input type="checkbox" class="login__checkbox-input" />
+                  <span class="login__checkbox-text">Запомнить меня</span>
+                </label>
+                <a href="#" class="login__forgot">Забыл пароль?</a>
+              </div>
+
+              <button type="submit" class="login__button">Войти</button>
+
+              <p class="login__alternative">Или войди с помощью</p>
+
+              <div class="login__socials">
+                <button
+                  type="submit"
+                  class="login__social login__social--github"
+                >
+                  <img src="/img/GitHub.png" alt="" width="30" height="30" />
+                </button>
+                <button
+                  type="button"
+                  class="login__social login__social--google"
+                >
+                  <img src="/img/Google.png" alt="" width="30" height="30" />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

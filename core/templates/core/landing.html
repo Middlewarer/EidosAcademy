@@ -1,0 +1,294 @@
+{% extends 'base/base.html' %}
+{% load static %}
+    {% block styles %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}"> {% endblock %}
+
+    {% block content %}
+    <main>
+      <!-- First section | HeroPage -->
+      <section class="hero">
+        <div class="hero__inner">
+          <div class="hero__caption">
+            <h2>
+              Раскрой Мудрость Кода с <span class="brand">EidosAcademy</span>
+            </h2>
+          </div>
+
+          <div class="hero__main">
+            <img
+              class="hero__main-img"
+              src="{% static 'assets/ancient temple.svg' %}"
+              alt=""
+              width="580"
+              height="740"
+            />
+            <div class="hero__main-info">
+              <p>
+                EidosCode — образовательная<br />
+                платформа,где сложные темы<br />
+                объясняются простыми<br />
+                словами. Курсы, практические<br />
+                задания и интерактивные уроки<br />
+                помогут тебе прокачать навыки<br />
+                программирования и уверенно<br />
+                двигаться к своей цели.
+              </p>
+              <button>Начать обучение</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero__main-footer"></div>
+      </section>
+
+      <section class="howitworks">
+        <div class="howitworks__inner">
+          <div class="howitworks__head">
+            <h1 class="howitworks__head-h1">Как Работает Академия?</h1>
+            <p class="howitworks__head-p">
+              <span class="howitworks__head-span">EidosCode</span> — это не
+              просто набор курсов, а целая система, где теория сразу
+              превращается в практику, ошибки становятся ступеньками к успеху, а
+              каждый урок приближает тебя к новым возможностям.
+            </p>
+          </div>
+          <div class="howitworks__columsection">
+            <div class="howitworks__columnsection-column">
+              <img
+                src="{% static 'assets/book_stack.svg' %}"
+                alt=""
+                class="howitworks__columnsection-img"
+                width="300"
+                height="370"
+              />
+              <h2 class="howitworks__columnsection-h2">Фокус На Знаниях</h2>
+              <p class="howitworks__columnsection-p">
+                Учёба превращается в увлекательный процесс: уровни, достижения и
+                прогресс-бары помогают держать мотивацию. Каждый шаг вперёд —
+                это маленькая победа на пути к большим результатам.
+              </p>
+            </div>
+            <div class="howitworks__columnsection-column">
+              <img
+                src="{% static 'assets/room.svg' %}"
+                alt=""
+                class="howitworks__columnsection-img"
+                width="350"
+                height="370"
+              />
+              <h2 class="howitworks__columnsection-h2">Игрофикацияи</h2>
+              <p class="howitworks__columnsection-p">
+                Мы верим, что учёба должна быть диалогом. Задания проверяются
+                автоматически, а при ошибках ты сразу получаешь подсказки. Это
+                помогает быстро находить слабые места и закреплять материал.
+              </p>
+            </div>
+            <div class="howitworks__columnsection-column">
+              <img
+                src="{% static 'assets/dialogue.svg' %}"
+                alt=""
+                class="howitworks__columnsection-img"
+                width="300"
+                height="370"
+              />
+              <h2 class="howitworks__columnsection-h2">Обратная связь</h2>
+              <p class="howitworks__columnsection-p">
+                Мы объясняем сложные темы простым языком и даём только то, что
+                реально пригодится в практике. Каждый урок построен так, чтобы
+                знания сразу закреплялись на примерах и заданиях.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="courses">
+        <div class="courses_inner">
+          <h2>Наши курсы:</h2>
+
+          <div class="courses_list">
+            <div class="course">
+              <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
+              <div class="textinfo__course">
+                <h4>Название курса</h4>
+                <div class="underinfo">
+                  <img src="/img/Clock.svg" alt="" />
+                  <p>~10часов</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="course">
+              <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
+              <div class="textinfo__course">
+                <h4>Название курса</h4>
+                <div class="underinfo">
+                  <img src="/img/Clock.svg" alt="" />
+                  <p>~10часов</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="course">
+              <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
+              <div class="textinfo__course">
+                <h4>Название курса</h4>
+                <div class="underinfo">
+                  <img src="/img/Clock.svg" alt="" />
+                  <p>~10часов</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="courses_list-btn">Начать обучение</button>
+        </div>
+      </section>
+      <section class="results">
+        <div class="results__inner">
+          <div class="results__caption">Наши Результаты</div>
+
+          <div class="results__content">
+            <div class="reulsts__left-info">
+              <div class="results__left-info-group">
+                <div class="result__left-info-group-top">📖<span>3</span></div>
+                <p class="results__left-info-group-bottom">
+                  Образовательных курса
+                </p>
+              </div>
+
+              <div class="results__left-info-group">
+                <div class="result__left-info-group-top">
+                  🧍<span>750+</span>
+                </div>
+                <p class="results__left-info-group-bottom">
+                  Учеников на наших курсах
+                </p>
+              </div>
+
+              <div class="results__left-info-group">
+                <div class="result__left-info-group-top">
+                  ⭐<span>4.85</span>
+                </div>
+                <p class="results__left-info-group-bottom">
+                  Средняя оценка курсов
+                </p>
+              </div>
+            </div>
+
+            <div class="results__right-info">
+              <p class="results__right-info-p">
+                Эйдос — это не просто название, это воплощение идеи
+                совершенства. EidosAcademy представляет качественный, тщательно
+                протестированный продукт, созданный с заботой о пользователе.
+                Наша платформа сочетает проверенные образовательные методики с
+                интерактивным обучением программированию, вдохновленным
+                древнегреческой мудростью. Каждый курс, от Python до JavaScript,
+                прошел тестирование, чтобы обеспечить понятность, вовлеченность
+                и реальные результаты.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="article">
+        <div class="article__inner">
+          <h2>Статьи Сообщества:</h2>
+
+          <div class="article_list">
+            <div class="article__card">
+              <img src="{% static 'assets/dummyimage2.svg' %}" alt="" />
+              <div class="textinfo__article">
+                <p class="textinfo__article-topic">Python</p>
+                <h4>Django - лучший выбор в 2025?</h4>
+                <div class="underinfo">
+                  <img src="{% static 'assets/Clock.svg' %}" alt="" />
+                  <p>~13 минут</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="article__card">
+              <img
+                class="article__card-img"
+                src="{% static 'assets/dummyimage2.svg' %}"
+                alt=""
+                width="320"
+                height="250"
+              />
+              <div class="textinfo__article">
+                <p class="textinfo__article-topic">Python</p>
+                <h4>Django - лучший выбор в 2025?</h4>
+                <div class="underinfo">
+                  <img src="{% static 'assets/Clock.svg' %}" alt="" />
+                  <p>~13 минут</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="article__card">
+              <img src="{% static 'assets/dummyimage2.svg' %}" alt="" />
+              <div class="textinfo__article">
+                <p class="textinfo__article-topic">Python</p>
+                <h4>Django - лучший выбор в 2025?</h4>
+                <div class="underinfo">
+                  <img src="{% static 'assets/Clock.svg' %}" alt="" />
+                  <p>~13 минут</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="article_list-btn">Посмотреть всё</button>
+        </div>
+      </section>
+      <section>
+        <div class="media">
+          <div class="media__inner">
+            <h1 class="media__h1">Наши Ресурсы:</h1>
+
+            <div class="media__grid">
+              <a href="#" class="media__grid-card">
+                <img
+                  src="{% static 'assets/telegram.svg' %}"
+                  alt="Telegram"
+                  width="75"
+                  height="75"
+                />
+                telegram
+              </a>
+              <a href="#" class="media__grid-card">
+                <img
+                  src="{% static 'assets/Youtube.svg' %}"
+                  alt="YouTube"
+                  width="75"
+                  height="75"
+                />
+                YouTube
+              </a>
+              <a href="#" class="media__grid-card">
+                <img
+                  src="{% static 'assets/instagram.svg' %}"
+                  alt="Instagram"
+                  width="75"
+                  height="75"
+                />
+                Instagram
+              </a>
+              <a href="#" class="media__grid-card">
+                <img
+                  src="{% static 'assets/VK.svg' %}"
+                  alt="Вконтакте"
+                  width="75"
+                  height="75"
+                />
+                Вконтакте
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+{% endblock %}
+
+

@@ -1,84 +1,8 @@
-html, body {
-  background-color: #20202F;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Verdana", sans-serif;
-}
 
 * {
     box-sizing: border-box;
 }
-/* Header-Settings */
 
-header {
-    border-bottom: 1px solid black;
-}
-
-.header__inner {
-    color: white;
-    height: 64px;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.header__logo a {
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.nav__list {
-    display: flex;
-    gap: 40px;
-    text-decoration: none;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: 
-}
-
-.nav__list li a {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.main_title {
-    font-size: 24px;
-}
-
-.auth_buttons button {
-    color: white;
-    background-color: #4A7043;
-    width: 110px;
-    height: 40px;
-    border-radius: 7px;
-    border: none;
-    cursor: pointer;
-}
-
-.auth_buttons__log-in {
-    text-decoration: underline;
-    color: white;
-    margin: 0;
-    padding: 0;
-}
-
-.auth_buttnons__log-up  a{
-    color: white;
-    text-decoration: none;
-}
-
-.auth_buttons {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
 
 .course_detail {
     max-width: 1200px;
