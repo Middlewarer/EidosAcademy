@@ -10,38 +10,18 @@
             <h2>Наши курсы:</h2>
 
             <div class="courses_list">
+                {% for course in courses %}
                 <div class="course">
                   <img src="{% static 'assets/dummyimage.svg' %}" alt="">
                   <div class="textinfo__course">
-                  <h4>Название курса</h4>
+                      <a href="{% url 'core:course_detail' course.id %}"><h4>{{course.title}}</h4></a>
                   <div class="underinfo">
                     <img src="assets/css/Clock.svg" alt="">
                     <p>~10часов</p>
                   </div>
                   </div>
                 </div>
-
-                <div class="course">
-                  <img src="{% static 'assets/dummyimage.svg' %}" alt="">
-                  <div class="textinfo__course">
-                  <h4>Название курса</h4>
-                  <div class="underinfo">
-                    <img src="assets/css/Clock.svg" alt="">
-                    <p>~10часов</p>
-                  </div>
-                  </div>
-                </div>
-
-                <div class="course">
-                  <img src="{% static 'assets/dummyimage.svg' %}" alt="">
-                  <div class="textinfo__course">
-                  <h4>Название курса</h4>
-                  <div class="underinfo">
-                    <img src="assets/css/Clock.svg" alt="">
-                    <p>~10часов</p>
-                  </div>
-                  </div>
-                </div>
+                {% endfor %}
             </div>
           </div>
       </section>

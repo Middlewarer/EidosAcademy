@@ -1,0 +1,99 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/lesson.css' %}"> {% endblock %}
+{% block content %}
+    <main>
+      <section class="course_info">
+        <div class="course_info__inner">
+          <div class="course_info__top">
+            <img
+              src="/img/You were the chosen one! 1.png"
+              alt=""
+              class="course_info-img"
+              width="230"
+              height="230"
+            />
+            <h2 class="course_info-h2">{{pdd.title}}</h2>
+            <p class="course_info-p">{{pdd.title}}</p>
+          </div>
+
+          <section class="course_content">
+            <h3 class="course_content-name">Introduction</h3>
+            <p class="course_content-p">
+              Our foundations lessons by design only scratched the surface of
+              what’s possible. We wanted to give you all of the bare necessities
+              for getting started so you could move on and be somewhat
+              productive as quickly as possible, but now it’s time to slow down
+              and dig in!
+            </p>
+            <p class="course_content-p">
+              There is also a lot more that you can do with CSS that you’ll
+              learn throughout this course, such as variables, functions,
+              shadows and of course grid layouts! So buckle up! By the time you
+              finish this course, you’ll be able to recreate just about any web
+              design you can find on the internet… which is an important skill
+              to carry forward. Even if you are not shooting for a front-end
+              specific job, being able to make your portfolio pieces look nice
+              is important when it comes to making yourself stand out.
+            </p>
+            <p class="course_content-p">
+              You’ll learn about animations, accessibility, and responsive
+              design in the second part of this course later in the curriculum.
+            </p>
+            <img src="/img/lessong-imf.jpg" alt="" class="course-content-img" />
+            <p class="course_content-p">
+              There is also a lot more that you can do with CSS that you’ll
+              learn throughout this course, such as variables, functions,
+              shadows and of course grid layouts! So buckle up! By the time you
+              finish this course, you’ll be able to recreate just about any web
+              design you can find on the internet… which is an important skill
+              to carry forward. Even if you are not shooting for a front-end
+              specific job, being able to make your portfolio pieces look nice
+              is important when it comes to making yourself stand out.
+            </p>
+            <p class="course_content-p">
+              There is also a lot more that you can do with CSS that you’ll
+              learn throughout this course, such as variables, functions,
+              shadows and of course grid layouts! So buckle up! By the time you
+              finish this course, you’ll be able to recreate just about any web
+              design you can find on the internet… which is an important skill
+              to carry forward. Even if you are not shooting for a front-end
+              specific job, being able to make your portfolio pieces look nice
+              is important when it comes to making yourself stand out.
+            </p>
+            <p class="course_content-p">
+              You have probably realized by now that there are many more HTML
+              elements than we mentioned in our foundations content. Throughout
+              this course, we’ll be hitting the rest of the important elements
+              such as forms and tables.
+            </p>
+            <p class="course_content-p">
+              Our foundations lessons by design only scratched the surface of
+              what’s possible. We wanted to give you all of the bare necessities
+              for getting started so you could move on and be somewhat
+              productive as quickly as possible, but now it’s time to slow down
+              and dig in!
+            </p>
+            <p class="course_content-p">
+              You have probably realized by now that there are many more HTML
+              elements than we mentioned in our foundations content. Throughout
+              this course, we’ll be hitting the rest of the important elements
+              such as forms and tables.
+            </p>
+          </section>
+          <section class="course-btns">
+            <button class="back_to_course">
+              <img src="/img/Education.svg" alt="" width="25px" height="25" />
+              Вернуться к курсу
+            </button>
+            <button class="mark_as_completed">Отметить как пройдено</button>
+            <button class="next_lesson">
+              <img src="/img/Next Page.svg" alt="" width="25px" height="25" />
+              Следующий урок
+            </button>
+          </section>
+        </div>
+      </section>
+    </main>
+    {% endblock %}

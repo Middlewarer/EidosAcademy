@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from courses.models import Course
 
 class UserProfile(models.Model):
     #Initial fields
@@ -25,6 +26,8 @@ class UserProfile(models.Model):
     account_created_at = models.DateTimeField(auto_now=True)
 
     #Coursepart
+    tasks_confirmed = models.PositiveIntegerField(default=0)
+    course_studied = models.ManyToManyField(Course, related_name='students')
     #courses = models.ManyToManyField('courses.Course', related_name='users', blank=True)
 
     def __str__(self):

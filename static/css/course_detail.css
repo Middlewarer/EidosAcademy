@@ -103,3 +103,31 @@
     align-items: center;
     margin-left: 50px;
 }
+
+.btn-bottom {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-bottom-btn {
+    color: white;
+    border: none;
+    padding: 16px 25px;
+    border-radius: 5px;
+    background: #4A7043;
+    font-size: 24px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.btn-bottom-deny {
+    color: white;
+    border: none;
+    padding: 16px 25px;
+    border-radius: 5px;
+    background-color: #4A7043;
+    font-size: 24px;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: center;
+}

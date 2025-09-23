@@ -1,0 +1,92 @@
+.course_info__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.course_info__top {
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.course_info-h2 {
+    font-weight: 700;
+    font-size: 32px;
+    color: #ffffff;
+}
+
+.course_info-p {
+    font-size: 32px;
+    color: #bababa;
+    font-weight: 700;
+}
+
+.course_content {
+    margin-bottom: 90px;
+}
+
+.course_content-name {
+    display: flex;
+    justify-self: center;
+    color: #FFFFFF;
+    font-size: 32px;
+    margin-bottom: 90px;
+    font-weight: 700;
+}
+
+.course_content-p {
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.course-btns {
+    margin-bottom: 160px;
+    display: flex;
+    justify-content: center;
+    gap: 45px;
+    text-align: center;
+}
+
+.back_to_course {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid #ffffff;
+    border-radius: 14px;
+    padding: 14px 20px;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.mark_as_completed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    background: #4A7043;
+    border: none;
+    padding: 16px 36px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+
+}
+
+.next_lesson {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    border: 1px solid #ffffff;
+    background: transparent;
+    font-size: 14px;
+    gap: 4px;
+    color: #ffffff;
+    padding: 14px 20px;
+}

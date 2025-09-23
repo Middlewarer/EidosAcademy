@@ -1,188 +1,67 @@
-{% extends 'base/base.html' %}
-{% load static %}
-                      {% block styles %}
-                  <link rel="stylesheet" href="{% static 'css/course_detail.css' %}">
-                      {% endblock %}
-
-
-{% block content %}
+{% extends 'base/base.html' %} {% load static %} {% block styles %}
+    <link rel="stylesheet" href="{% static 'css/course_detail.css' %}" />
+    {% endblock %} {% block content %}
     <main>
       <section class="course_detail">
         <div class="course_detail__inner">
           <div class="upperpart">
-          <img src="{% static 'assets/course_image.svg' %}" alt="">
-          <h2>Python | Первая ступень</h2>
+            <img src="{% static 'assets/course_image.svg' %}" alt="" />
+            <h2>{{ course.title }}</h2>
 
-          <div class="caption__description">
-            <p>Описание:</p>
-            <p>На первой ступени Python-разработки вы освоите базовый синтаксис языка и начнёте решать базовые алгоритмические задачи. Курс поможет вам познакомиться с программированием с 
-              нуля или выучить новый язык программирования.</p>
-          </div>
+            <div class="caption__description">
+              <p>Описание:</p>
+              <p>{{ course.description }}</p>
+            </div>
           </div>
           <div class="downerpart">
+            {% for block in blocks %}
             <div class="block">
-              <h3>Введение</h3>
+              <h3>{{ block.title }}</h3>
               <div class="divider_line"></div>
               <div class="topics_listed">
+                {% for topic in block.topics.all %}
                 <div class="topic">
                   <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
+                    <img src="{% static 'assets/book.svg' %}" alt="" />
+                    <h3>{{topic.title}}</h3>
                   </div>
                   <div class="topic__rightpart">
                     <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
+                      <img
+                        src="{% static 'assets/Clock.svg' %}"
+                        alt=""
+                        width="30px"
+                        height="29px"
+                      />
                       <p>10 минут</p>
                     </div>
                     <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
+                      <img
+                        src="{% static 'assets/done.svg' %}"
+                        alt=""
+                        width="45px"
+                        height="45px"
+                      />
                     </div>
                   </div>
                 </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
+                {% endfor %}
               </div>
             </div>
-
-            <div class="block">
-              <h3>Введение</h3>
-              <div class="divider_line"></div>
-              <div class="topics_listed">
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="block">
-              <h3>Введение</h3>
-              <div class="divider_line"></div>
-              <div class="topics_listed">
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="topic">
-                  <div class="topic__leftpart">
-                  <img src="{% static 'assets/book.svg' %}" alt="">
-                  <h3>Введение в курс</h3>
-                  </div>
-                  <div class="topic__rightpart">
-                    <div class="rightpart_left">
-                      <img src="{% static 'assets/Clock.svg' %}" alt="" width="30px" height="29px">
-                      <p>10 минут</p>
-                    </div>
-                    <div class="rightpart_right">
-                      <img src="{% static 'assets/done.svg' %}" alt="" width="45px" height="45px">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {% endfor %}
           </div>
+          {% if profile not in course.students.all %}
+          <a href="{% url 'core:course_assign' course.pk %}">
+          <div class="btn-bottom">
+            <button class="btn-bottom-btn">Записаться на курс</button>
+          </div>
+            {% else %}
+             <div class="btn-bottom-deny">
+            <button class="btn-bottom-btn">Вы уже записаны</button>
+          </div>
+            {% endif %}
+          </a>
         </div>
       </section>
     </main>
-{% endblock %}
+    {% endblock %}
