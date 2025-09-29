@@ -13,12 +13,16 @@
           </ul>
         </nav>
         <div class="auth_buttons">
+          {% if not request.user.is_authenticated %}
           <a class="auth_buttons__log-in" href="{% url 'users:user_login' %}">войти</a>
           <a href="{% url 'users:user_register' %}">
           <button class="auth_buttnons__log-up">
             Начать
           </button>
             </a>
+          {% else %}
+            <a class="auth_buttons__log-in" href="{% url 'users:profile_page' request.user.id %}">Кабинет</a>
+          {% endif %}
         </div>
       </div>
     </header>

@@ -21,6 +21,7 @@ class Category(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
+    main_image = models.ImageField(upload_to='courses/', null=True, blank=True)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.PROTECT, related_name='courses')
     created_at = models.DateTimeField(auto_now_add=True)

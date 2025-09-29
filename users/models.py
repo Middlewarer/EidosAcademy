@@ -4,13 +4,13 @@ from courses.models import Course
 
 class UserProfile(models.Model):
     #Initial fields
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     #bio fields
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=150)
-    avatar = models.ImageField(upload_to='avatars/')
-    name_displayed = models.CharField(max_length=75)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    surname = models.CharField(max_length=150, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    name_displayed = models.CharField(max_length=75, null=True, blank=True)
 
     #Motivational fields
     score = models.PositiveIntegerField(default=0)
@@ -20,16 +20,16 @@ class UserProfile(models.Model):
     daily_goal_score = models.PositiveIntegerField(default=10)
 
     #Additional information
-    localization = models.CharField(max_length=100)
-    country_of_origin = models.CharField(max_length=100)
-    purpose_language = models.CharField(max_length=100)
-    account_created_at = models.DateTimeField(auto_now=True)
+    localization = models.CharField(max_length=100, null=True, blank=True)
+    country_of_origin = models.CharField(max_length=100, null=True, blank=True)
+    purpose_language = models.CharField(max_length=100, null=True, blank=True)
+    account_created_at = models.DateTimeField(auto_now_add=True)
 
     #Coursepart
     tasks_confirmed = models.PositiveIntegerField(default=0)
-    course_studied = models.ManyToManyField(Course, related_name='students')
+    course_studied = models.ManyToManyField(Course, related_name='students', null=True)
     #courses = models.ManyToManyField('courses.Course', related_name='users', blank=True)
 
     def __str__(self):
-        return self.name_displayed
+        return self.user.username
 

@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import FormView, TemplateView, DetailView
 from django.urls import reverse_lazy
@@ -40,17 +40,23 @@ class RegisterPageView(FormView):
         login(self.request, user)
         return super().form_valid(form)
 
-class UserPageView(LoginRequiredMixin, DetailView):
-    template_name = 'users/profile_page.html'
-    model = UserProfile
-    context_object_name = 'profile'
+class UserPageView(DetailView):
+    queryset = UserProfile.objects.select_related("user")  # ВАЖНО: QuerySet, не класс и не экземпляр
+    context_object_name = "profile"
+    template_name = "users/profile_page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
+        user = self.kwargs.get('id')
+        context['courses_studied'] = self.object.course_studied.all()
         return context
 
-    def get_queryset(self):
-        return self.request.user.profile
+    def get_object(self):
+        # Берём профиль по user_id из URL
+        return get_object_or_404(
+            UserProfile.objects.select_related("user").prefetch_related("course_studied"),
+            user_id=self.kwargs["pk"],
+        )
 
 
 
