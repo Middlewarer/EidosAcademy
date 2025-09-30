@@ -7,6 +7,7 @@ urlpatterns = [
     path('course/<int:pk>/', views.CoursePageView.as_view(), name='course_detail'),
     path('course/<int:pk>/enroll/', views.course_assign_view, name='course_assign'),
     path('', views.LandingPageView.as_view(), name='landing_page'),
-    path('course_list/', views.CourseListView.as_view(), name='course_list'),   
+    path('course_list/', views.CourseListView.as_view(), name='course_list'),
+    path('topic/<int:topic_id>/', views.TopicStepView.as_view(), name='topic_detail'),
     
 ]

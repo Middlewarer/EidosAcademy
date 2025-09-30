@@ -20,6 +20,7 @@
               <div class="divider_line"></div>
               <div class="topics_listed">
                 {% for topic in block.topics.all %}
+                  <a href="{% url 'core:topic_detail' topic.id %}">
                 <div class="topic">
                   <div class="topic__leftpart">
                     <img src="{% static 'assets/book.svg' %}" alt="" />
@@ -45,6 +46,7 @@
                     </div>
                   </div>
                 </div>
+                  </a>
                 {% endfor %}
               </div>
             </div>

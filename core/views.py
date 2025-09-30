@@ -35,4 +35,12 @@ def course_assign_view(request, pk):
     return HttpResponse(status=204)
 
 
+class TopicStepView(DetailView):
+    model = Topic
+    template_name = 'core/topic_steps.html'
+
+    def get_object(self):
+        self.object = Topic.objects.get(id=self.kwargs['topic_id'])
+        return self.object
+
 
