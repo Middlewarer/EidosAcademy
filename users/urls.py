@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'users'
 
@@ -8,3 +10,4 @@ urlpatterns = [
     path('register/', views.RegisterPageView.as_view(), name='user_register'),
     path('profile/<int:pk>/', views.UserPageView.as_view(), name='profile_page'),
 ]
+

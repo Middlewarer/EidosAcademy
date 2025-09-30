@@ -46,8 +46,8 @@ class UserPageView(DetailView):
     template_name = "users/profile_page.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        user = self.kwargs.get('id')
+        context = super().get_context_data(**kwargs)
+        user = self.kwargs.get('pk')
         context['courses_studied'] = self.object.course_studied.all()
         return context
 
