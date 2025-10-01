@@ -53,12 +53,9 @@ class Topic(models.Model):
     def __str__(self):
         return self.title
 
-class UserTopicProgress(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    topic_id = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    percentage = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    started_at = models.DateTimeField(auto_now=True)
-    finished_at = models.DateTimeField(null=True, blank=True)
+
+
+
 
 
 class Content(models.Model):
@@ -78,4 +75,9 @@ class Content(models.Model):
     def __str__(self):
         return f'{self.topic.title} | {self.title}'
 
+
+class UserTopicProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    topic = models.ForeignKey(Topic, on_delete=models.PROTECT, null=True, blank=True)
+    finished_contents = models.ManyToManyField(Content, related_name='finished_contents')
 

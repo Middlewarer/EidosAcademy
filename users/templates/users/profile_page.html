@@ -11,12 +11,12 @@
           <div class="main__info">
             <div class="nameandavatar_section">
             <img src="{% static 'assets/Profile.svg' %}" alt="">
-            <h2>{{profile.name}}</h2>
+            <h2>{{profile.username}}</h2>
             </div>
 
             <p>В данный момент изучает: {{ profile.purpose_language }}</p>
 
-            <img src="{% static 'assets/settings.svg' %}" alt="" id="settings_button">
+              <a href="{% url 'users:settings_page' user.id %}"><img src="{% static 'assets/settings.svg' %}" alt="" id="settings_button"></a>
           </div>
         </div>
 

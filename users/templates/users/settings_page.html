@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/settings_page.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class="main">
+      <div class="container">
+        <div class="settings_back"><a href="/html/main.html"><img src="/img/Back.svg" alt="" width="45" height="45"></a></div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        <h2 class="main_h2">Настройки профиля</h2>
+        <div class="avatar_section">
+          <img src="/img/Avatar.png" alt="" width="120px"/>
+          <div class="avatar_change">
+              <input type="file" name="avatar" accept="image/*">
+            <a href="" class="avatar_change-delete">Убрать</a>
+          </div>
+        </div>
+        <div class="Username_section section">
+            <label for="username" class="label username-label">Имя Пользователя</label>
+          <input
+          id="username"
+          name="username"
+          type="text"
+            class="input Username_section-username"
+            placeholder=""
+          value="{{ form.username.value }}"
+            required
+          />
+        </div>
+        <div class="City_section section">
+            <label for="city" class="label city-label">Страна, Город </label>
+          <input
+          id="city"
+          name="country_of_origin"
+          type="text"
+            class="City_section-input input"
+            placeholder="Введите свою Страну"
+          value="{{ form.country_of_origin.value }}"
+          />
+        </div>
+        <div class="Daily-Goal-Minutes_section section">
+            <label for="GoalMinutes" class="goalMinutes-label label">Дневная цель обучения в минутах:</label>
+          <input
+          id="GoalMinutes"
+          name="daily_goal_minutes"
+          type="number"
+            class="Daily-Goal-Minutes_section-input input"
+            placeholder="0"
+          value="{{ form.daily_goal_minutes.value }}"
+          />
+        </div>
+        <div class="btn-section">
+            <button class="btn btn-section-accept" type="submit">Сохранить</button>
+            <button class="btn btn-section-reject" type="reset">Сбросить</button>
+        </div>
+        </form>
+      </div>
+    </main>
+{% endblock %}

@@ -106,38 +106,18 @@
           <h2>Наши курсы:</h2>
 
           <div class="courses_list">
+              {% for course in courses %}
             <div class="course">
               <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
               <div class="textinfo__course">
-                <h4>Название курса</h4>
+                <h4>{{ course.title }}</h4>
                 <div class="underinfo">
                   <img src="/img/Clock.svg" alt="" />
-                  <p>~10часов</p>
                 </div>
               </div>
             </div>
+              {% endfor %}
 
-            <div class="course">
-              <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
-              <div class="textinfo__course">
-                <h4>Название курса</h4>
-                <div class="underinfo">
-                  <img src="/img/Clock.svg" alt="" />
-                  <p>~10часов</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="course">
-              <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
-              <div class="textinfo__course">
-                <h4>Название курса</h4>
-                <div class="underinfo">
-                  <img src="/img/Clock.svg" alt="" />
-                  <p>~10часов</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           <button class="courses_list-btn">Начать обучение</button>
@@ -248,7 +228,7 @@
             <h1 class="media__h1">Наши Ресурсы:</h1>
 
             <div class="media__grid">
-              <a href="#" class="media__grid-card">
+              <a href="https://t.me/eidos_academy" class="media__grid-card">
                 <img
                   src="{% static 'assets/telegram.svg' %}"
                   alt="Telegram"

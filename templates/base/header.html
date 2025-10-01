@@ -9,7 +9,7 @@
             <li class="nav__list-item"><a href="{% url 'users:profile_page' request.user.id %}">Главная</a></li>
             {% endif %}
             <li class="nav__list-item"><a href="{% url 'core:course_list' %}">Курсы </a></li>
-            <li class="nav__list-item"><a href="#">Статьи</a></li>
+            <li class="nav__list-item"><a href="{% url 'articles:main_article' %}">Статьи</a></li>
           </ul>
         </nav>
         <div class="auth_buttons">

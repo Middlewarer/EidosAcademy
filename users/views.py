@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.views.generic import FormView, TemplateView, DetailView
+from django.views.generic import FormView, TemplateView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from PIL import Image
+from django.db import transaction
+import os
 
 from .forms import LoginForm, RegisterForm
 from django.contrib.auth.models import User
@@ -57,6 +60,38 @@ class UserPageView(DetailView):
             UserProfile.objects.select_related("user").prefetch_related("course_studied"),
             user_id=self.kwargs["pk"],
         )
+
+
+class UserUpdateView(UpdateView):
+    template_name = "users/settings_page.html"
+    model = UserProfile
+    fields = ['avatar', 'username', 'country_of_origin', 'daily_goal_minutes']
+
+    def get_success_url(self):
+        return reverse_lazy('core:landing_page')
+
+    @transaction.atomic
+    def form_valid(self, form):
+        profile = form.save(commit=False)
+        old_path = profile.avatar.path if profile.avatar else None
+
+        resp = super().form_valid(form)
+
+        if 'avatar' in form.changed_data:
+            try:
+                os.remove(old_path)
+            except OSError:
+                pass
+
+        print("СОХРАНЯЕМ:", form.cleaned_data)
+        return resp
+
+    def form_invalid(self, form):
+        print("Ошибки формы:", form.errors)  # логирование для отладки
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+
 
 
 

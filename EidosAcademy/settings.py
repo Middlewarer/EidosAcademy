@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'courses.apps.CoursesConfig',
     'core.apps.CoreConfig',
+    'articles.apps.ArticlesConfig',
 
     'rest_framework',
 ]
@@ -91,7 +92,8 @@ DATABASES = {
         'PASSWORD': config('POSTGRES_PASSWORD'),
         'HOST': config('POSTGRES_HOST', default='localhost'),
         'PORT': config('POSTGRES_PORT', default=5432),
-    }
+    },
+
 }
 
 

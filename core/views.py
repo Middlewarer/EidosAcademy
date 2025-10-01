@@ -1,7 +1,9 @@
+import datetime
+
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import DetailView, TemplateView, ListView
-from courses.models import Course, TopicsBlock, Topic, Content
+from courses.models import Course, TopicsBlock, Topic, Content, UserTopicProgress
 from users.models import UserProfile
 
 class CoursePageView(DetailView):
@@ -18,6 +20,13 @@ class CoursePageView(DetailView):
 
 class LandingPageView(TemplateView):
     template_name = 'core/landing.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        courses = Course.objects.order_by('id')[:3]
+        context['courses'] = courses
+        return context
+
 
 class CourseListView(ListView):
     model = Course
@@ -42,5 +51,41 @@ class TopicStepView(DetailView):
     def get_object(self):
         self.object = Topic.objects.get(id=self.kwargs['topic_id'])
         return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['contents'] = Content.objects.filter(topic=self.object)
+        return context
+
+
+class LessonPageView(DetailView):
+    model = Content
+    template_name = 'core/lesson.html'
+    context_object_name = 'content'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = self.object.topic.block.course
+
+        # проверяем прогресс
+        user_prog, _ = UserTopicProgress.objects.get_or_create(user=self.request.user)
+        is_finished = user_prog.finished_topics.filter(id=self.object.topic.id).exists()
+
+        context['course'] = course
+        context['is_finished'] = is_finished
+        return context
+
+
+def topic_finished_button(request, pk):
+    content = get_object_or_404(Content, pk=pk)
+    topic = content.topic
+    user_prog, _ = UserTopicProgress.objects.get_or_create(user=request.user)
+    user_prog.finished_topics.add(topic)
+    return redirect('core:topic_detail', topic_id=topic.id)
+
+
+
+
+
 
 

@@ -11,13 +11,15 @@
             <div class="course_detail__inner">
               <div class="downerpart">
                 <div class="topic_info">
-                    <h2>Название Топика</h2>
+                    <h2>{{topic.title}}</h2>
                 </div>
+                  {% for content in contents %}
                 <div class="topics_listed">
-                  <div class="topic">
+
+                  <a href="{% url 'core:lesson_page' content.id %}"> <div class="topic">
                     <div class="topic__leftpart">
                       <img src="/img/Read.svg" alt="" />
-                      <h3>Введение в курс</h3>
+                      <h3>{{content.title}}</h3>
                     </div>
                     <div class="topic__rightpart">
                       <div class="rightpart_left">
@@ -39,57 +41,10 @@
                       </div>
                     </div>
                   </div>
-                  <div class="topic">
-                    <div class="topic__leftpart">
-                      <img src="/img/Read.svg" alt="" />
-                      <h3>Введение в курс</h3>
-                    </div>
-                    <div class="topic__rightpart">
-                      <div class="rightpart_left">
-                        <img
-                          src="/img/Clock.svg"
-                          alt=""
-                          width="30px"
-                          height="29px"
-                        />
-                        <p>10 минут</p>
-                      </div>
-                      <div class="rightpart_right">
-                        <img
-                          src="/img/Done.svg"
-                          alt=""
-                          width="45px"
-                          height="45px"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="topic">
-                    <div class="topic__leftpart">
-                      <img src="/img/Read.svg" alt="" />
-                      <h3>Введение в курс</h3>
-                    </div>
-                    <div class="topic__rightpart">
-                      <div class="rightpart_left">
-                        <img
-                          src="/img/Clock.svg"
-                          alt=""
-                          width="30px"
-                          height="29px"
-                        />
-                        <p>10 минут</p>
-                      </div>
-                      <div class="rightpart_right">
-                        <img
-                          src="/img/Done.svg"
-                          alt=""
-                          width="45px"
-                          height="45px"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      </a>
+
                 </div>
+                  {% endfor %}
               </div>
             </div>
           </section>

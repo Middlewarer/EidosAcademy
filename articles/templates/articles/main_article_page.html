@@ -1,129 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/landing.css" />
-  </head>
-  <body>
-    <header class="header">
-      <div class="header__inner">
-        <div class="header__logo">
-          <a href="/html/landing.html">EidosAcademy</a>
-        </div>
-        <nav class="header-nav">
-          <ul class="nav__list">
-            <li class="nav__list-item"><a href="#">Главная</a></li>
-            <li class="nav__list-item"><a href="#">Курсы </a></li>
-            <li class="nav__list-item"><a href="#">Статьи</a></li>
-            <li class="nav__list-item"><a href="#">FAQ</a></li>
-          </ul>
-        </nav>
-        <div class="auth_buttons">
-          <a class="auth_buttons__log-in" href="/html/sign_in.html">войти</a>
-          <button class="auth_buttnons__log-up">
-            <a href="/html/sign_up.html">Начать</a>
-          </button>
-        </div>
-      </div>
-    </header>
+{% extends 'base/base.html' %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}"> {% endblock %}
 
+{% block content %}
     <main>
       <section class="article">
         <div class="article__inner">
           <h2>Статьи Сообщества:</h2>
 
           <div class="article_list">
+              {% for article in articles %}
             <div class="article__card">
-              <img src="/img/article_img 20.png" alt="" />
+              <img src="{{article.main_image.url}}" alt="" />
               <div class="textinfo__article">
                 <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
+                <h4>{{ article.title }}</h4>
                 <div class="underinfo">
                   <img src="/img/Clock.svg" alt="" />
-                  <p>~13 минут</p>
+                  <p>~{{article.ap_time}} минут</p>
                 </div>
               </div>
             </div>
-
-            <div class="article__card">
-              <img
-                class="article__card-img"
-                src="/img/article_img 20.png"
-                alt=""
-                width="320"
-                height="250"
-              />
-              <div class="textinfo__article">
-                <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
-                <div class="underinfo">
-                  <img src="/img/Clock.svg" alt="" />
-                  <p>~13 минут</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="article__card">
-              <img src="/img/article_img 20.png" alt="" />
-              <div class="textinfo__article">
-                <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
-                <div class="underinfo">
-                  <img src="/img/Clock.svg" alt="" />
-                  <p>~13 минут</p>
-                </div>
-              </div>
-            </div>
+              {% endfor %}
           </div>
-
-          <button class="article_list-btn">Посмотреть всё</button>
         </div>
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="footer__inner">
-        <div class="footer__left-side">
-          <h1 class="footer__left-side-h1">EidosAcademy</h1>
-          <p class="footer__left-side-p">
-            Eidos Academy — место, где рождаются идеи.
-          </p>
-        </div>
-        <div class="footer_right-side">
-          <nav class="footer_right-side--nav">
-            <ul>
-              <li><a href="#">Главная</a></li>
-              <li><a href="#">Курсы</a></li>
-              <li><a href="#">Статьи</a></li>
-              <li><a href="#">FAQ</a></li>
-            </ul>
-          </nav>
-          <ul class="footer_right-side--media">
-            <li>
-              <a href="#"
-                ><img src="/img/telegram.svg" alt="" width="30" height="30"
-              /></a>
-            </li>
-            <li>
-              <a href="#"
-                ><img src="/img/Group 24.svg" alt="" width="30" height="30"
-              /></a>
-            </li>
-            <li>
-              <a href="#"
-                ><img src="/img/instagram.svg" alt="" width="30" height="30"
-              /></a>
-            </li>
-            <li>
-              <a href="#"
-                ><img src="/img/vksvg.png" alt="" width="30" height="30"
-              /></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </footer>
-  </body>
-</html>
+
+{% endblock %}

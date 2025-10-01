@@ -1,0 +1,100 @@
+* {
+    box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+*::after,
+*::before {
+    box-sizing: inherit;
+}
+
+body {
+    background-color: #20202F;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid rgb(77, 77, 77);
+    border-radius: 8px;
+    padding: 60px 80px;
+    margin-top: 50px;
+    background-color: rgb(26, 31, 61);
+}
+
+.settings_back {
+    margin-bottom: 15px;
+}
+
+.main_h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+}
+
+.avatar_section_h4 {
+    color: rgb(202, 201, 201);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 25px;
+}
+
+.avatar_change {
+    display: flex;
+    gap: 20px;
+}
+
+.avatar_section a {
+    color: rgb(202, 201, 201);
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    width: 300px;
+    height: 50px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.Username_section-username::placeholder {
+    color: black;
+}
+
+.label {
+    color: white;
+    font-size: 24px;
+    margin-top: 50px;
+    margin-bottom: 15px;
+}
+
+.settings_back {
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.btn-section {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.btn {
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-section-accept {
+    background-color: rgb(5, 139, 5);
+}
+
+.btn-section-reject {
+    background-color: #921a0a;
+}
