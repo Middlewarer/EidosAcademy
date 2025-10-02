@@ -3,6 +3,8 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import DetailView, TemplateView, ListView
+
+from articles.models import Article
 from courses.models import Course, TopicsBlock, Topic, Content, UserTopicProgress
 from users.models import UserProfile
 
@@ -25,6 +27,7 @@ class LandingPageView(TemplateView):
         context = super().get_context_data()
         courses = Course.objects.order_by('id')[:3]
         context['courses'] = courses
+        context['articles'] = Article.objects.order_by('id')[:3]
         return context
 
 
@@ -41,7 +44,7 @@ def course_assign_view(request, pk):
     profile = UserProfile.objects.get(user=user)
     course = Course.objects.get(id=pk)
     profile.course_studied.add(course)
-    return HttpResponse(status=204)
+    return redirect(reverse('core:course_list'))
 
 
 class TopicStepView(DetailView):
@@ -69,7 +72,7 @@ class LessonPageView(DetailView):
 
         # проверяем прогресс
         user_prog, _ = UserTopicProgress.objects.get_or_create(user=self.request.user)
-        is_finished = user_prog.finished_topics.filter(id=self.object.topic.id).exists()
+        is_finished = user_prog.finished_contents.filter(id=self.object.id).exists()
 
         context['course'] = course
         context['is_finished'] = is_finished
@@ -80,7 +83,7 @@ def topic_finished_button(request, pk):
     content = get_object_or_404(Content, pk=pk)
     topic = content.topic
     user_prog, _ = UserTopicProgress.objects.get_or_create(user=request.user)
-    user_prog.finished_topics.add(topic)
+    user_prog.finished_contents.add(content)
     return redirect('core:topic_detail', topic_id=topic.id)
 
 

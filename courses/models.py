@@ -67,7 +67,7 @@ class Content(models.Model):
 
     topic = models.ForeignKey(Topic, on_delete=models.PROTECT)
     type = models.CharField(max_length=20, choices=Type.choices, default=Type.TEXT)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, null=True, blank=True)
     video_url = models.URLField(blank=True, null=True)
     video_duration = models.PositiveIntegerField(blank=True, null=True)
     essence_html = models.TextField(null=True, blank=True)

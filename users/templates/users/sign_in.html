@@ -14,7 +14,7 @@
             <h1 class="sign_in__information-h1">Войди в свой Аккаунт</h1>
             <p class="sign_in__information-p">
               Или
-              <a зарегестрируй href="/html/sign_up.html">зарегестрируй новый</a>
+              <a зарегестрируй href="{% url 'users:user_register' %}">зарегестрируй новый</a>
             </p>
           </div>
 
@@ -43,32 +43,11 @@
                 name="password"
               />
 
-              <div class="login__options">
-                <label class="login-label login__checkbox">
-                  <input type="checkbox" class="login__checkbox-input" />
-                  <span class="login__checkbox-text">Запомнить меня</span>
-                </label>
-                <a href="#" class="login__forgot">Забыл пароль?</a>
-              </div>
-
               <button type="submit" class="login__button">Войти</button>
 
-              <p class="login__alternative">Или войди с помощью</p>
 
-              <div class="login__socials">
-                <button
-                  type="button"
-                  class="login__social login__social--github"
-                >
-                  <img src="{% static 'assets/GitHub.svg' %}" alt="" width="30" height="30" />
-                </button>
-                <button
-                  type="submit"
-                  class="login__social login__social--google"
-                >
-                  <img src="{% static 'assets/Google.svg' %}" alt="" width="30" height="30" />
-                </button>
-              </div>
+
+
             </form>
           </div>
         </div>

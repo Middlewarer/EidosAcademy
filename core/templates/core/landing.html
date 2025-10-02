@@ -107,6 +107,7 @@
 
           <div class="courses_list">
               {% for course in courses %}
+              <a href="{% url 'core:course_detail' course.id%}">
             <div class="course">
               <img src="{% static 'assets/dummyimage.svg' %}" alt="" />
               <div class="textinfo__course">
@@ -115,12 +116,14 @@
                   <img src="/img/Clock.svg" alt="" />
                 </div>
               </div>
+
             </div>
+                  </a>
               {% endfor %}
 
           </div>
 
-          <button class="courses_list-btn">Начать обучение</button>
+            <a href="{% url 'users:user_register' %}"><button class="courses_list-btn" >Начать обучение</button></a>
         </div>
       </section>
       <section class="results">
@@ -176,50 +179,22 @@
           <h2>Статьи Сообщества:</h2>
 
           <div class="article_list">
-            <div class="article__card">
+            {% for article in articles %}
+              <div class="article__card">
               <img src="{% static 'assets/dummyimage2.svg' %}" alt="" />
               <div class="textinfo__article">
                 <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
+                <h4>{{article.title}}</h4>
                 <div class="underinfo">
                   <img src="{% static 'assets/Clock.svg' %}" alt="" />
                   <p>~13 минут</p>
                 </div>
               </div>
             </div>
-
-            <div class="article__card">
-              <img
-                class="article__card-img"
-                src="{% static 'assets/dummyimage2.svg' %}"
-                alt=""
-                width="320"
-                height="250"
-              />
-              <div class="textinfo__article">
-                <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
-                <div class="underinfo">
-                  <img src="{% static 'assets/Clock.svg' %}" alt="" />
-                  <p>~13 минут</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="article__card">
-              <img src="{% static 'assets/dummyimage2.svg' %}" alt="" />
-              <div class="textinfo__article">
-                <p class="textinfo__article-topic">Python</p>
-                <h4>Django - лучший выбор в 2025?</h4>
-                <div class="underinfo">
-                  <img src="{% static 'assets/Clock.svg' %}" alt="" />
-                  <p>~13 минут</p>
-                </div>
-              </div>
-            </div>
+              {% endfor %}
           </div>
 
-          <button class="article_list-btn">Посмотреть всё</button>
+            <a href="{% url 'articles:main_article' %}"><button class="article_list-btn">Посмотреть всё</button></a>
         </div>
       </section>
       <section>
