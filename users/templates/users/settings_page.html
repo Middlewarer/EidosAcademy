@@ -12,22 +12,14 @@
             {% csrf_token %}
         <h2 class="main_h2">Настройки профиля</h2>
         <div class="avatar_section">
+            {% if object.avatar %}
           <img src="{{object.avatar.url}}" alt="" width="120px"/>
+            {% else %}
+            <img src="  " alt="" width="120px"/>
+            {% endif %}
           <div class="avatar_change">
               <input type="file" name="avatar" accept="image/*">
           </div>
-        </div>
-        <div class="Username_section section">
-            <label for="username" class="label username-label">Имя Пользователя</label>
-          <input
-          id="username"
-          name="username"
-          type="text"
-            class="input Username_section-username"
-            placeholder=""
-          value="{{ form.username.value }}"
-            required
-          />
         </div>
         <div class="City_section section">
             <label for="city" class="label city-label">Страна, Город </label>

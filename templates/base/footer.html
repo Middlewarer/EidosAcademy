@@ -11,7 +11,13 @@
         <div class="footer_right-side">
           <nav class="footer_right-side--nav">
             <ul>
-              <li><a href="{% url 'users:profile_page' request.user.id %}">Главная</a></li>
+              {% if request.user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'users:profile_page' request.user.pk %}">
+                            Профиль
+                        </a>
+                    </li>
+                {% endif %}
               <li><a href="{% url 'core:course_list' %}">Курсы</a></li>
               <li><a href="{% url 'articles:main_article' %}">Статьи</a></li>
               <li><a href="#">FAQ</a></li>

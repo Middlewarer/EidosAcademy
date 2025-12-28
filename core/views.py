@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import DetailView, TemplateView, ListView
@@ -44,7 +45,7 @@ def course_assign_view(request, pk):
     profile = UserProfile.objects.get(user=user)
     course = Course.objects.get(id=pk)
     profile.course_studied.add(course)
-    return redirect(reverse('core:course_list'))
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 class TopicStepView(DetailView):
@@ -61,7 +62,7 @@ class TopicStepView(DetailView):
         return context
 
 
-class LessonPageView(DetailView):
+class LessonPageView(UserPassesTestMixin, DetailView):
     model = Content
     template_name = 'core/lesson.html'
     context_object_name = 'content'
@@ -77,6 +78,14 @@ class LessonPageView(DetailView):
         context['course'] = course
         context['is_finished'] = is_finished
         return context
+
+    def test_func(self):
+        self.course = self.get_object().topic.block.course
+        user = UserProfile.objects.get(user=self.request.user)
+        return self.course not in user.course_studied.all()
+
+    def handle_no_permission(self):
+        return redirect('core:course_detail', pk=self.course.pk)
 
 
 def topic_finished_button(request, pk):

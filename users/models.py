@@ -11,7 +11,6 @@ class UserProfile(models.Model):
 
     #bio fields
     name = models.CharField(max_length=100, null=True, blank=True)
-    username = models.CharField(max_length=100, null=True, blank=True)
     surname = models.CharField(max_length=150, null=True, blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'webp']), validate_image])
     name_displayed = models.CharField(max_length=75, null=True, blank=True)

@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.views.generic import FormView, TemplateView, DetailView, UpdateView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from PIL import Image
 from django.db import transaction
 import os
@@ -33,15 +33,22 @@ class LoginPageView(FormView):
             return self.form_invalid(form)
 
 
-class RegisterPageView(FormView):
+class RegisterPageView(UserPassesTestMixin, FormView):
     form_class = RegisterForm
     template_name = 'users/sign_up.html'
     success_url = reverse_lazy('core:landing_page')
+
 
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
         return super().form_valid(form)
+
+    def test_func(self):
+        return not self.request.user.is_authenticated
+
+    def handle_no_permission(self):
+        return redirect('users:profile_page', pk=self.request.user.id)
 
 class UserPageView(DetailView):
     queryset = UserProfile.objects.select_related("user")  # ВАЖНО: QuerySet, не класс и не экземпляр
@@ -65,7 +72,7 @@ class UserPageView(DetailView):
 class UserUpdateView(UpdateView):
     template_name = "users/settings_page.html"
     model = UserProfile
-    fields = ['avatar', 'username', 'country_of_origin', 'daily_goal_minutes']
+    fields = ['avatar', 'country_of_origin', 'daily_goal_minutes']
 
     def get_success_url(self):
         return reverse_lazy('core:landing_page')

@@ -11,7 +11,7 @@
           <div class="main__info">
             <div class="nameandavatar_section">
             <img src="{% static 'assets/Profile.svg' %}" alt="">
-            <h2>{{profile.username}}</h2>
+            <h2>{{request.user.username}}</h2>
             </div>
 
             <p>В данный момент изучает: {{ profile.purpose_language }}</p>

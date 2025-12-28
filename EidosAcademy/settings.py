@@ -43,11 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'users.apps.UsersConfig',
-    'api.apps.ApiConfig',
     'courses.apps.CoursesConfig',
     'core.apps.CoreConfig',
     'articles.apps.ArticlesConfig',
 
+
+    'api.apps.ApiConfig',
     'rest_framework',
 ]
 
