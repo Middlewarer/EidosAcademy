@@ -1,7 +1,28 @@
 import CourseCard from "./CourseCard"
 
 const Courses = () => {
-    return (
+  const courses = [
+  {
+    id: 1,
+    title: "Python",
+    description: "...",
+    icon: "PY",
+  },
+  {
+    id: 2,
+    title: "Django",
+    description: "...",
+    icon: "DJ",
+  },
+  {
+    id: 3,
+    title: "React",
+    description: "...",
+    icon: "JS",
+  },
+];
+
+       return (
         <section id="courses" className="courses">
 
           <div className="container">
@@ -24,14 +45,8 @@ const Courses = () => {
 
 
             <div className="course-grid">
-
-
-              < CourseCard title="Django" description="Научитесь создавать джанго приложения за 15 минут"/>
-              < CourseCard title="Python" description="Что же делать? Конечно же учить Python!" />
-              < CourseCard title="REST API" description="Научитесь передавать данные от сервера к рабочему клиенту в этом курсе!" />
-
-
-
+            
+            {courses.map((course) => (< CourseCard key={course.id} title={course.title} description={course.description} icon={course.icon} />))}
             </div>
 
 
