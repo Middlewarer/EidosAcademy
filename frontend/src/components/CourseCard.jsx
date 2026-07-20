@@ -1,13 +1,13 @@
 const CourseCard = (props) => {
     const {
         title,
-        description
+        description,
+        key,
     } = props
     return (
         <article className="course-card">
 
                 <div className="course-icon">
-                  PY
                 </div>
 
 
@@ -21,7 +21,7 @@ const CourseCard = (props) => {
                 </p>
 
 
-                <button>
+                <button key={key}>
                   Подробнее →
                 </button>
 
