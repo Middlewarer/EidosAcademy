@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 const CourseCard = (props) => {
     const {
         title,
@@ -20,11 +22,12 @@ const CourseCard = (props) => {
                   {description}
                 </p>
 
-
+              <Link to={"/details"}>
+              
                 <button key={key}>
                   Подробнее →
                 </button>
-
+              </Link> 
               </article>
     )
 }

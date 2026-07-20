@@ -11,8 +11,6 @@ function Courses() {
   const [search, setSearch] = useState("");
   return (
     <div className="courses-page">
-      < Header/>
-
       <main>
         <CoursesHero search={search} setSearch={setSearch} />
 
@@ -20,8 +18,6 @@ function Courses() {
 
         <CoursesList activeFilter={activeFilter} search={search} setSearch={setSearch}/>
       </main>
-
-      <Footer />
     </div>
   );
 }

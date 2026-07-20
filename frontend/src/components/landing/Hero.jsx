@@ -1,3 +1,6 @@
+import { Router, Link } from "react-router-dom"
+import Button from "../Button"
+
 function Hero() {
     return (
         <section className="hero">
@@ -34,9 +37,11 @@ function Hero() {
                 </button>
 
 
+                <Link to={"/courses"} >
                 <button className="secondary-btn">
                   Все курсы
                 </button>
+                </Link>
 
               </div>
 

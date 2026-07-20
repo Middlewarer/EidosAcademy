@@ -12,9 +12,6 @@ import Footer from "../components/initial/Footer";
 function Home() {
   return (
     <div className="app">
-
-      <Header />
-
       <main>
         <Hero />
         <Advantages />
@@ -23,18 +20,6 @@ function Home() {
         <AboutSection />
         <ReviewSection />
         <FAQSection />
-
-
-
-        
-
-
-
-
-
-        <Footer />
-
-
       </main>
 
 

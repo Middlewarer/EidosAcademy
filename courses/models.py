@@ -24,6 +24,8 @@ class Course(CourseAndTimeStamp):
         related_name='courses'
     )
 
+    short_description = models.CharField(max_length=300, default="This is the description of this course")
+
     image = models.URLField(blank=True, null=True, help_text="Ссылка на обложку курса")
 
     is_published = models.BooleanField(default=False)
@@ -37,7 +39,7 @@ class Course(CourseAndTimeStamp):
 
 
 class Module(CourseAndTimeStamp):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="modules")
 
     def __str__(self):
         return f"{self.course.title} - {self.title}"
@@ -48,7 +50,7 @@ class Module(CourseAndTimeStamp):
 
 
 class Topic(CourseAndTimeStamp):
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="topics")
 
     def __str__(self):
         return f"{self.title} | {self.order}"
