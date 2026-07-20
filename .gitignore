@@ -1,0 +1,277 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# ===================================
+# Python / Django
+# ===================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ===================================
+# Node / React / JavaScript
+# ===================================
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build output
+.nuxt
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# ===================================
+# Общее
+# ===================================
+
+# IDE / Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Файлы с локальными настройками
+*.local
+*.dev
+
+# Файлы с секретами
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+credentials/
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+
+# ===================================
+# Медиа и загрузки (для твоей платформы курсов)
+# ===================================
+
+media/
+staticfiles/
+static/
+uploads/
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+
+# ===================================
+# Логи бэкенда (специфичные)
+# ===================================
+
+logs/
+*.log
+django.log
+
+# ===================================
+# Тесты и отчеты
+# ===================================
+
+test-reports/
+test-results/
+coverage/
+
+# ===================================
+# Файлы баз данных (кроме PostgreSQL)
+# ===================================
+
+*.sqlite3
+*.db
+
+# ===================================
+# Файлы, создаваемые при деплое
+# ===================================
+
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+
+
+# Node
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+dist/
+build/
+*.log
+.idea/
+.vscode/
+coverage/
+.eslintcache
+*.tsbuildinfo
