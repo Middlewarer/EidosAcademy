@@ -1,3 +1,5 @@
+import Button from "../Button"
+
 function Header() {
     return (
        <header className="header">
@@ -17,9 +19,7 @@ function Header() {
           </nav>
 
 
-          <button className="login-btn">
-            Войти
-          </button>
+          <Button type='button'>Войти</Button>
 
         </div>
       </header> 

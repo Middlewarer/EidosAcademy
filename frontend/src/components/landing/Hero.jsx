@@ -45,7 +45,7 @@ function Hero() {
 
                 <div>
                   <strong>
-                    500+
+                    1000+
                   </strong>
                   студентов
                 </div>
@@ -53,7 +53,7 @@ function Hero() {
 
                 <div>
                   <strong>
-                    20+
+                    Много
                   </strong>
                   проектов
                 </div>
@@ -61,9 +61,9 @@ function Hero() {
 
                 <div>
                   <strong>
-                    10+
+                    Куча
                   </strong>
-                  направлений
+                  направлений :)
                 </div>
 
               </div>
@@ -87,7 +87,7 @@ function Hero() {
 
 
                 <h3>
-                  Идея → Навык → Профессия
+                  Идея -> Навык-> Профессия
                 </h3>
 
 
