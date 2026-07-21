@@ -3,6 +3,7 @@ import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
+import ModulePage from "./pages/ModulePage"
 
 const App = () => {
     return (
@@ -12,6 +13,7 @@ const App = () => {
                     <Route path="/" element={< Home/>} />
                     <Route path="/courses" element={< Courses/>} />
                     <Route path="/details" element={< CourseDetail/>} />
+                    <Route path="/module" element={< ModulePage/>}/>
                 </Route>
             </Routes>
         </BrowserRouter>

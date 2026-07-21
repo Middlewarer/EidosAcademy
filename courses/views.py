@@ -1,8 +1,12 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from .models import *
 from .serializers import *
+
+from django.shortcuts import get_object_or_404
+
 
 
 class CoursesApiView(APIView):
@@ -26,14 +30,17 @@ class CoursesApiView(APIView):
 
 
 
-class ModulesApiView(generics.GenericAPIView):
-    queryset = Module.objects.all()
+class ModulesViewSet(ModelViewSet):
     serializer_class = ModuleSerializer
+    queryset = Module.objects.all()
 
-    def get(self, request):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({'modules': serializer.data})
+
+class ModuleDetailApiView(APIView):
+    def get(self, request, pk):
+        module = get_object_or_404(Module, id=pk)
+        serializer = ModuleDetailSerializer(module)
+        return Response({"module": serializer.data})
+
 
 
 class TopicsApiView(APIView):
