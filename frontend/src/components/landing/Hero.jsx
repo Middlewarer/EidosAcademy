@@ -32,10 +32,11 @@ function Hero() {
 
               <div className="hero-buttons">
 
+              <Link to={"/courses"}>
                 <button className="primary-btn">
                   Начать обучение
                 </button>
-
+              </Link>
 
                 <Link to={"/courses"} >
                 <button className="secondary-btn">

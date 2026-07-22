@@ -1,6 +1,6 @@
 import "../styles/ModulePage.css";
 import MarkdownContent from "../components/MarkdownContent";
-import lessonMarkdown from "../content/lessons/python-intro.md?raw";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react"
 
 function ModulePage() {
@@ -8,8 +8,10 @@ function ModulePage() {
   const [topics, setTopics] = useState([])
   const [selectedTopic, setSelectedTopic] = useState(0);
 
+  const { id } = useParams();
+
   const getTopics = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/modules/1")
+    const response = await fetch(`http://127.0.0.1:8000/api/modules/${id}`)
     const data = await response.json()
 
     setTopics(data.module.topics)

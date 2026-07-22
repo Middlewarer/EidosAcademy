@@ -12,17 +12,19 @@ from django.shortcuts import get_object_or_404
 class CoursesApiView(APIView):
     def get(self, request, pk=None):
         if pk:
-            course = Course.objects.get(id=pk)
+            course = get_object_or_404(Course, id=pk)
             serializer = CourseDetailSerializer(course)
             module_counter = course.modules.count()
             topic_counter = Topic.objects.filter(module__course=course).count()
             topics = Topic.objects.filter(module__course=course).order_by("module__order", "order")
             topic_serializer = TopicSerializer(many=True, instance=topics)
 
-            return Response({"course": serializer.data,
-                            "module_counter": module_counter,
-                            "topic_counter": topic_counter,
-                            "topics": topic_serializer.data})
+            return Response({
+                "course": serializer.data,
+                "module_counter": module_counter,
+                "topic_counter": topic_counter,
+                "topics": topic_serializer.data,
+            })
         else:
             queryset = Course.objects.all()
             serializer = CourseListSerializer(queryset, many=True)

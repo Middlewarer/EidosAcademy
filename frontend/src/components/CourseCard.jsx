@@ -1,11 +1,6 @@
 import { Link } from "react-router-dom"
 
-const CourseCard = (props) => {
-    const {
-        title,
-        description,
-        key,
-    } = props
+const CourseCard = ({ title, description, id }) => {
     return (
         <article className="course-card">
 
@@ -22,9 +17,8 @@ const CourseCard = (props) => {
                   {description}
                 </p>
 
-              <Link to={"/details"}>
-              
-                <button key={key}>
+              <Link to={`/courses/${id}`}>
+                <button type="button">
                   Подробнее →
                 </button>
               </Link> 

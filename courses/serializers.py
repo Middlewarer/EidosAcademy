@@ -49,7 +49,7 @@ class ModuleDetailSerializer(ModelSerializer):
 class CourseListSerializer(ModelSerializer):
     class Meta:
         model = Course
-        fields = ['title', 'short_description', 'description', 'created_at']
+        fields = ['id', 'title', 'short_description', 'description', 'created_at']
 
 
 class CourseDetailSerializer(ModelSerializer):

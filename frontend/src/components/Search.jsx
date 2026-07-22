@@ -11,7 +11,6 @@ const Search = (props) => {
                 placeholder={placeholder}
                 onChange={(event) => {setSearch(event.target.value)}}
               />
-              <button type="button">Найти</button>
             </div>)
 }
 

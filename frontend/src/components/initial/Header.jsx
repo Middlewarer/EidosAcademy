@@ -15,7 +15,8 @@ function Header() {
           <a href="/#learning">Обучение</a>
           <a href="/#reviews">Отзывы</a>
         </nav>
-        <Button type="button">Войти</Button>
+        {/* <Button type="button">Войти</Button> */}
+        
       </div>
     </header>
     )

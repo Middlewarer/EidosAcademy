@@ -2,28 +2,82 @@ import "../styles/CourseDetail.css";
 import Crumbs from "../components/Crumbs";
 import { useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
+import { useParams } from "react-router-dom";
 
 function CourseDetail() {
-    const [course, setCourse] = useState({})
+    const [course, setCourse] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-    const [moduleCounter, setModuleCounter] = useState(1)
+    const [moduleCounter, setModuleCounter] = useState(0)
 
-    const [topicCounter, setTopicCounter] = useState(1)
+    const [topicCounter, setTopicCounter] = useState(0)
 
     const [modules, setModules] = useState([])
 
-    const getCourse = async () => {
-        const response = await fetch("http://127.0.0.1:8000/api/courses/1/")
-        const course = await response.json()
+    const { id } = useParams();
 
-        
-        setModuleCounter(course.module_counter)
-        setTopicCounter(course.topic_counter)
-        setCourse(course.course);
-        setModules(course.course.modules)
+    const getCourse = async () => {
+        try {
+            setLoading(true)
+            setError(null)
+
+            const response = await fetch(`http://127.0.0.1:8000/api/courses/${id}/`)
+            const data = await response.json()
+
+            if (!response.ok || !data.course) {
+                setCourse(null)
+                setModules([])
+                setError(data.reason || "Не удалось загрузить курс")
+                return
+            }
+
+            setModuleCounter(data.module_counter ?? 0)
+            setTopicCounter(data.topic_counter ?? 0)
+            setCourse(data.course)
+            setModules(data.course.modules ?? [])
+        } catch {
+            setCourse(null)
+            setModules([])
+            setError("Не удалось загрузить курс")
+        } finally {
+            setLoading(false)
+        }
     }
 
-    useEffect(() => {getCourse()}, [])
+    useEffect(() => {
+        if (!id) {
+            return;
+        }
+
+        getCourse();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="course-detail-page">
+                <main>
+                    <Crumbs />
+                    <div className="container">
+                        <p>Загрузка курса...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    if (error || !course) {
+        return (
+            <div className="course-detail-page">
+                <main>
+                    <Crumbs />
+                    <div className="container">
+                        <p>{error || "Курс не найден"}</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
   return (
     <div className="course-detail-page">
@@ -92,7 +146,7 @@ function CourseDetail() {
 
             <div className="course-detail-modules">
               {modules.map((module) => (
-    <Module title={module.title} topics={module.topics}/>
+    <Module key={module.id} title={module.title} topics={module.topics}/>
 ))}
             </div>
           </div>

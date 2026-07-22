@@ -1,21 +1,25 @@
 import CourseCard from "../CourseCard"
 import { useEffect, useState } from "react"
 
+import { getCourses } from "../api/courses/Courses"
+
+
 const Courses = () => {
   const [courses, setCourses] = useState([])
 
 
-  const getCourses = async () => {
-      const response = await fetch("http://127.0.0.1:8000/api/courses/");
-
-      const data = await response.json()  
-
-      setCourses(data.courses);
-
-  }
 
   useEffect(() => {
-      getCourses()
+      async function load() {
+        try {
+          const data = await getCourses();
+          setCourses(data.courses)
+        }
+        catch (err) {
+          console.log(err)
+        }
+      } 
+      load();
   }, []);
 
        return (
@@ -43,9 +47,11 @@ const Courses = () => {
             <div className="course-grid">
             
             {courses.map((course) =>
-              (< CourseCard key={course.id}
+              (<CourseCard
+              key={course.id}
+              id={course.id}
               title={course.title}
-              description={ course.description.length > 120 ? course.description.slice(0, 120) + "..." : course.description}/>))}
+              description={ course.description.length > 120 ? course.description.slice(0, 120) + "..." : course.description} />))}
             </div>
 
 
