@@ -3,6 +3,7 @@ import Crumbs from "../components/Crumbs";
 import { useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
 import { useParams } from "react-router-dom";
+import {Link } from "react-router-dom"
 
 function CourseDetail() {
     const [course, setCourse] = useState(null)
@@ -112,9 +113,13 @@ function CourseDetail() {
                 </div>
               </div>
 
-              <button type="button" className="course-detail-start-btn">
-                Начать обучение
-              </button>
+              {modules[0] && (
+                <Link to={`/courses/${id}/modules/${modules[0].id}`}>
+                  <button type="button" className="course-detail-start-btn">
+                    Начать обучение
+                  </button>
+                </Link>
+              )}
             </div>
 
             <div className="course-detail-cover">
@@ -146,8 +151,14 @@ function CourseDetail() {
 
             <div className="course-detail-modules">
               {modules.map((module) => (
-    <Module key={module.id} title={module.title} topics={module.topics}/>
-))}
+                <Module
+                  key={module.id}
+                  id={module.id}
+                  courseId={id}
+                  title={module.title}
+                  topics={module.topics}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -157,9 +168,13 @@ function CourseDetail() {
           <div className="container">
             <h2>Готовы начать?</h2>
             <p>Присоединяйтесь к курсу и начните учиться уже сегодня.</p>
-            <button type="button" className="course-detail-start-btn">
-              Начать обучение
-            </button>
+            {modules[0] && (
+              <Link to={`/courses/${id}/modules/${modules[0].id}`}>
+                <button type="button" className="course-detail-start-btn">
+                  Начать обучение
+                </button>
+              </Link>
+            )}
           </div>
         </section>
       </main>
