@@ -1,4 +1,3 @@
-import Button from "../Button"
 import { Link } from "react-router-dom";
 
 function Header() {
@@ -15,7 +14,9 @@ function Header() {
           <a href="/#learning">Обучение</a>
           <a href="/#reviews">Отзывы</a>
         </nav>
-        {/* <Button type="button">Войти</Button> */}
+        <Link to="/login" className="login-btn">
+          Войти
+        </Link>
         
       </div>
     </header>

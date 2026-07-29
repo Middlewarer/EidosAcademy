@@ -5,11 +5,14 @@ from rest_framework.viewsets import ModelViewSet
 from .models import *
 from .serializers import *
 
+from rest_framework.permissions import IsAuthenticated
+
 from django.shortcuts import get_object_or_404
 
 
 
 class CoursesApiView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk=None):
         if pk:
             course = get_object_or_404(Course, id=pk)
