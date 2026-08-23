@@ -3,6 +3,8 @@ from rest_framework.serializers import ModelSerializer
 
 from .models import *
 
+from django.contrib.auth.models import User
+
 
         
 class TopicSerializer(ModelSerializer):
@@ -58,7 +60,35 @@ class CourseDetailSerializer(ModelSerializer):
         model = Course
         fields = ['title', 'short_description', 'created_at', 'modules']
 
+class UserProgressSerializer(ModelSerializer):
+    class Meta:
+        model = UserProgress
+        fields = '__all__'
 
 
+class UserRegistrationSerializer(ModelSerializer):
+    password2 = serializers.CharField(style={'input_type': "password"}, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'password2']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Sorry, incorrect"})
+
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+        )
+
+        return user
 
 

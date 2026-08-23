@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from .models import *
 from .serializers import *
+from rest_framework import status
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,7 +13,6 @@ from django.shortcuts import get_object_or_404
 
 
 class CoursesApiView(APIView):
-    permission_classes = [IsAuthenticated]
     def get(self, request, pk=None):
         if pk:
             course = get_object_or_404(Course, id=pk)
@@ -62,6 +62,18 @@ class TopicLessonsApiView(APIView):
 
         return Response({'topics': serializer.data,
                          'count': queryset.count()})
+
+
+class RegisterUserApiView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=reqeust.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "User Created"
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({'error': "Chtoto ne tak"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

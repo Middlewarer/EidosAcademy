@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import ModulePage from "./pages/ModulePage"
-import Login from "./pages/Login"
 
 const App = () => {
     return (
@@ -13,9 +12,8 @@ const App = () => {
                 <Route element={<Layout />}>
                     <Route path="/" element={< Home/>} />
                     <Route path="/courses" element={<Courses />} />
-                    <Route path="/courses/:id" element={<CourseDetail />} />
+                    <Route path="/courses/:courseId" element={<CourseDetail />} />
                     <Route path="/courses/:courseId/modules/:moduleId" element={< ModulePage/>}/>
-                    <Route path="/login" element={<Login />} />
                 </Route>
             </Routes>
         </BrowserRouter>
