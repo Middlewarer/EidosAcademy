@@ -1,15 +1,16 @@
 import "../styles/ModulePage.css";
 import MarkdownContent from "../components/MarkdownContent";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function ModulePage() {
 
     const {courseId, moduleId} = useParams();
+    const navigate = useNavigate();
 
     const [selectedTopicId, setSelectedTopicId] = useState(null);
-
-    const [module, setModule] = useState(null)
+    const [module, setModule] = useState(null);
+    const [nextModuleId, setNextModuleId] = useState(null);
 
     const getModule = async () => {
       const response = await fetch(`http://127.0.0.1:8000/api/modules/${moduleId}`)
@@ -22,11 +23,18 @@ function ModulePage() {
         console.log("Выбран топик с Id", topicId)
     }
 
+    const handleNextModule = () => {
+        if (nextModuleId) {
+            navigate(`/courses/${courseId}/modules/${nextModuleId}`);
+        }
+    }
+
     useEffect(() => {
       const loadModule = async () => {
         const data = await getModule();
         console.log(data)
         setModule(data.module)
+        setNextModuleId(data.module.next_module.next_module_id || null)
 
           if (data.module?.topics?.length > 0) {
             setSelectedTopicId(data.module.topics[0].id)
@@ -41,12 +49,14 @@ function ModulePage() {
 
     const selectedLesson = selectedTopic?.lessons?.[0];
 
+    const isLastTopic = module?.topics && selectedTopic?.id === module.topics[module.topics.length - 1]?.id;
+
   return (
     <div className="module-page">
       <main>
         <section className="module-page-top">
           <div className="container">
-            <Link to={`/courses/`} className="module-page-back">
+            <Link to={`/courses/${courseId}`} className="module-page-back">
               ← Назад к курсу
             </Link>
 
@@ -75,7 +85,7 @@ function ModulePage() {
 
         <section className="module-page-content">
           <div className="container module-page-grid">
-            <aside className="module-page-">
+            <aside className="module-page-topics-sidebar">
               <h2>Уроки модуля</h2>
 
               <ul className="module-page-topics">
@@ -93,6 +103,18 @@ function ModulePage() {
                     </div>
                   </li>))}
               </ul>
+
+              {/* Кнопка перехода на следующий модуль */}
+              {nextModuleId && isLastTopic && (
+                <div className="module-page-next-module">
+                  <button 
+                    onClick={handleNextModule}
+                    className="next-module-button"
+                  >
+                    Перейти на следующий модуль →
+                  </button>
+                </div>
+              )}
             </aside>
 
             <article className="module-page-lesson">
@@ -101,11 +123,23 @@ function ModulePage() {
               </span>
 
               <MarkdownContent content={selectedLesson?.content}/>
+
+              {nextModuleId && isLastTopic && (
+                <div className="module-page-next-module">
+                  <button
+                    onClick={handleNextModule}
+                    className="next-module-button"
+                  >
+                    Перейти на следующий модуль →
+                  </button>
+                </div>
+              )}
             </article>
           </div>
         </section>
       </main>
     </div>
+    
   );
 }
 

@@ -183,6 +183,46 @@
   font-size: 12px;
 }
 
+.module-page-next-module {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f1e4bf;
+}
+
+.next-module-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 14px;
+  background: #ffc83d;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.next-module-button:hover {
+  background: #f5b900;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(245, 185, 0, 0.28);
+}
+
+.next-module-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.next-module-button:focus-visible {
+  outline: 2px solid #d99500;
+  outline-offset: 3px;
+}
+
 /* LESSON */
 
 .module-page-lesson {
