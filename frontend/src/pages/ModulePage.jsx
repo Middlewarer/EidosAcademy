@@ -21,6 +21,7 @@ function ModulePage() {
     const handleTopicClick = (topicId) => {
         setSelectedTopicId(topicId);
         console.log("Выбран топик с Id", topicId)
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     const handleNextModule = () => {
