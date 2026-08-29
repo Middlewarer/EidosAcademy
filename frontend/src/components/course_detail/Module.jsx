@@ -1,17 +1,19 @@
-const Module = (props) => {
-    const {
-        title,
-        topics,
-    } = props
-    return (<article className="course-detail-module">
-                <h3>{title}</h3>
+import { Link } from "react-router-dom";
 
-                <ul>
-                  {topics.map((topic, index) => (
-    <li key={index}>{topic.title}</li>
-))}
-                </ul>
-              </article>)
-}
+const Module = ({ id, courseId, title, topics }) => {
+    return (
+        <article className="course-detail-module">
+            <h3>
+                <Link to={`/courses/${courseId}/modules/${id}`}>{title}</Link>
+            </h3>
+
+            <ul>
+                {topics.map((topic) => (
+                    <li key={topic.id}>{topic.title}</li>
+                ))}
+            </ul>
+        </article>
+    );
+};
 
 export default Module

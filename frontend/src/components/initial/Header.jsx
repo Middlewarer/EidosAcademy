@@ -1,8 +1,11 @@
-import Button from "../Button"
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+
 
 function Header() {
-    return (
+  const {user} = useAuth();
+  return (
        <header className="header">
       <div className="container nav">
         <Link to="/" className="logo">
@@ -15,7 +18,15 @@ function Header() {
           <a href="/#learning">Обучение</a>
           <a href="/#reviews">Отзывы</a>
         </nav>
-        <Button type="button">Войти</Button>
+        {user? (<Link to="/profile" className="login-btn">
+          {user?.username} <Link to="/logout" className="login-btn">
+          Выйти
+        </Link>
+        </Link>) : ((<Link to="/login" className="login-btn">
+          Войти
+        </Link>))}
+        
+        
       </div>
     </header>
     )

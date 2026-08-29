@@ -120,6 +120,12 @@ nav a:hover {
 
   font-size:15px;
 
+  text-decoration:none;
+
+  color:inherit;
+
+  display:inline-block;
+
 }
 
 

@@ -1,12 +1,12 @@
 import "../styles/Home.css";
 import Header from "../components/initial/Header";
-import Hero from "../components/landing/Hero";
-import Advantages from "../components/landing/Advantages";
-import CoursesLanding from "../components/landing/Courses";
-import StudyProcessLanding from "../components/landing/StudyProcess";
-import AboutSection from "../components/landing/AboutSection";
-import ReviewSection from "../components/landing/ReviewSection";
-import FAQSection from "../components/landing/FAQSection";
+import Hero from "../components/initial/Hero";
+import Advantages from "../components/initial/Advantages";
+import CoursesLanding from "../components/courses_list/Courses";
+import StudyProcessLanding from "../components/initial/StudyProcess";
+import AboutSection from "../components/initial/AboutSection";
+import ReviewSection from "../components/initial/ReviewSection";
+import FAQSection from "../components/initial/FAQSection";
 import Footer from "../components/initial/Footer";
 
 function Home() {

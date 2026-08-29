@@ -2,30 +2,49 @@ import "../styles/CourseDetail.css";
 import Crumbs from "../components/Crumbs";
 import { useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
+import { useParams } from "react-router-dom";
+import {Link } from "react-router-dom"
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../components/context/AuthContext";
 
 function CourseDetail() {
-    const [course, setCourse] = useState({})
-
-    const [moduleCounter, setModuleCounter] = useState(1)
-
-    const [topicCounter, setTopicCounter] = useState(1)
+    const [course, setCourse] = useState(null)
+    const [error, setError] = useState(null)
+    const { user, loading } = useAuth()
 
     const [modules, setModules] = useState([])
 
-    const getCourse = async () => {
-        const response = await fetch("http://127.0.0.1:8000/api/courses/1/")
-        const course = await response.json()
+    const { courseId } = useParams();
 
-        
-        setModuleCounter(course.module_counter)
-        setTopicCounter(course.topic_counter)
-        setCourse(course.course);
-        setModules(course.course.modules)
+    const getCourse = async () => {
+        const response = await fetch(`http://127.0.0.1:8000/api/courses/${courseId}/`)
+        const data = await response.json()
+        console.log(data)
+        return data
     }
 
-    useEffect(() => {getCourse()}, [])
+    useEffect(() => {
+    const loadCourse = async () => {
+        try {
+            const data = await getCourse();  // Здесь приходит ВЕСЬ ответ
+            
+            // Сохраняем курс
+            setCourse(data);
+            
+            // Сохраняем модули (они внутри course)
+            setModules(data.course.modules || []);
+            
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+    
+    loadCourse();
+}, [courseId]);
 
+  if (user) {
   return (
+    
     <div className="course-detail-page">
       <main>
         {/* Хлебные крошки + назад */}
@@ -37,19 +56,19 @@ function CourseDetail() {
             <div className="course-detail-info">
               <span className="course-detail-label">Python</span>
 
-              <h1>{course.title}</h1>
+              <h1>{course?.course?.title}</h1>
 
               <p className="course-detail-description">
-                {course.short_description}
+                {course?.course?.short_description}
               </p>
 
               <div className="course-detail-meta">
                 <div>
-                  <strong>{moduleCounter}</strong>
+                  <strong>{course?.module_counter}</strong>
                   <span>модулей</span>
                 </div>
                 <div>
-                  <strong>{topicCounter}</strong>
+                  <strong>{course?.topic_counter}</strong>
                   <span>уроков</span>
                 </div>
                 <div>
@@ -57,10 +76,14 @@ function CourseDetail() {
                   <span>обучения</span>
                 </div>
               </div>
-
-              <button type="button" className="course-detail-start-btn">
-                Начать обучение
-              </button>
+              
+              {modules[0] && (
+                <Link to={`/courses/${courseId}/modules/${modules[0].id}`}>
+                  <button type="button" className="course-detail-start-btn">
+                    Начать обучение
+                  </button>
+                </Link>
+              )}
             </div>
 
             <div className="course-detail-cover">
@@ -92,8 +115,14 @@ function CourseDetail() {
 
             <div className="course-detail-modules">
               {modules.map((module) => (
-    <Module title={module.title} topics={module.topics}/>
-))}
+                <Module
+                  key={module.id}
+                  id={module.id}
+                  courseId={courseId}
+                  title={module.title}
+                  topics={module.topics}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -103,14 +132,23 @@ function CourseDetail() {
           <div className="container">
             <h2>Готовы начать?</h2>
             <p>Присоединяйтесь к курсу и начните учиться уже сегодня.</p>
-            <button type="button" className="course-detail-start-btn">
-              Начать обучение
-            </button>
+            {modules[0] && (
+              <Link to={`/courses/${courseId}/modules/${modules[0].id}`}>
+                <button type="button" className="course-detail-start-btn">
+                  Начать обучение
+                </button>
+              </Link>
+            )}
           </div>
         </section>
       </main>
     </div>
   );
+}
+
+return (
+  <div>Загрузка...</div>
+)
 }
 
 export default CourseDetail;
