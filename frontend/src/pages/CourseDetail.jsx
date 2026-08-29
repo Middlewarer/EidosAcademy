@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
 import { useParams } from "react-router-dom";
 import {Link } from "react-router-dom"
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../components/context/AuthContext";
 
 function CourseDetail() {
     const [course, setCourse] = useState(null)
     const [error, setError] = useState(null)
+    const { user, loading } = useAuth()
 
     const [modules, setModules] = useState([])
 
@@ -39,7 +42,9 @@ function CourseDetail() {
     loadCourse();
 }, [courseId]);
 
+  if (user) {
   return (
+    
     <div className="course-detail-page">
       <main>
         {/* Хлебные крошки + назад */}
@@ -71,7 +76,7 @@ function CourseDetail() {
                   <span>обучения</span>
                 </div>
               </div>
-
+              
               {modules[0] && (
                 <Link to={`/courses/${courseId}/modules/${modules[0].id}`}>
                   <button type="button" className="course-detail-start-btn">
@@ -139,6 +144,11 @@ function CourseDetail() {
       </main>
     </div>
   );
+}
+
+return (
+  <div>Загрузка...</div>
+)
 }
 
 export default CourseDetail;

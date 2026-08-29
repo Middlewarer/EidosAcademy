@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'courses',
     'corsheaders',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -153,7 +154,14 @@ STATIC_URL = 'static/'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,                      
+    'BLACKLIST_AFTER_ROTATION': True,                    
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,                          
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 REST_FRAMEWORK = {
