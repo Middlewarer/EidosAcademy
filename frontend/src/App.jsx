@@ -5,6 +5,7 @@ import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import ModulePage from "./pages/ModulePage"
 import Login from "./pages/Login"
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
     return (
@@ -16,6 +17,7 @@ const App = () => {
                     <Route path="/courses/:courseId" element={<CourseDetail />} />
                     <Route path="/courses/:courseId/modules/:moduleId" element={< ModulePage/>}/>
                     <Route path="/login" element={< Login/>}/>
+                    <Route path="/profile" element={< ProfilePage/>}/>
                 </Route>
             </Routes>
         </BrowserRouter>

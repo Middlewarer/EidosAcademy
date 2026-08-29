@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const { user } = useAuth();
     const navigator = useNavigate();
     const { login } = useAuth();
     async function handleSubmit(e) {
@@ -42,6 +43,14 @@ function Login() {
                 alert('Не удалось выполнить запрос');
         }
     }
+
+    useEffect(() => {
+        if (user) {
+            return navigator("/courses")
+        }
+    }, [])
+
+
     return (
     <div style={styles.page}>
       <div style={styles.card}>

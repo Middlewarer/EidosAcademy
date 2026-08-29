@@ -12,7 +12,7 @@ export function AuthProvider({children} ) {
                 const response = await apiRequest("/api/me/")
                 
                 if (response.ok) {
-                    const data = response.json();
+                    const data = await response.json();
                     setUser(data)
                 }
                 else {
