@@ -1,6 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    bio = models.TextField(max_length=500, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+
+    level = models.CharField(
+        max_length=20,
+        choices=[
+            ('beginner', 'Начинающий'),
+            ('intermediate', 'Средний'),
+            ('advanced', 'Продвинутый'),
+        ],
+        default='beginner'
+    )
+    last_course_id = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Profile for {self.user.username}"
+
 class CourseAndTimeStamp(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -83,11 +104,37 @@ class TopicLesson(models.Model):
     def __str__(self):
         return f'{self.parent_topic.title} | {self.order}'
 
-
-class UserProgress(models.Model):
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+class UserCourseProgress(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_progress")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('course', 'user')
+
+class UserModuleProgress(models.Model):
+    module = models.ManyToManyField(Module, related_name="user_modules")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+
+
+
+class UserTopicProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_topics")
+    topic = models.ManyToManyField(Topic, related_name="user_topics")
+    completed = models.BooleanField(default=False)
+
+
+
+
+class Achievment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="achievments")
+    title = models.CharField(max_length=255)
+    small_description = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+    icon = models.ImageField(upload_to="achievment_icons/", null=True, blank=True)
+
+    
 
         
 

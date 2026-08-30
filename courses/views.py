@@ -34,7 +34,6 @@ class CoursesApiView(APIView):
             return Response({'courses': serializer.data})
 
 
-
 class ModulesViewSet(ModelViewSet):
     serializer_class = ModuleSerializer
     queryset = Module.objects.all()
@@ -80,15 +79,12 @@ class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]  # только для авторизованных
 
     def get(self, request):
-        user = request.user
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
-        return Response({
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-        })
+
+
+
 
 
 

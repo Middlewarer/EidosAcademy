@@ -4,7 +4,12 @@ import { useAuth } from "../context/AuthContext";
 
 
 function Header() {
-  const {user} = useAuth();
+  const {user, loading} = useAuth();
+
+  if (loading) {
+    return <div>Загрузка до сих пор</div>
+  }
+
   return (
        <header className="header">
       <div className="container nav">
@@ -19,17 +24,18 @@ function Header() {
           <a href="/#reviews">Отзывы</a>
         </nav>
         {user? (<Link to="/profile" className="login-btn">
-          {user?.username} <Link to="/logout" className="login-btn">
+          {user?.username}
+          </Link>) :
+          (<Link to="/logout" className="login-btn">
           Выйти
-        </Link>
-        </Link>) : ((<Link to="/login" className="login-btn">
-          Войти
-        </Link>))}
+        </Link>)
+      }
         
         
       </div>
     </header>
     )
-}
+  }
+
 
 export default Header

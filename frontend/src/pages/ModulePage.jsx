@@ -79,7 +79,7 @@ function ModulePage() {
               <div className="module-page-progress-bar">
                 <div className="module-page-progress-fill" style={{width: `${100 / module?.topics?.length * (selectedTopic?.order + 1)}%`}}></div>
               </div>
-              <span>{selectedTopic?.order + 1} из {module?.topics?.length}</span>
+              <span>{selectedTopic? selectedTopic?.order + 1 : 0} из {module?.topics?.length}</span>
             </div>
           </div>
         </section>
@@ -119,11 +119,11 @@ function ModulePage() {
             </aside>
 
             <article className="module-page-lesson">
-              <span className="module-page-lesson-type">
-                Урок {selectedTopic?.order + 1} | {selectedTopic?.title} 
-              </span>
-
-              <MarkdownContent content={selectedLesson?.content}/>
+              
+                {selectedTopic? <span className="module-page-lesson-type">Урок {selectedTopic?.order + 1} | {selectedTopic?.title}</span> : <p>Выбери урок</p>} 
+              
+              {selectedLesson? <MarkdownContent content={selectedLesson?.content}/> : <p>Выбери топик</p>}
+              
 
               {nextModuleId && isLastTopic && (
                 <div className="module-page-next-module">

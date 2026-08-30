@@ -1,8 +1,66 @@
 import "../styles/ProfilePage.css";
 import Crumbs from "../components/Crumbs";
 import { Link } from "react-router-dom";
+import { useAuth } from "../components/context/AuthContext";
+import { useEffect, useState } from "react";
 
 function ProfilePage() {
+    const { user, loading } = useAuth();
+
+    //Работа с данными пользователя
+    const [formattedDate, setFormattedDate] = useState('Новый ученик');
+    
+    
+
+    useEffect(() => {
+    const loadRegDate = async () => {
+        // ✅ 1. Получаем дату
+        const regDate = user?.date_joined;
+        
+        // ✅ 2. Проверяем, что дата есть
+        if (!regDate) {
+            setFormattedDate('Новый ученик');
+            return;
+        }
+
+        // ✅ 3. Создаем объект Date
+        const date = new Date(regDate);
+        
+        // ✅ 4. Проверяем валидность
+        if (isNaN(date.getTime())) {
+            setFormattedDate('Некорректная дата');
+            return;
+        }
+
+        // ✅ 5. Форматируем
+        const options = { day: "numeric", month: 'long', year: 'numeric' };
+        const formatted = new Intl.DateTimeFormat('ru-RU', options).format(date);
+        
+        // ✅ 6. Сохраняем в state
+        setFormattedDate(formatted);
+    };
+
+    loadRegDate();
+}, [user]);
+
+    const achievments = user?.achievments || [];
+
+    console.log(achievments)
+    
+    if (loading) {
+    return (
+      <header className="header">
+        <div className="container nav">
+          <Link to="/" className="logo">
+            <span className="bulb">💡</span>
+            Eidos<span>Academy</span>
+          </Link>
+
+          <div>Загрузка...</div>
+        </div>
+      </header>
+    );
+  }
   return (
     <div className="profile-page">
       <main>
@@ -20,14 +78,14 @@ function ProfilePage() {
               <div className="profile-main-info">
                 <span className="profile-label">Профиль ученика</span>
 
-                <h1>Александр Иванов</h1>
+                <h1>{user?.first_name} {user?.last_name}</h1>
 
                 <p>
-                  alexander@example.com
+                  {user?.email}
                 </p>
 
                 <span className="profile-member">
-                  Ученик с августа 2026
+                  Ученик с {formattedDate}
                 </span>
               </div>
 
@@ -47,22 +105,17 @@ function ProfilePage() {
             <div className="profile-stats-grid">
 
               <div className="profile-stat-card">
-                <strong>3</strong>
+                <strong>{user?.courses_count}</strong>
                 <span>Курса</span>
               </div>
 
               <div className="profile-stat-card">
-                <strong>18</strong>
+                <strong>{user?.topics_count}</strong>
                 <span>Уроков пройдено</span>
               </div>
 
               <div className="profile-stat-card">
-                <strong>7</strong>
-                <span>Часов обучения</span>
-              </div>
-
-              <div className="profile-stat-card">
-                <strong>4</strong>
+                <strong>{achievments.length}</strong>
                 <span>Достижения</span>
               </div>
 
@@ -79,33 +132,35 @@ function ProfilePage() {
               <div className="profile-left">
 
                 {/* PROGRESS */}
-                <div className="profile-section">
-                  <div className="profile-section-header">
-                    <div>
-                      <span className="profile-section-label">
-                        Обучение
-                      </span>
+                                                      {/* Progress map!
+                                                      <div className="profile-section">
+                                                        <div className="profile-section-header">
+                                                          <div>
+                                                            <span className="profile-section-label">
+                                                              Обучение
+                                                            </span>
 
-                      <h2>Ваш прогресс</h2>
-                    </div>
+                                                            <h2>Ваш прогресс</h2>
+                                                          </div>
 
-                    <span className="profile-progress-percent">
-                      65%
-                    </span>
-                  </div>
+                                                          <span className="profile-progress-percent">
+                                                            65%
+                                                          </span>
+                                                        </div>
 
-                  <div className="profile-progress">
-                    <div className="profile-progress-bar">
-                      <div className="profile-progress-fill"></div>
-                    </div>
-                  </div>
+                                                        <div className="profile-progress">
+                                                          <div className="profile-progress-bar">
+                                                            <div className="profile-progress-fill"></div>
+                                                          </div>
+                                                        </div>
 
-                  <p className="profile-progress-text">
-                    Вы уже прошли большую часть текущего курса.
-                    Продолжайте в том же духе!
-                  </p>
-                </div>
-
+                                                        <p className="profile-progress-text">
+                                                          Вы уже прошли большую часть текущего курса.
+                                                          Продолжайте в том же духе!
+                                                        </p>
+                                                      </div>
+                                                    
+                                                      */}
                 {/* CURRENT COURSE */}
                 <div className="profile-section">
                   <div className="profile-section-header">
@@ -114,7 +169,7 @@ function ProfilePage() {
                         Сейчас изучаете
                       </span>
 
-                      <h2>Мои курсы</h2>
+                      <h2>Ваш случайных курс</h2>
                     </div>
                   </div>
 
@@ -125,30 +180,29 @@ function ProfilePage() {
                     </div>
 
                     <div className="profile-course-info">
-                      <span>Программирование</span>
+                      <span>{user?.random_course?.category}</span>
 
-                      <h3>Python с нуля</h3>
+                      <h3>{user?.random_course?.title}</h3>
 
                       <p>
-                        Основы Python, переменные, условия,
-                        циклы и функции.
+                        {user?.random_course?.short_description}
                       </p>
 
                       <div className="profile-course-progress">
                         <div className="profile-course-progress-top">
                           <span>Прогресс</span>
-                          <strong>65%</strong>
+                          <strong>{user?.random_course?.progress}%</strong>
                         </div>
 
                         <div className="profile-progress">
                           <div className="profile-course-progress-bar">
-                            <div className="profile-course-progress-fill"></div>
+                            <div className="profile-course-progress-fill" style={{ width: `${user?.random_course?.progress || 0}%` }}></div>
                           </div>
                         </div>
                       </div>
 
                       <Link
-                        to="/courses/1"
+                        to={`/courses/${user?.random_course.id}`}
                         className="profile-course-btn"
                       >
                         Продолжить обучение
@@ -160,74 +214,40 @@ function ProfilePage() {
 
                 {/* ACHIEVEMENTS */}
                 <div className="profile-section">
-                  <div className="profile-section-header">
-                    <div>
-                      <span className="profile-section-label">
-                        Ваши успехи
-                      </span>
+                                    <div className="profile-section-header">
+                                        <div>
+                                            <span className="profile-section-label">
+                                                Ваши успехи
+                                            </span>
+                                            <h2>Достижения</h2>
+                                        </div>
+                                    </div>
 
-                      <h2>Достижения</h2>
-                    </div>
-                  </div>
-
-                  <div className="profile-achievements">
-
-                    <div className="profile-achievement">
-                      <div className="profile-achievement-icon">
-                        ★
-                      </div>
-
-                      <div>
-                        <h3>Первый шаг</h3>
-                        <p>
-                          Вы прошли первый урок
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="profile-achievement">
-                      <div className="profile-achievement-icon">
-                        ✓
-                      </div>
-
-                      <div>
-                        <h3>В ритме</h3>
-                        <p>
-                          7 дней обучения подряд
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="profile-achievement">
-                      <div className="profile-achievement-icon">
-                        &lt;/&gt;
-                      </div>
-
-                      <div>
-                        <h3>Программист</h3>
-                        <p>
-                          Пройдено 10 уроков
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="profile-achievement">
-                      <div className="profile-achievement-icon">
-                        ★
-                      </div>
-
-                      <div>
-                        <h3>Отличник</h3>
-                        <p>
-                          Все задания выполнены
-                        </p>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
+                                    <div className="profile-achievements">
+                                        {achievments.length > 0 ? (
+                                            // ✅ Если достижения есть — показываем их
+                                            achievments.map((achievment, index) => (
+                                                <div className="profile-achievement" key={index}>
+                                                    <div className="profile-achievement-icon">
+                                                        <img src={`${achievment.icon}`} alt="" />
+                                                        
+                                                    </div>
+                                                    <div>
+                                                        <h3>{achievment.title}</h3>
+                                                        <p>{achievment.small_description || 'Достижение получено'}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            // ❌ Если достижений нет — показываем заглушку
+                                            <div className="profile-no-achievements">
+                                                <p>У вас пока нет достижений</p>
+                                                <span>Продолжайте учиться, чтобы их получить!</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
 
               {/* RIGHT */}
               <aside className="profile-sidebar">
@@ -244,17 +264,17 @@ function ProfilePage() {
 
                     <div className="profile-info-item">
                       <span>Имя</span>
-                      <strong>Александр Иванов</strong>
+                      <strong>{user?.first_name} {user?.last_name}</strong>
                     </div>
 
                     <div className="profile-info-item">
                       <span>Email</span>
-                      <strong>alexander@example.com</strong>
+                      <strong>{user?.email}</strong>
                     </div>
 
                     <div className="profile-info-item">
                       <span>Дата регистрации</span>
-                      <strong>12 августа 2026</strong>
+                      <strong>{formattedDate}</strong>
                     </div>
 
                     <div className="profile-info-item">

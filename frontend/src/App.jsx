@@ -6,10 +6,13 @@ import CourseDetail from "./pages/CourseDetail";
 import ModulePage from "./pages/ModulePage"
 import Login from "./pages/Login"
 import ProfilePage from "./pages/ProfilePage";
+import Toaster from 'react-hot-toast';
 
 const App = () => {
     return (
+        
         <BrowserRouter>
+        <Toaster />
             <Routes>
                 <Route element={<Layout />}>
                     <Route path="/" element={< Home/>} />

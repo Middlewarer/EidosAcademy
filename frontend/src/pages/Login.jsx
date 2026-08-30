@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast"
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -25,17 +26,19 @@ function Login() {
             console.log(`Ответ сервера: ${data}`)
 
         if (data.access && data.refresh) {
+
             const meResponse = await apiRequest("/api/me/")
             const userData = await meResponse.json()
 
             login(data.access, data.refresh, userData);
 
-            alert("Успешный вход!")
-            navigator("/courses/1")
+            toast.success('✅ Вход выполнен!');
+            <Toaster/>
+            navigator("/courses/1");
         }
-        else {
-            alert("Ошибка входа")
-        }
+            else {
+                alert("Ошибка входа")
+            }
         }
 
         catch (error) {
