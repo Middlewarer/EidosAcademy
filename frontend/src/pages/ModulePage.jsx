@@ -35,7 +35,7 @@ function ModulePage() {
         const data = await getModule();
         console.log(data)
         setModule(data.module)
-        setNextModuleId(data.module.next_module.next_module_id || null)
+        setNextModuleId(data.module.next_module_id || null)
 
           if (data.module?.topics?.length > 0) {
             setSelectedTopicId(data.module.topics[0].id)

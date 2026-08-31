@@ -125,8 +125,6 @@ class UserTopicProgress(models.Model):
     completed = models.BooleanField(default=False)
 
 
-
-
 class Achievment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="achievments")
     title = models.CharField(max_length=255)

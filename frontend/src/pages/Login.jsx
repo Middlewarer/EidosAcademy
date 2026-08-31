@@ -32,8 +32,7 @@ function Login() {
 
             login(data.access, data.refresh, userData);
 
-            toast.success('✅ Вход выполнен!');
-            <Toaster/>
+            toast.success('Вход выполнен!');
             navigator("/courses/1");
         }
             else {

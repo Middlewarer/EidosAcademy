@@ -49,7 +49,6 @@ export function AuthProvider({children} ) {
                         setUser(data);
                     }
                 } else {
-                    // ❌ Refresh токен тоже протух — разлогиниваем
                     localStorage.removeItem("access_token");
                     localStorage.removeItem("refresh_token");
                 }

@@ -44,9 +44,16 @@ class TopicDetailSerializer(ModelSerializer):
 class ModuleDetailSerializer(ModelSerializer):
     topics = TopicDetailSerializer(many=True, read_only=True)
     course_title = serializers.CharField(source='course.title', read_only=True)
+    next_module_id = serializers.SerializerMethodField()
+
     class Meta:
         model = Module
-        fields = ['id', 'title', 'description', 'order', 'course_title', 'topics']
+        fields = ['id', 'title', 'description', 'order', 'course_title', 'topics', 'next_module_id']
+
+    def get_next_module_id(self, obj):
+        obj_id = Module.objects.filter(course=obj.course, order=obj.order+1).values_list('id', flat=True).first()
+        return obj_id
+
 
 
 class CourseListSerializer(ModelSerializer):
@@ -118,7 +125,7 @@ class UserSerializer(ModelSerializer):
                 'title': course.title,
                 'short_description': course.short_description,
                 'category': course.category.title,
-                'progress': int(100 / total_topics * completed_topics)
+                'progress': int(100 / total_topics * completed_topics if total_topics > 0 else 0)
             }
 
         except Course.DoesNotExist:
@@ -153,7 +160,7 @@ class UserRegistrationSerializer(ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],

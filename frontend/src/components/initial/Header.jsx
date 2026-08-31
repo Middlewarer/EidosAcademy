@@ -1,17 +1,24 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-
+import Button from "../Button";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
-  const {user, loading} = useAuth();
+  const { user, loading, logout } = useAuth();
+  const navigator = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+    navigator("login/")
+  };
 
   if (loading) {
-    return <div>Загрузка до сих пор</div>
+    return <div>Загрузка до сих пор</div>;
   }
 
   return (
-       <header className="header">
+    <header className="header">
       <div className="container nav">
         <Link to="/" className="logo">
           <span className="bulb">💡</span>
@@ -23,19 +30,21 @@ function Header() {
           <a href="/#learning">Обучение</a>
           <a href="/#reviews">Отзывы</a>
         </nav>
-        {user? (<Link to="/profile" className="login-btn">
-          {user?.username}
-          </Link>) :
-          (<Link to="/logout" className="login-btn">
-          Выйти
-        </Link>)
-      }
         
-        
+        {user ? (
+          // Если пользователь авторизован - показываем кнопку "Выйти"
+          <Button className="login-btn" onClick={handleLogout}>
+            Выйти
+          </Button>
+        ) : (
+          // Если не авторизован - показываем "Войти"
+          <Link to="login/" className="login-btn">
+            Войти
+          </Link>
+        )}
       </div>
     </header>
-    )
-  }
+  );
+}
 
-
-export default Header
+export default Header;
