@@ -162,7 +162,7 @@ function ProfilePage() {
                                                     
                                                       */}
                 {/* CURRENT COURSE */}
-                <div className="profile-section">
+                {user?.random_course? (<div className="profile-section">
                   <div className="profile-section-header">
                     <div>
                       <span className="profile-section-label">
@@ -210,7 +210,8 @@ function ProfilePage() {
                     </div>
 
                   </div>
-                </div>
+                </div>) : (<></>)}
+                
 
                 {/* ACHIEVEMENTS */}
                 <div className="profile-section">

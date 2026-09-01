@@ -5,9 +5,11 @@ import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import ModulePage from "./pages/ModulePage";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import ProfilePage from "./pages/ProfilePage";
 import { Toaster } from 'react-hot-toast'; // ✅ Правильный импорт
 import ProtectedRoute from "./components/ProtectedRoute";
+import "./styles/theme-overrides.css";
 
 const App = () => {
     return (
@@ -16,6 +18,7 @@ const App = () => {
             <Routes>
                 {/* Страница входа без Layout */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 
                 {/* Все страницы с Layout */}
                 <Route element={<Layout />}>

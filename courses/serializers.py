@@ -109,8 +109,11 @@ class UserSerializer(ModelSerializer):
 
     def get_random_course(self, obj):
         import random
-        random_id = random.choice(UserCourseProgress.objects.filter(user=obj).values_list('id', flat=True))
 
+        try:
+            random_id = random.choice(UserCourseProgress.objects.filter(user=obj).values_list('id', flat=True))
+        except:
+            return ""
         try:
             course = Course.objects.get(id=random_id)
             total_topics = Topic.objects.filter(module__course=course).count()
@@ -148,7 +151,7 @@ class UserRegistrationSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2']
+        fields = ['username', 'password', 'password2']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -162,7 +165,6 @@ class UserRegistrationSerializer(ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data['email'],
             password=validated_data['password'],
         )
 

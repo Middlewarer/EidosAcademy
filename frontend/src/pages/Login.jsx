@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast"
 
 function Login() {
@@ -86,6 +86,10 @@ function Login() {
             Войти
           </button>
         </form>
+
+        <p style={styles.registerText}>
+          Нет аккаунта? <Link to="/register" style={styles.registerLink}>Зарегистрироваться</Link>
+        </p>
       </div>
     </div>
   );
@@ -97,29 +101,29 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #FFF9E6 0%, #FFE566 100%)',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    background: 'radial-gradient(circle at 75% 20%, #eef1ff, transparent 35%), #f7f8fb',
+    fontFamily: 'Manrope, sans-serif',
   },
   card: {
     background: '#FFFFFF',
-    borderRadius: '16px',
-    padding: '40px 36px',
+    borderRadius: '24px',
+    padding: '46px 40px',
     width: '100%',
     maxWidth: '400px',
-    boxShadow: '0 20px 40px rgba(255, 193, 7, 0.25)',
-    border: '1px solid #FFE082',
+    boxShadow: '0 24px 65px rgba(34, 46, 80, .12)',
+    border: '1px solid #e3e7ef',
   },
   title: {
     margin: '0 0 8px',
     fontSize: '28px',
     fontWeight: '700',
-    color: '#F57F17',
+    color: '#172033',
     textAlign: 'center',
   },
   subtitle: {
     margin: '0 0 32px',
     fontSize: '15px',
-    color: '#F9A825',
+    color: '#6d7688',
     textAlign: 'center',
   },
   form: {
@@ -135,16 +139,16 @@ const styles = {
   label: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#F57F17',
+    color: '#172033',
   },
   input: {
     padding: '12px 14px',
     fontSize: '15px',
-    borderRadius: '10px',
-    border: '2px solid #FFE082',
+    borderRadius: '16px',
+    border: '1px solid #e3e7ef',
     outline: 'none',
     transition: 'border-color 0.2s',
-    background: '#FFFDE7',
+    background: '#f7f8fb',
   },
   button: {
     marginTop: '8px',
@@ -152,11 +156,24 @@ const styles = {
     fontSize: '16px',
     fontWeight: '600',
     color: '#FFFFFF',
-    background: 'linear-gradient(135deg, #FFCA28 0%, #FFA000 100%)',
+    background: '#4f6df5',
     border: 'none',
-    borderRadius: '10px',
+    borderRadius: '13px',
     cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(255, 160, 0, 0.4)',
+    boxShadow: '0 12px 30px rgba(79,109,245,.22)',
+  },
+  registerText: {
+    margin: '24px 0 0',
+    paddingTop: '20px',
+    borderTop: '1px solid #e3e7ef',
+    color: '#6d7688',
+    fontSize: '14px',
+    textAlign: 'center',
+  },
+  registerLink: {
+    color: '#4f6df5',
+    fontWeight: '700',
+    textDecoration: 'none',
   },
 };
 

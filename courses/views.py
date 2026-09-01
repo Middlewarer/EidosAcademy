@@ -72,7 +72,7 @@ class RegisterUserApiView(APIView):
                 "message": "User Created"
             }, status=status.HTTP_201_CREATED)
 
-        return Response({'error': "Something's wrong"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CurrentUserView(APIView):
