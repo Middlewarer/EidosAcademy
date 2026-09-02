@@ -7,10 +7,21 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -47,6 +58,17 @@ function Header() {
           </nav>
 
           <div className="header-actions">
+            <button
+              type="button"
+              className="theme-toggle"
+              aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
+              title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
+              onClick={() => setTheme((value) => value === "dark" ? "light" : "dark")}
+            >
+              <span className="theme-toggle-icon" aria-hidden="true">
+                {theme === "dark" ? "☀" : "☾"}
+              </span>
+            </button>
             {loading ? (
               <span className="header-actions-loading" aria-label="Проверяем авторизацию" />
             ) : user ? (

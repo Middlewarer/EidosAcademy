@@ -54,8 +54,8 @@ function Login() {
 
 
     return (
-    <div style={styles.page}>
-      <div style={styles.card}>
+    <div className="auth-page" style={styles.page}>
+      <div className="auth-card" style={styles.card}>
         <h1 style={styles.title}>Вход</h1>
         <p style={styles.subtitle}>Войдите в свой аккаунт</p>
 

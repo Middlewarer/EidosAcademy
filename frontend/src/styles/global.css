@@ -1,3 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 :root{--ink:#172033;--paper:#f7f8fb;--white:#fff;--blue:#4f6df5;--blue-dark:#3954d8;--blue-soft:#eef1ff;--accent:#ffb84d;--muted:#6d7688;--line:#e3e7ef;--lime:#4f6df5;--lime-deep:#3954d8}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--paper);color:var(--ink);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}a,button{tap-highlight-color:transparent}::selection{background:#dfe5ff;color:var(--ink)}
+
+html[data-theme="dark"]{--ink:#eef1f8;--paper:#0f1420;--white:#171e2c;--blue:#8297ff;--blue-dark:#9cafff;--blue-soft:#202a48;--accent:#ffc36b;--muted:#a3adbf;--line:#2a3446}
+body{transition:background-color .3s ease,color .3s ease}
