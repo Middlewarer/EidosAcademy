@@ -67,8 +67,12 @@ class Module(CourseAndTimeStamp):
         return f"{self.course.title} - {self.title}"
     
     class Meta(CourseAndTimeStamp.Meta):
-        verbose_name = 'Module'
-        verbose_name_plural = 'Modules'
+        constraints = [
+        models.UniqueConstraint(
+            fields=["course", "order"],
+            name="unique_module_order_in_course",
+        )
+    ]
 
 
 class Topic(CourseAndTimeStamp):
@@ -78,8 +82,12 @@ class Topic(CourseAndTimeStamp):
         return f"{self.title} | {self.order}"
 
     class Meta(CourseAndTimeStamp.Meta):
-        verbose_name = 'Topic'
-        verbose_name_plural = 'Topics'
+        constraints = [
+        models.UniqueConstraint(
+            fields=["module", "order"],
+            name="unique_topic_order_in_module",
+        )
+    ]
 
 
 class TopicLesson(models.Model):
@@ -109,19 +117,23 @@ class UserCourseProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
 
+
     class Meta:
         unique_together = ('course', 'user')
 
-class UserModuleProgress(models.Model):
-    module = models.ManyToManyField(Module, related_name="user_modules")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    completed = models.BooleanField(default=False)
-
-
 
 class UserTopicProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_topics")
-    topic = models.ManyToManyField(Topic, related_name="user_topics")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="topic_progress",
+    )
+
+    topic = models.ForeignKey(
+        Topic,
+        on_delete=models.CASCADE,
+        related_name="user_progress",
+        )
     completed = models.BooleanField(default=False)
 
 

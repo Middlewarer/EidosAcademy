@@ -68,11 +68,6 @@ class CourseDetailSerializer(ModelSerializer):
         model = Course
         fields = ['title', 'short_description', 'created_at', 'modules']
 
-class UserModuleProgressSerializer(ModelSerializer):
-    class Meta:
-        model = UserModuleProgress
-        fields = '__all__'
-
 class UserTopicProgressSerializer(ModelSerializer):
     class Meta:
         model = UserTopicProgress
@@ -111,7 +106,13 @@ class UserSerializer(ModelSerializer):
         import random
 
         try:
-            random_id = random.choice(UserCourseProgress.objects.filter(user=obj).values_list('id', flat=True))
+            random_id = random.choice(
+                list(
+                    UserCourseProgress.objects
+                    .filter(user=obj)
+                    .values_list("course_id", flat=True)
+                )
+            )
         except:
             return ""
         try:

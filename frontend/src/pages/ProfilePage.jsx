@@ -173,6 +173,11 @@ function ProfilePage() {
                     </div>
                   </div>
 
+                  <Link
+                    to={`/courses/${user?.random_course.id}`}
+                    className="profile-course-link"
+                    aria-label={`Продолжить курс «${user?.random_course?.title}»`}
+                  >
                   <div className="profile-course-card">
 
                     <div className="profile-course-icon">
@@ -201,15 +206,14 @@ function ProfilePage() {
                         </div>
                       </div>
 
-                      <Link
-                        to={`/courses/${user?.random_course.id}`}
-                        className="profile-course-btn"
-                      >
+                      <span className="profile-course-btn">
                         Продолжить обучение
-                      </Link>
+                        <span aria-hidden="true">→</span>
+                      </span>
                     </div>
 
                   </div>
+                  </Link>
                 </div>) : (<></>)}
                 
 
