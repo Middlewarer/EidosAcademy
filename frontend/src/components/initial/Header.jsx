@@ -1,35 +1,99 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-
-
 function Header() {
-  const {user} = useAuth();
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+    navigate("/login");
+  };
+
   return (
-       <header className="header">
+    <header className="header">
       <div className="container nav">
-        <Link to="/" className="logo">
+        <Link to="/" className="logo" aria-label="EidosAcademy — главная">
           <span className="bulb">💡</span>
           Eidos<span>Academy</span>
         </Link>
-        <nav>
-          <Link to="/courses">Курсы</Link>
-          <a href="/#about">О нас</a>
+
+        <button
+          type="button"
+          className={`nav-toggle ${menuOpen ? "is-open" : ""}`}
+          aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+          aria-expanded={menuOpen}
+          aria-controls="main-navigation"
+          onClick={() => setMenuOpen((value) => !value)}
+        >
+          <span />
+          <span />
+        </button>
+
+        <div className={`nav-panel ${menuOpen ? "is-open" : ""}`}>
+          <nav id="main-navigation" aria-label="Основная навигация">
+            <NavLink to="/" end>Главная</NavLink>
+            <NavLink to="/courses">Курсы</NavLink>
           <a href="/#learning">Обучение</a>
           <a href="/#reviews">Отзывы</a>
-        </nav>
-        {user? (<Link to="/profile" className="login-btn">
-          {user?.username} <Link to="/logout" className="login-btn">
-          Выйти
-        </Link>
-        </Link>) : ((<Link to="/login" className="login-btn">
-          Войти
-        </Link>))}
-        
-        
+          </nav>
+
+          <div className="header-actions">
+            <button
+              type="button"
+              className="theme-toggle"
+              aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
+              title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
+              onClick={() => setTheme((value) => value === "dark" ? "light" : "dark")}
+            >
+              <span className="theme-toggle-icon" aria-hidden="true">
+                {theme === "dark" ? "☀" : "☾"}
+              </span>
+            </button>
+            {loading ? (
+              <span className="header-actions-loading" aria-label="Проверяем авторизацию" />
+            ) : user ? (
+              <>
+                <Link to="/profile" className="profile-btn">
+                  <span className="profile-btn-avatar" aria-hidden="true">
+                    {(user.first_name || user.username || "П").charAt(0).toUpperCase()}
+                  </span>
+                  Профиль
+                </Link>
+                <button type="button" className="logout-btn" onClick={handleLogout}>
+                  Выйти
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="login-link-btn">Войти</Link>
+                <Link to="/register" className="register-btn">Регистрация</Link>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </header>
-    )
+  );
 }
 
-export default Header
+export default Header;

@@ -94,7 +94,7 @@ function CourseDetail() {
         </section>
 
         {/* Чему научитесь */}
-        <section className="course-detail-learn">
+        {/*<section className="course-detail-learn">
           <div className="container">
             <h2>Чему вы научитесь</h2>
 
@@ -106,7 +106,7 @@ function CourseDetail() {
               <li>Решать практические задачи после каждого модуля</li>
             </ul>
           </div>
-        </section>
+        </section> */}
 
         {/* Программа курса */}
         <section className="course-detail-program">

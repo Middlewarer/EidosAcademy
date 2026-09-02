@@ -34,7 +34,6 @@ class CoursesApiView(APIView):
             return Response({'courses': serializer.data})
 
 
-
 class ModulesViewSet(ModelViewSet):
     serializer_class = ModuleSerializer
     queryset = Module.objects.all()
@@ -49,14 +48,14 @@ class ModuleDetailApiView(APIView):
 
 
 class TopicsApiView(APIView):
-    def get(self, reqeust):
+    def get(self, request):
         queryset = Topic.objects.all()
         serializer = TopicSerializer(many=True, instance=queryset)
 
         return Response({'topics': serializer.data})
 
 class TopicLessonsApiView(APIView):
-    def get(self, reqeust):
+    def get(self, request):
         queryset = TopicLesson.objects.all()
         serializer = TopicLessonSerializer(many=True, instance=queryset)
 
@@ -66,29 +65,26 @@ class TopicLessonsApiView(APIView):
 
 class RegisterUserApiView(APIView):
     def post(self, request):
-        serializer = UserRegistrationSerializer(data=reqeust.data)
+        serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({
                 "message": "User Created"
             }, status=status.HTTP_201_CREATED)
 
-        return Response({'error': "Chtoto ne tak"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]  # только для авторизованных
 
     def get(self, request):
-        user = request.user
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
-        return Response({
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-        })
+
+
+
 
 
 

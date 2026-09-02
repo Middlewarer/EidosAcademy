@@ -5,6 +5,9 @@
   font-family: Inter, Arial, sans-serif;
 }
 
+/* Premium theme */
+.module-page{padding-top:76px;background:var(--paper)!important;color:var(--ink);font-family:'Manrope',sans-serif}.module-page .container{width:min(1240px,calc(100% - 48px));margin-inline:auto}.module-page h1,.module-page h2{font-family:'Unbounded',sans-serif;letter-spacing:-1.3px}.module-page-sidebar,.module-page-content,.module-sidebar,.lesson-content{border-color:var(--line)!important;border-radius:26px!important;background:var(--white)!important}.module-page button,.next-module-button{border-radius:999px!important}.next-module-button{background:var(--lime)!important;color:var(--ink)!important}
+
 .module-page .container {
   width: min(1180px, 90%);
   margin: 0 auto;
