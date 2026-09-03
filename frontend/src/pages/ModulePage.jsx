@@ -18,6 +18,36 @@ function ModulePage() {
       return data
     }
 
+      const topics = module?.topics ?? [];
+    const selectedTopicIndex = topics.findIndex(
+  (topic) => topic.id === selectedTopicId
+);
+    
+    const previousTopic = selectedTopicIndex > 0 ? topics[selectedTopicIndex - 1] ?? null : null;
+    const nextTopic =
+  selectedTopicIndex >= 0
+    ? topics[selectedTopicIndex + 1] ?? null
+    : null;
+
+    const selectTopic = (topic) => {
+  if (!topic) return;
+
+  setSelectedTopicId(topic.id);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
+const handlePreviousTopic = () => {
+  selectTopic(previousTopic);
+};
+
+const handleNextTopic = () => {
+  selectTopic(nextTopic);
+};
+
     const handleTopicClick = (topicId) => {
         setSelectedTopicId(topicId);
         console.log("Выбран топик с Id", topicId)
@@ -90,11 +120,15 @@ function ModulePage() {
               <h2>Уроки модуля</h2>
 
               <ul className="module-page-topics">
-                {module?.topics?.map((topic) => (<li key={topic.id}
-                onClick={() => handleTopicClick(topic.id)}
-                className={topic.id === selectedTopicId ? "is-active" : ""}
-
+                {module?.topics?.map((topic) => (<li
+                  key={topic.id}
+                  className={topic.id === selectedTopicId ? "is-active" : ""}
                 >
+                  <button
+                    type="button"
+                    onClick={() => handleTopicClick(topic.id)}
+                    aria-current={topic.id === selectedTopicId ? "step" : undefined}
+                  >
                     <span className="module-page-topic-number">
                         {topic.order + 1}
                     </span>
@@ -102,7 +136,8 @@ function ModulePage() {
                     <div>
                       <strong>{topic.title}</strong>
                     </div>
-                  </li>))}
+                  </button>
+                </li>))}
               </ul>
 
               {/* Кнопка перехода на следующий модуль */}
@@ -123,7 +158,35 @@ function ModulePage() {
                 {selectedTopic? <span className="module-page-lesson-type">Урок {selectedTopic?.order + 1} | {selectedTopic?.title}</span> : <p>Выбери урок</p>} 
               
               {selectedLesson? <MarkdownContent content={selectedLesson?.content}/> : <p>Выбери топик</p>}
-              
+
+              <nav className="lesson-navigation" aria-label="Навигация между топиками">
+                <button
+                  type="button"
+                  className="lesson-navigation-button lesson-navigation-button--previous"
+                  data-direction="previous"
+                  onClick={handlePreviousTopic}
+                  disabled={!previousTopic}
+                >
+                  <span className="lesson-navigation-arrow" aria-hidden="true">←</span>
+                  <span className="lesson-navigation-copy">
+                    <small>Предыдущий топик</small>
+                    <strong>Вернуться назад</strong>
+                  </span>
+                </button>
+
+                <button
+                    type="button"
+                    className="lesson-navigation-button lesson-navigation-button--next"
+                    onClick={handleNextTopic}
+                    disabled={!nextTopic}
+                  >
+                  <span className="lesson-navigation-copy">
+                    <small>Следующий топик</small>
+                    <strong>Продолжить обучение</strong>
+                  </span>
+                  <span className="lesson-navigation-arrow" aria-hidden="true">→</span>
+                </button>
+              </nav>
 
               {nextModuleId && isLastTopic && (
                 <div className="module-page-next-module">

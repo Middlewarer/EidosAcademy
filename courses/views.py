@@ -83,6 +83,18 @@ class CurrentUserView(APIView):
         return Response(serializer.data)
 
 
+class UserTopicProgressView(APIView):
+    def post(self, request):
+        serializer = UserTopicProgressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Progress created"
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

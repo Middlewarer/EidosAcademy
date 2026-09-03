@@ -17,7 +17,8 @@ urlpatterns = [
     path("token/", TokenObtainPairView.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
     path('register/', RegisterUserApiView.as_view(), name='register'),
-    path('me/', CurrentUserView.as_view(), name='me')
+    path('me/', CurrentUserView.as_view(), name='me'),
+    path('complete/', UserTopicProgressView.as_view(), name='progress_complete'),
 ]
 
 urlpatterns += router.urls
