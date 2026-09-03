@@ -121,7 +121,6 @@ class UserSerializer(ModelSerializer):
             completed_topics = UserTopicProgress.objects.filter(
                 user=obj,
                 topic__module__course=course.id,
-                completed=True
             ).count() 
 
             return {
