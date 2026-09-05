@@ -82,17 +82,42 @@ class CurrentUserView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
+    def patch(self, request):
+        serializer = UpdateUserSerializer(data=request.data, instance=request.user, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(UserSerializer(request.user).data)
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(
+            instance=request.user, data=request.data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'message': 'Пароль обновлён.'})
+
 
 class UserTopicProgressView(APIView):
-    def post(self, request):
-        serializer = UserTopicProgressSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({
-                "message": "Progress created"
-            }, status=status.HTTP_201_CREATED)
+    permission_classes = [IsAuthenticated]
 
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        serializer = TopicVisitSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        progress, created = UserTopicProgress.objects.get_or_create(
+            user=request.user,
+            topic=serializer.validated_data['topic'],
+        )
+
+        return Response(
+            {'id': progress.id},
+            status=201 if created else 200,
+        )
 
 
 

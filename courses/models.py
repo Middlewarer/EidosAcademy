@@ -136,6 +136,11 @@ class UserTopicProgress(models.Model):
         )
     completed = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ("user", "topic")
+
+    
+
 
 class Achievment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="achievments")

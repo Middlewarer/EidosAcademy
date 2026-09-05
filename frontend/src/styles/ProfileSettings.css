@@ -1,0 +1,58 @@
+.profile-settings {
+  min-height: 100vh;
+  padding: 112px 0 80px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+}
+
+.settings-container { width: min(1080px, calc(100% - 48px)); margin-inline: auto; }
+.settings-back { color: var(--muted); font-size: 14px; text-decoration: none; }
+.settings-back:hover, .settings-cancel:hover { color: var(--blue); }
+.settings-heading { margin: 36px 0; }
+.settings-eyebrow { color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.settings-heading h1 { margin: 12px 0; font-size: clamp(28px, 4vw, 42px); line-height: 1.2; letter-spacing: -1.5px; }
+.settings-heading p, .settings-card-heading p, .settings-aside p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.settings-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 28px; align-items: start; }
+.settings-aside { padding: 28px 24px; border: 1px solid var(--line); border-radius: 22px; background: var(--white); }
+.settings-avatar { display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 20px; border-radius: 24px; color: var(--blue); background: var(--blue-soft); }
+.settings-aside h2 { margin: 0 0 8px; font-size: 19px; }
+.settings-nav { display: grid; gap: 8px; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+.settings-nav a { display: flex; justify-content: space-between; gap: 12px; padding: 12px; border-radius: 10px; color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 700; }
+.settings-nav a:hover { background: var(--blue-soft); color: var(--blue); }
+.settings-sections { display: grid; gap: 24px; min-width: 0; }
+.settings-card { padding: 30px; border: 1px solid var(--line); border-radius: 22px; background: var(--white); scroll-margin-top: 100px; }
+.settings-card-heading { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 28px; }
+.settings-step { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; background: var(--blue-soft); color: var(--blue); font-size: 12px; font-weight: 800; }
+.settings-card-heading h2 { margin: 0 0 6px; font-size: 21px; letter-spacing: -.5px; }
+.settings-form { display: grid; gap: 22px; }
+.settings-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.settings-field { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.settings-field label { font-size: 13px; font-weight: 700; }
+.settings-field input { width: 100%; min-width: 0; padding: 13px 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; }
+.settings-field input::placeholder { color: var(--muted); opacity: 1; }
+.settings-field input:focus { outline: 2px solid var(--blue); outline-offset: 2px; }
+.settings-hint { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.settings-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 20px; padding-top: 22px; border-top: 1px solid var(--line); }
+.settings-cancel { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 700; }
+.settings-primary, .settings-secondary { padding: 13px 20px; border: 1px solid transparent; border-radius: 11px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.settings-primary { background: var(--blue); color: var(--white); }
+.settings-primary:hover { background: var(--blue-dark); }
+.settings-secondary { background: var(--blue-soft); color: var(--blue); }
+.settings-secondary:hover { border-color: var(--blue); }
+.profile-settings a:focus-visible, .profile-settings button:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+
+@media (max-width: 800px) {
+  .settings-layout { grid-template-columns: 1fr; }
+  .settings-aside { display: none; }
+}
+
+@media (max-width: 540px) {
+  .profile-settings { padding: 100px 0 48px; }
+  .settings-container { width: calc(100% - 32px); }
+  .settings-heading { margin: 28px 0; }
+  .settings-card { padding: 22px 18px; }
+  .settings-field-grid { grid-template-columns: 1fr; }
+  .settings-actions { gap: 16px; }
+  .settings-primary, .settings-secondary { width: 100%; }
+}

@@ -2,6 +2,8 @@ import "../styles/ModulePage.css";
 import MarkdownContent from "../components/MarkdownContent";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { apiRequest } from "../components/api/apiRequest";
+import { useAuth } from "../components/context/AuthContext";
 
 function ModulePage() {
 
@@ -11,6 +13,7 @@ function ModulePage() {
     const [selectedTopicId, setSelectedTopicId] = useState(null);
     const [module, setModule] = useState(null);
     const [nextModuleId, setNextModuleId] = useState(null);
+    const {user} = useAuth();
 
     const getModule = async () => {
       const response = await fetch(`http://127.0.0.1:8000/api/modules/${moduleId}`)
@@ -40,21 +43,42 @@ function ModulePage() {
   });
 };
 
+const saveProgress = async () => {
+      if (selectedTopic) {
+      await apiRequest("/api/complete/", {
+    method: "POST",
+    body: JSON.stringify({
+      "user": user.id,
+      "topic": selectedTopic?.id
+    })
+  }) 
+  }}
+
 const handlePreviousTopic = () => {
+  
   selectTopic(previousTopic);
 };
 
-const handleNextTopic = () => {
+const handleNextTopic =async () => {
+  await saveProgress();
+
+  console.log(JSON.stringify({
+      "user": user.id,
+      "topic": selectedTopic.id
+    }))
   selectTopic(nextTopic);
 };
 
-    const handleTopicClick = (topicId) => {
-        setSelectedTopicId(topicId);
+    const handleTopicClick = async (topicId) => {
+      
+      await saveProgress();
+      setSelectedTopicId(topicId);
         console.log("Выбран топик с Id", topicId)
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    const handleNextModule = () => {
+    const handleNextModule = async () => {
+      await saveProgress();
         if (nextModuleId) {
             navigate(`/courses/${courseId}/modules/${nextModuleId}`);
         }

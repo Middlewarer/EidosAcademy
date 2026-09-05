@@ -5,6 +5,8 @@ from django.db.models import Q
 from .models import *
 
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 
         
@@ -88,7 +90,13 @@ class RandomCourseSerializer(ModelSerializer):
         fields = ['id', 'title', 'short_description', 'category',
             'image', 'difficulty', 'total_lessons', 'progress_status']
 
-        
+
+class TopicVisitSerializer(serializers.Serializer):
+    topic = serializers.PrimaryKeyRelatedField(
+        queryset=Topic.objects.all()
+    )
+
+    
 
 
 class UserSerializer(ModelSerializer):
@@ -169,6 +177,37 @@ class UserRegistrationSerializer(ModelSerializer):
         )
 
         return user
+
+class UpdateUserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(write_only=True, trim_whitespace=False)
+    new_password = serializers.CharField(write_only=True, trim_whitespace=False)
+    confirm_password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if not user.check_password(attrs['current_password']):
+            raise serializers.ValidationError({'current_password': 'Текущий пароль неверен.'})
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({'confirm_password': 'Пароли не совпадают.'})
+        if attrs['new_password'] == attrs['current_password']:
+            raise serializers.ValidationError({'new_password': 'Новый пароль должен отличаться от текущего.'})
+        try:
+            validate_password(attrs['new_password'], user=user)
+        except DjangoValidationError as error:
+            raise serializers.ValidationError({'new_password': error.messages})
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save(update_fields=['password'])
+        return instance
+
 
 
 
