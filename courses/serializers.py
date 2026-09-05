@@ -93,7 +93,7 @@ class RandomCourseSerializer(ModelSerializer):
 
 class TopicVisitSerializer(serializers.Serializer):
     topic = serializers.PrimaryKeyRelatedField(
-        queryset=Topic.objects.all()
+        queryset=Topic.objects.filter(module__course__is_published=True)
     )
 
     
@@ -117,14 +117,15 @@ class UserSerializer(ModelSerializer):
             random_id = random.choice(
                 list(
                     UserCourseProgress.objects
-                    .filter(user=obj)
+                    .filter(user=obj, course__is_published=True)
                     .values_list("course_id", flat=True)
                 )
             )
-        except:
-            return ""
+        except IndexError:
+            return None
         try:
             course = Course.objects.get(id=random_id)
+
             total_topics = Topic.objects.filter(module__course=course).count()
             completed_topics = UserTopicProgress.objects.filter(
                 user=obj,

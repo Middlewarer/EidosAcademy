@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class PublishedCourseManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=True)
+
+    def unpublished(self):
+        return super().get_queryset().filter(is_published=False)
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -52,12 +61,18 @@ class Course(CourseAndTimeStamp):
 
     is_published = models.BooleanField(default=False)
 
+    objects = models.Manager()
+
+    published = PublishedCourseManager()
+    
     def __str__(self):
         return self.title
     
     class Meta(CourseAndTimeStamp.Meta):
         verbose_name = 'Course'
         verbose_name_plural = 'Courses'
+
+    
 
 
 class Module(CourseAndTimeStamp):
