@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { apiRequest } from "../components/api/apiRequest";
+import { apiRequest, saveTokens } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -13,7 +13,7 @@ function Login() {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/token/", {
+            const response = await apiRequest(`/api/token/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json",},
                 body: JSON.stringify({
@@ -23,24 +23,34 @@ function Login() {
             });
 
             const data = await response.json()
-            console.log(`Ответ сервера: ${data}`)
 
-        if (data.access && data.refresh) {
 
-            const meResponse = await apiRequest("/api/me/")
-            const userData = await meResponse.json()
+        if (response.ok && data.access && data.refresh) {
 
-            login(data.access, data.refresh, userData);
+    saveTokens(data.access, data.refresh);
 
-            toast.success('Вход выполнен!');
-            navigator("/courses/1");
-        }
-            else {
-                alert("Ошибка входа")
-            }
-        }
+    const meResponse = await apiRequest("/api/me/");
 
-        catch (error) {
+    if (!meResponse.ok) {
+        toast.error("Не удалось загрузить профиль.");
+        return;
+    }
+
+    const userData = await meResponse.json();
+
+    login(
+        localStorage.getItem("access_token"),
+        localStorage.getItem("refresh_token"),
+        userData,
+    );
+
+    toast.success("Вход выполнен!");
+    navigator("/courses");
+} else {
+    toast.error(response.status === 429 ? "Слишком много попыток. Попробуйте позже." : "Не удалось войти. Проверь логин и пароль.");
+}
+
+        } catch (error) {
                 console.error('Ошибка запроса:', error);
                 alert('Не удалось выполнить запрос');
         }
@@ -50,7 +60,7 @@ function Login() {
         if (user) {
             return navigator("/courses")
         }
-    }, [])
+    }, [user, navigator])
 
 
     return (

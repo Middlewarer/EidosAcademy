@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "../styles/ProfileSettings.css";
-import { apiRequest } from "../components/api/apiRequest";
+import { apiRequest, clearSession } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -66,7 +66,8 @@ export default function ProfileSettings() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      toast.success("Пароль обновлён.");
+      clearSession();
+      toast.success("Пароль обновлён. Войдите снова.");
     } catch {
       toast.error("Не удалось связаться с сервером. Попробуйте ещё раз.");
     }

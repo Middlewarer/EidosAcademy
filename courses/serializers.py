@@ -167,7 +167,12 @@ class UserRegistrationSerializer(ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Sorry, incorrect"})
+            raise serializers.ValidationError({"password": "Пароли не совпадают."})
+
+        try:
+            validate_password(attrs['password'], user=User(username=attrs['username']))
+        except DjangoValidationError as error:
+            raise serializers.ValidationError({'password': error.messages})
 
         return attrs
 

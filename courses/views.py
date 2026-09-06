@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import NotAuthenticated
 
 from django.shortcuts import get_object_or_404
+from rest_framework.throttling import ScopedRateThrottle
 
 
 
@@ -83,6 +84,8 @@ class TopicLessonsApiView(APIView):
 
 
 class RegisterUserApiView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'register'
     permission_classes = [NotAuthenticated]
 
     def post(self, request):
@@ -112,6 +115,8 @@ class CurrentUserView(APIView):
 
 
 class ChangePasswordView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'password'
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

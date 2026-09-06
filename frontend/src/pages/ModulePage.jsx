@@ -1,7 +1,7 @@
 import "../styles/ModulePage.css";
 import MarkdownContent from "../components/MarkdownContent";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 
@@ -15,11 +15,15 @@ function ModulePage() {
     const [nextModuleId, setNextModuleId] = useState(null);
     const {user} = useAuth();
 
-    const getModule = async () => {
-      const response = await fetch(`http://127.0.0.1:8000/api/modules/${moduleId}`)
-      const data = await response.json();
-      return data
+    const getModule = useCallback(async () => {
+    const response = await apiRequest(`/api/modules/${moduleId}/`);
+
+    if (!response.ok) {
+        throw new Error(`Не удалось загрузить модуль: ${response.status}`);
     }
+
+    return response.json();
+}, [moduleId]);
 
       const topics = module?.topics ?? [];
     const selectedTopicIndex = topics.findIndex(
@@ -86,17 +90,18 @@ const handleNextTopic =async () => {
 
     useEffect(() => {
       const loadModule = async () => {
+    try {
         const data = await getModule();
-        console.log(data)
-        setModule(data.module)
-        setNextModuleId(data.module.next_module_id || null)
 
-          if (data.module?.topics?.length > 0) {
-            setSelectedTopicId(data.module.topics[0].id)
-          }
-      }
+        setModule(data.module);
+        setNextModuleId(data.module.next_module_id ?? null);
+        setSelectedTopicId(data.module.topics?.[0]?.id ?? null);
+    } catch (error) {
+        console.error(error);
+    }
+};
       loadModule();
-    }, [moduleId])
+    }, [getModule])
 
     const selectedTopic = module?.topics?.find(
     topic => topic.id === selectedTopicId

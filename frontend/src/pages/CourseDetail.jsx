@@ -1,6 +1,6 @@
 import "../styles/CourseDetail.css";
 import Crumbs from "../components/Crumbs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
 import { useParams } from "react-router-dom";
 import {Link } from "react-router-dom"
@@ -11,17 +11,17 @@ function CourseDetail() {
     const [course, setCourse] = useState(null)
     const [error, setError] = useState(null)
     const { user, loading } = useAuth()
-
+    const API_URL = import.meta.env.VITE_API_URL;
     const [modules, setModules] = useState([])
 
     const { courseId } = useParams();
 
-    const getCourse = async () => {
-        const response = await fetch(`http://127.0.0.1:8000/api/courses/${courseId}/`)
+    const getCourse = useCallback(async () => {
+        const response = await fetch(`${API_URL}/api/courses/${courseId}/`)
         const data = await response.json()
         console.log(data)
         return data
-    }
+    }, [API_URL, courseId]);
 
     useEffect(() => {
     const loadCourse = async () => {
@@ -40,8 +40,10 @@ function CourseDetail() {
     };
     
     loadCourse();
-}, [courseId]);
+}, [getCourse]);
 
+  if (loading) return <p role="status">Загрузка курса…</p>;
+  if (error) return <p role="alert">{error}</p>;
   if (user) {
   return (
     

@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -23,10 +24,12 @@ function Header() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
-    logout();
-    navigate("/login");
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) { toast.error(error.message); }
   };
 
   return (

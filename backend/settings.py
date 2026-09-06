@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import config, Csv
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'courses',
     'corsheaders',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -59,10 +60,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",   # Vite
-    "http://localhost:3000",   # Create React App
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
+    config('CORS_ORIGIN_1'),
+    config('CORS_ORIGIN_2'),
+    config('CORS_ORIGIN_3'),
+    config('CORS_ORIGIN_4'),
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -107,8 +108,8 @@ DATABASES = {
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -152,6 +153,7 @@ STATIC_URL = 'static/'
 #REST_FRAMEWORK_SETTINGS
 
 SIMPLE_JWT = {
+    'CHECK_REVOKE_TOKEN': True,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,                      
@@ -164,6 +166,10 @@ SIMPLE_JWT = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '10/min', 'register': '5/hour',
+        'password': '5/min', 'refresh': '60/min', 'logout': '30/min',
+    },
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     )

@@ -64,10 +64,9 @@ source venv/bin/activate
 
 ```bash
 python -m pip install -r requirements.txt
-python -m pip install Pillow
 ```
 
-Pillow нужен для `ImageField` и пока не включён в `requirements.txt`. Для установки `psycopg2` из исходников могут понадобиться инструменты сборки и `pg_config` из PostgreSQL.
+Pillow для `ImageField` включён в `requirements.txt`. Для установки `psycopg2` из исходников могут понадобиться инструменты сборки и `pg_config` из PostgreSQL.
 
 ### 2. База и окружение
 
@@ -77,7 +76,7 @@ Pillow нужен для `ImageField` и пока не включён в `requir
 createdb -U postgres EidosAcademy_DB
 ```
 
-В корне проекта, рядом с `manage.py`, создай `.env`:
+В корне проекта скопируй `.env.example` в `.env`. Заполни все переменные шаблона, включая параметры БД, разрешённые хосты и CORS. Например, для локальной базы:
 
 ```dotenv
 SECRET_KEY=replace-with-your-generated-key
@@ -93,7 +92,7 @@ DB_PASSWORD=your-local-database-password
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-Файл `.env` не нужно коммитить. Сейчас адрес базы задан в `backend/settings.py`: `localhost:5432`. Если PostgreSQL работает на другом адресе или порту, измени эти параметры.
+Файл `.env` не нужно коммитить. Адрес базы задаётся переменными `DB_HOST` и `DB_PORT`. В `ALLOWED_HOSTS` перечисли хосты backend через запятую, без схемы и пути.
 
 Примени миграции, создай администратора и запусти сервер:
 
@@ -107,7 +106,7 @@ python manage.py runserver 127.0.0.1:8000
 
 ### 3. Frontend
 
-Во втором терминале:
+Скопируй `frontend/.env.example` в `frontend/.env` и укажи адрес backend в `VITE_API_URL`, без `/api` и завершающего `/`. Во втором терминале:
 
 ```bash
 cd frontend
@@ -117,7 +116,7 @@ npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 
 Сайт: [127.0.0.1:5173](http://127.0.0.1:5173/).
 
-Порт `5173` указан намеренно: он уже разрешён в CORS-настройках Django. Если порт занят, освободи его или добавь другой адрес frontend в `CORS_ALLOWED_ORIGINS`. Запросы к API пока направлены на `http://127.0.0.1:8000` прямо из кода.
+Порт `5173` указан намеренно: он разрешён в примере CORS-настроек. Если порт занят, освободи его или измени `CORS_ORIGIN_1–4` в корневом `.env`. После изменения `frontend/.env` перезапусти Vite; для production потребуется новая сборка. Переменные `VITE_` видны в браузере, поэтому секреты в них хранить нельзя.
 
 ### 4. Первый курс
 
@@ -178,3 +177,15 @@ npm run lint      # Проверка JavaScript и React
 - [ ] Подготовить конфигурацию для деплоя.
 
 Текущие настройки рассчитаны на локальную разработку, не на публичный сервер. Перед публикацией нужно настроить домены и HTTPS, выключить debug, вынести адреса API и базы в окружение и проверить права доступа. `npm run build` собирает только frontend — сам по себе он не разворачивает Django и PostgreSQL.
+
+## Авторизация
+
+Все защищённые запросы используют `apiRequest`: при 401 клиент один раз обновляет токены и повторяет запрос. Одновременные запросы в одной вкладке разделяют одно обновление. Вход и регистрация не запускают refresh. Временные ошибки сети и сервера не удаляют токены.
+
+Выход отзывает текущий refresh через `POST /api/logout/`, затем очищает состояние браузера. Уже выданный access при обычном выходе действителен до истечения его срока (30 минут). После смены пароля все ранее выданные access и refresh отклоняются; требуется повторный вход. Старые токены, выданные до включения проверки смены пароля, также требуют повторного входа.
+
+Перед запуском примените `python manage.py migrate`: необходимы таблицы `token_blacklist`. Периодически запускайте `python manage.py flushexpiredtokens` для очистки истёкших записей.
+
+Лимиты заданы в `DEFAULT_THROTTLE_RATES`: вход — 10/мин, регистрация — 5/час, смена пароля — 5/мин, refresh — 60/мин. DRF throttling использует кеш; для нескольких серверных процессов при деплое нужен общий кеш. Это ограничение частоты на уровне приложения, а не защита от DDoS.
+
+Проверки: `python manage.py test courses.tests`, `npm --prefix frontend test`, `npm --prefix frontend run lint`, `npm --prefix frontend run build`.

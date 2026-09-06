@@ -1,3 +1,4 @@
+import { apiRequest } from "../components/api/apiRequest";
 import { Link } from "react-router-dom";
 import "../styles/Login.css";
 import {toast} from "react-hot-toast";
@@ -12,13 +13,14 @@ function Register() {
     const password2 = e.target.elements.password2.value;
     
 
+
     const registerUser = async () => {
         
         if (password != password2) {
           toast.error("Ваши пароли не совпадают!", )
           return;
         }
-        const response = await fetch("http://127.0.0.1:8000/api/register/", {
+        const response = await apiRequest("/api/register/", {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({"username": username,
@@ -28,7 +30,8 @@ function Register() {
         })
 
         if (!response.ok) {
-          toast.error("Ошибка в создании пользователя")
+          const data = await response.json();
+          toast.error(Object.values(data.error ?? data).flat().join(" ") || "Ошибка регистрации.");
           return;
         }
 
@@ -37,7 +40,7 @@ function Register() {
       navigator('/login');  
     }
 
-    registerUser();
+    registerUser().catch(() => toast.error("Не удалось связаться с сервером."));
     
     return;
 
