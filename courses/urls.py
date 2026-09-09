@@ -21,6 +21,7 @@ urlpatterns = [
     path('complete/', UserTopicProgressView.as_view(), name='progress_complete'),
     path('progress/visit/', UserTopicProgressView.as_view(), name='progress_visit'),
     path('progress/complete/', CompleteTopicView.as_view(), name='progress_complete_topic'),
-    path("assign/", AssignForCourseView.as_view(), name="assign_course")
+    path("assign/", AssignForCourseView.as_view(), name="assign_course"),
+    path("feedback/", FeedbackView.as_view(), name="feedback"),
 ]
 

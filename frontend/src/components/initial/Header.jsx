@@ -56,8 +56,8 @@ function Header() {
           <nav id="main-navigation" aria-label="Основная навигация">
             <NavLink to="/" end>Главная</NavLink>
             <NavLink to="/courses">Курсы</NavLink>
-          <a href="/#learning">Обучение</a>
-          <a href="/#reviews">Отзывы</a>
+            <a href="/#learning">Обучение</a>
+            <NavLink to="/feedback">Обратная связь</NavLink>
           </nav>
 
           <div className="header-actions">

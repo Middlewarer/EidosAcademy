@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettings from "./pages/ProfileSettings";
+import FeedbackPage from "./pages/FeedbackPage";
 import NotFound from "./pages/NotFound";
 import { Toaster } from 'react-hot-toast'; // ✅ Правильный импорт
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -27,6 +28,7 @@ const App = () => {
                     {/* Публичные маршруты */}
                     <Route path="/" element={<Home />} />
                     <Route path="/courses" element={<Courses />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
                     
                     {/* Защищенные маршруты */}
                     <Route element={<ProtectedRoute />}>

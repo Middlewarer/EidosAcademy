@@ -43,10 +43,6 @@ function ProfilePage() {
     loadRegDate();
 }, [user]);
 
-    const achievments = user?.achievments || [];
-
-    console.log(achievments)
-    
     if (loading) {
     return (
       <header className="header">
@@ -112,11 +108,6 @@ function ProfilePage() {
               <div className="profile-stat-card">
                 <strong>{user?.topics_count}</strong>
                 <span>Уроков пройдено</span>
-              </div>
-
-              <div className="profile-stat-card">
-                <strong>{achievments.length}</strong>
-                <span>Достижения</span>
               </div>
 
             </div>
@@ -219,41 +210,6 @@ function ProfilePage() {
                 </div>) : (<></>)}
                 
 
-                {/* ACHIEVEMENTS */}
-                <div className="profile-section">
-                                    <div className="profile-section-header">
-                                        <div>
-                                            <span className="profile-section-label">
-                                                Ваши успехи
-                                            </span>
-                                            <h2>Достижения</h2>
-                                        </div>
-                                    </div>
-
-                                    <div className="profile-achievements">
-                                        {achievments.length > 0 ? (
-                                            // ✅ Если достижения есть — показываем их
-                                            achievments.map((achievment, index) => (
-                                                <div className="profile-achievement" key={index}>
-                                                    <div className="profile-achievement-icon">
-                                                        <img src={`${achievment.icon}`} alt="" />
-                                                        
-                                                    </div>
-                                                    <div>
-                                                        <h3>{achievment.title}</h3>
-                                                        <p>{achievment.small_description || 'Достижение получено'}</p>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            // ❌ Если достижений нет — показываем заглушку
-                                            <div className="profile-no-achievements">
-                                                <p>У вас пока нет достижений</p>
-                                                <span>Продолжайте учиться, чтобы их получить!</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
                             </div>
 
               {/* RIGHT */}
@@ -287,61 +243,6 @@ function ProfilePage() {
                     <div className="profile-info-item">
                       <span>Уровень</span>
                       <strong>Начинающий</strong>
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* ACTIVITY */}
-                <div className="profile-side-card">
-                  <span className="profile-section-label">
-                    Активность
-                  </span>
-
-                  <h2>Последние действия</h2>
-
-                  <div className="profile-activity">
-
-                    <div className="profile-activity-item">
-                      <div className="profile-activity-dot"></div>
-
-                      <div>
-                        <strong>Урок завершён</strong>
-                        <span>
-                          Переменные в Python
-                        </span>
-                        <small>
-                          Сегодня
-                        </small>
-                      </div>
-                    </div>
-
-                    <div className="profile-activity-item">
-                      <div className="profile-activity-dot"></div>
-
-                      <div>
-                        <strong>Получено достижение</strong>
-                        <span>
-                          В ритме
-                        </span>
-                        <small>
-                          Вчера
-                        </small>
-                      </div>
-                    </div>
-
-                    <div className="profile-activity-item">
-                      <div className="profile-activity-dot"></div>
-
-                      <div>
-                        <strong>Урок завершён</strong>
-                        <span>
-                          Условия и логика
-                        </span>
-                        <small>
-                          2 дня назад
-                        </small>
-                      </div>
                     </div>
 
                   </div>

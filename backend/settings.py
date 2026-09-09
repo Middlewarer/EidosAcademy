@@ -230,6 +230,7 @@ REST_FRAMEWORK = {
         "password": "5/min",
         "refresh": "60/min",
         "logout": "30/min",
+        "feedback": "5/hour",
     },
 }
 

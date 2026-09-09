@@ -229,3 +229,36 @@ class UserCourseProgressSerializer(ModelSerializer):
         fields = ['id', 'course', 'completed', 'assigned_at', 'last_topic']
         read_only_fields = fields
 
+
+class FeedbackSerializer(ModelSerializer):
+    author = serializers.SerializerMethodField()
+    kind_label = serializers.CharField(source='get_kind_display', read_only=True)
+    status_label = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = [
+            'id', 'kind', 'kind_label', 'status', 'status_label',
+            'author', 'message', 'created_at',
+        ]
+
+    def get_author(self, obj):
+        return obj.name or (obj.user.get_full_name() if obj.user else '') or 'Аноним'
+
+
+class CreateFeedbackSerializer(ModelSerializer):
+    website = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    class Meta:
+        model = Feedback
+        fields = ['kind', 'name', 'contact', 'message', 'page_url', 'website']
+
+    def validate(self, attrs):
+        if attrs.pop('website', ''):
+            raise serializers.ValidationError({'message': 'Не удалось отправить сообщение.'})
+        attrs['name'] = attrs.get('name', '').strip()
+        attrs['message'] = attrs['message'].strip()
+        if len(attrs['message']) < 10:
+            raise serializers.ValidationError({'message': 'Напишите хотя бы 10 символов.'})
+        return attrs
+

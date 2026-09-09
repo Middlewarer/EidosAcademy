@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
     return (
         <footer className="footer">
@@ -22,6 +24,8 @@ const Footer = () => {
             <p>
               Создаем будущее через знания.
             </p>
+
+            <Link className="footer-feedback-link" to="/feedback">Отзыв, идея или ошибка →</Link>
 
 
           </div>

@@ -173,6 +173,42 @@ class Achievment(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     icon = models.ImageField(upload_to="achievment_icons/", null=True, blank=True)
 
+
+class Feedback(models.Model):
+    class Kind(models.TextChoices):
+        REVIEW = "review", "Отзыв"
+        IDEA = "idea", "Пожелание"
+        BUG = "bug", "Ошибка"
+
+    class Status(models.TextChoices):
+        NEW = "new", "Новое"
+        SEEN = "seen", "Просмотрено"
+        PLANNED = "planned", "Запланировано"
+        RESOLVED = "resolved", "Исправлено"
+        REJECTED = "rejected", "Отклонено"
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="feedback_entries",
+    )
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    name = models.CharField(max_length=80, blank=True)
+    contact = models.EmailField(blank=True)
+    message = models.TextField(max_length=2000)
+    page_url = models.URLField(max_length=500, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.NEW)
+    is_public = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.name or 'Аноним'}"
+
     
 
         

@@ -46,3 +46,13 @@ class PasswordRateThrottle(SimpleRateThrottle):
             "scope": self.scope,
             "ident": request.user.pk,
         }
+
+
+class FeedbackRateThrottle(SimpleRateThrottle):
+    scope = "feedback"
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {
+            "scope": self.scope,
+            "ident": self.get_ident(request),
+        }

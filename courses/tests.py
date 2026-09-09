@@ -2,7 +2,15 @@ from django.test import TestCase
 
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
-from .models import Category, Course, Module, Topic, UserCourseProgress, UserTopicProgress
+from .models import (
+    Category,
+    Course,
+    Feedback,
+    Module,
+    Topic,
+    UserCourseProgress,
+    UserTopicProgress,
+)
 
 
 class ChangePasswordTests(TestCase):
@@ -212,3 +220,77 @@ class CourseLearningFlowTests(TestCase):
         self.assertEqual(
             UserTopicProgress.objects.filter(user=self.user, topic=self.second_topic).count(), 1
         )
+
+
+class FeedbackTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+
+        cache.clear()
+        self.client = APIClient()
+
+    def test_guest_can_submit_and_contact_stays_private(self):
+        response = self.client.post(
+            '/api/feedback/',
+            {
+                'kind': 'bug',
+                'name': 'Тестировщик',
+                'contact': 'tester@example.com',
+                'message': 'На странице курса не открывается первый урок.',
+                'page_url': 'https://eidosacademy.ru/courses/1',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 201)
+        feedback = Feedback.objects.get()
+        self.assertIsNone(feedback.user)
+        self.assertEqual(feedback.contact, 'tester@example.com')
+        self.assertFalse(feedback.is_public)
+        self.assertNotIn('contact', response.data)
+
+    def test_authenticated_feedback_is_linked_to_user(self):
+        user = User.objects.create_user(username='feedback-user', password='Strong!Pass42')
+        self.client.force_authenticate(user)
+
+        response = self.client.post(
+            '/api/feedback/',
+            {'kind': 'idea', 'message': 'Добавьте заметки рядом с каждым уроком.'},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Feedback.objects.get().user, user)
+
+    def test_public_board_only_exposes_moderated_entries(self):
+        Feedback.objects.create(
+            kind=Feedback.Kind.REVIEW,
+            name='Анна',
+            contact='private@example.com',
+            message='Курс помог спокойно разобраться с основами.',
+            is_public=True,
+        )
+        Feedback.objects.create(
+            kind=Feedback.Kind.BUG,
+            message='Это сообщение ещё не прошло модерацию.',
+        )
+
+        response = self.client.get('/api/feedback/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['entries']), 1)
+        self.assertEqual(response.data['entries'][0]['author'], 'Анна')
+        self.assertNotIn('contact', response.data['entries'][0])
+
+    def test_short_message_and_honeypot_are_rejected(self):
+        short = self.client.post(
+            '/api/feedback/', {'kind': 'review', 'message': 'Мало'}, format='json'
+        )
+        bot = self.client.post(
+            '/api/feedback/',
+            {'kind': 'review', 'message': 'Сообщение достаточной длины', 'website': 'spam'},
+            format='json',
+        )
+
+        self.assertEqual(short.status_code, 400)
+        self.assertEqual(bot.status_code, 400)

@@ -16,6 +16,7 @@ from .throttles import LoginRateThrottle
 from .throttles import (
     RegisterRateThrottle,
     PasswordRateThrottle,
+    FeedbackRateThrottle,
 )
 
 
@@ -345,6 +346,28 @@ class AssignForCourseView(APIView):
                 "data": response_serializer.data
             },
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
+
+
+class FeedbackView(APIView):
+    permission_classes = [AllowAny]
+
+    def get_throttles(self):
+        return [FeedbackRateThrottle()] if self.request.method == 'POST' else []
+
+    def get(self, request):
+        entries = Feedback.objects.filter(is_public=True)[:30]
+        return Response({'entries': FeedbackSerializer(entries, many=True).data})
+
+    def post(self, request):
+        serializer = CreateFeedbackSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        feedback = serializer.save(
+            user=request.user if request.user.is_authenticated else None
+        )
+        return Response(
+            {'message': 'Спасибо! Сообщение отправлено.', 'id': feedback.id},
+            status=status.HTTP_201_CREATED,
         )
 
 
