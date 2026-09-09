@@ -53,7 +53,13 @@ class ModuleDetailSerializer(ModelSerializer):
         fields = ['id', 'title', 'description', 'order', 'course_title', 'topics', 'next_module_id']
 
     def get_next_module_id(self, obj):
-        obj_id = Module.objects.filter(course=obj.course, order=obj.order+1).values_list('id', flat=True).first()
+        obj_id = (
+            Module.objects
+            .filter(course=obj.course, order__gt=obj.order)
+            .order_by('order', 'id')
+            .values_list('id', flat=True)
+            .first()
+        )
         return obj_id
 
 
@@ -111,45 +117,47 @@ class UserSerializer(ModelSerializer):
         'date_joined', 'courses_count', 'topics_count', 'achievments', 'random_course']
 
     def get_random_course(self, obj):
-        import random
-
-        try:
-            random_id = random.choice(
-                list(
-                    UserCourseProgress.objects
-                    .filter(user=obj, course__is_published=True)
-                    .values_list("course_id", flat=True)
-                )
-            )
-        except IndexError:
+        progress = (
+            UserCourseProgress.objects
+            .filter(user=obj, course__is_published=True)
+            .select_related("course__category", "last_topic__module")
+            .order_by("-assigned_at", "-id")
+            .first()
+        )
+        if not progress:
             return None
-        try:
-            course = Course.objects.get(id=random_id)
 
-            total_topics = Topic.objects.filter(module__course=course).count()
-            completed_topics = UserTopicProgress.objects.filter(
-                user=obj,
-                topic__module__course=course.id,
-            ).count() 
+        course = progress.course
+        total_topics = Topic.objects.filter(module__course=course).count()
+        completed_topics = UserTopicProgress.objects.filter(
+            user=obj,
+            topic__module__course=course,
+            completed=True,
+        ).count()
+        first_module_id = (
+            Module.objects.filter(course=course)
+            .order_by("order", "id")
+            .values_list("id", flat=True)
+            .first()
+        )
 
-            return {
-                'id': course.id,
-                'title': course.title,
-                'short_description': course.short_description,
-                'category': course.category.title,
-                'progress': int(100 / total_topics * completed_topics if total_topics > 0 else 0)
-            }
-
-        except Course.DoesNotExist:
-            return None
-        return random_id
+        return {
+            'id': course.id,
+            'title': course.title,
+            'short_description': course.short_description,
+            'category': course.category.title,
+            'progress': int(100 * completed_topics / total_topics) if total_topics else 0,
+            'continue_module_id': (
+                progress.last_topic.module_id if progress.last_topic_id else first_module_id
+            ),
+        }
         
 
     def get_courses_count(self, obj):
         return UserCourseProgress.objects.filter(user=obj).count()
 
     def get_topics_count(self, obj):
-        topics_count = UserTopicProgress.objects.filter(user=obj).count()
+        topics_count = UserTopicProgress.objects.filter(user=obj, completed=True).count()
         return topics_count
 
 
@@ -215,6 +223,9 @@ class ChangePasswordSerializer(serializers.Serializer):
         return instance
 
 
-
-
+class UserCourseProgressSerializer(ModelSerializer):
+    class Meta:
+        model = UserCourseProgress
+        fields = ['id', 'course', 'completed', 'assigned_at', 'last_topic']
+        read_only_fields = fields
 

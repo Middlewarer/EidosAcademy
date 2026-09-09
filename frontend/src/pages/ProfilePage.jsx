@@ -169,12 +169,14 @@ function ProfilePage() {
                         Сейчас изучаете
                       </span>
 
-                      <h2>Ваш случайных курс</h2>
+                      <h2>Последний добавленный курс</h2>
                     </div>
                   </div>
 
                   <Link
-                    to={`/courses/${user?.random_course.id}`}
+                    to={user?.random_course?.continue_module_id
+                      ? `/courses/${user.random_course.id}/modules/${user.random_course.continue_module_id}`
+                      : `/courses/${user?.random_course.id}`}
                     className="profile-course-link"
                     aria-label={`Продолжить курс «${user?.random_course?.title}»`}
                   >

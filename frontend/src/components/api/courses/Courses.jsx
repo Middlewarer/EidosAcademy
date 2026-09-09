@@ -1,7 +1,7 @@
-const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+import { apiRequest } from "../apiRequest";
 
 export async function getCourses() {
-    const response = await fetch(`${BASE_URL}/courses/`);
+    const response = await apiRequest("/api/courses/", { auth: false });
     const data = await response.json();
 
     if (!response.ok) {

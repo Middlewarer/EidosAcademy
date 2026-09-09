@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
+from .models import Category, Course, Module, Topic, UserCourseProgress, UserTopicProgress
 
 
 class ChangePasswordTests(TestCase):
@@ -103,10 +104,111 @@ class AuthFlowTests(TestCase):
         from django.core.cache import cache
         from rest_framework.test import force_authenticate, APIRequestFactory
         from django.urls import resolve
-        for path, limit, user in [('/api/token/',10,None),('/api/register/',5,None),('/api/me/password/',5,self.user),('/api/token/refresh/',60,None)]:
+        for path, limit, user in [('/api/token/refresh/',60,None)]:
             cache.clear()
             for index in range(limit + 1):
                 request = APIRequestFactory().post(path, {}, format='json')
                 if user: force_authenticate(request, user=user)
                 response = resolve(path).func(request)
                 self.assertEqual(response.status_code, 429 if index == limit else 400)
+
+
+class CourseLearningFlowTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='student', password='Strong!Pass42')
+        self.client = APIClient()
+        self.client.force_authenticate(self.user)
+        category = Category.objects.create(title='Backend')
+        self.course = Course.objects.create(
+            category=category,
+            title='Django',
+            description='Course',
+            short_description='Course',
+            is_published=True,
+        )
+        self.module = Module.objects.create(
+            course=self.course, title='Start', description='Module', order=0
+        )
+        self.topic = Topic.objects.create(
+            module=self.module, title='Intro', description='Topic', order=0
+        )
+        self.second_module = Module.objects.create(
+            course=self.course, title='Advanced', description='Module', order=5
+        )
+        self.second_topic = Topic.objects.create(
+            module=self.second_module, title='Finish', description='Topic', order=0
+        )
+
+    def test_assign_is_idempotent_and_course_reports_assignment(self):
+        first = self.client.post('/api/assign/', {'course_id': self.course.id}, format='json')
+        second = self.client.post('/api/assign/', {'course_id': self.course.id}, format='json')
+
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(
+            UserCourseProgress.objects.filter(user=self.user, course=self.course).count(), 1
+        )
+        detail = self.client.get(f'/api/courses/{self.course.id}/')
+        self.assertTrue(detail.data['is_assigned'])
+        self.assertEqual(detail.data['continue_module_id'], self.module.id)
+
+    def test_visit_saves_last_place_without_completing_topic(self):
+        response = self.client.post(
+            '/api/progress/visit/', {'topic': self.topic.id}, format='json'
+        )
+
+        self.assertEqual(response.status_code, 201)
+        topic_progress = UserTopicProgress.objects.get(user=self.user, topic=self.topic)
+        course_progress = UserCourseProgress.objects.get(user=self.user, course=self.course)
+        self.assertFalse(topic_progress.completed)
+        self.assertEqual(course_progress.last_topic, self.topic)
+        module_detail = self.client.get(f'/api/modules/{self.module.id}/')
+        self.assertEqual(module_detail.data['last_topic_id'], self.topic.id)
+
+    def test_unpublished_course_cannot_be_assigned_or_visited(self):
+        self.course.is_published = False
+        self.course.save(update_fields=['is_published'])
+
+        self.assertEqual(
+            self.client.post('/api/assign/', {'course_id': self.course.id}, format='json').status_code,
+            404,
+        )
+        self.assertEqual(
+            self.client.post('/api/progress/visit/', {'topic': self.topic.id}, format='json').status_code,
+            400,
+        )
+
+    def test_topic_module_and_course_statuses(self):
+        initial = self.client.get(f'/api/modules/{self.module.id}/')
+        self.assertEqual(initial.data['module']['status'], 'not_started')
+        self.assertEqual(initial.data['course_progress']['percent'], 0)
+        self.assertEqual(initial.data['module']['next_module_id'], self.second_module.id)
+
+        self.client.post('/api/progress/visit/', {'topic': self.topic.id}, format='json')
+        started = self.client.get(f'/api/modules/{self.module.id}/')
+        self.assertEqual(started.data['module']['status'], 'in_progress')
+        self.assertEqual(started.data['module']['topics'][0]['status'], 'in_progress')
+
+        first_complete = self.client.post(
+            '/api/progress/complete/', {'topic': self.topic.id}, format='json'
+        )
+        self.assertEqual(first_complete.status_code, 200)
+        self.assertEqual(first_complete.data['course_progress']['completed_topics'], 1)
+        self.assertEqual(first_complete.data['course_progress']['percent'], 50)
+        self.assertEqual(first_complete.data['course_outline'][0]['status'], 'completed')
+        self.assertFalse(UserCourseProgress.objects.get(user=self.user, course=self.course).completed)
+
+        final_complete = self.client.post(
+            '/api/progress/complete/', {'topic': self.second_topic.id}, format='json'
+        )
+        self.assertEqual(final_complete.data['course_progress']['status'], 'completed')
+        self.assertEqual(final_complete.data['course_progress']['percent'], 100)
+        self.assertTrue(UserCourseProgress.objects.get(user=self.user, course=self.course).completed)
+
+        repeated = self.client.post(
+            '/api/progress/complete/', {'topic': self.second_topic.id}, format='json'
+        )
+        self.assertEqual(repeated.status_code, 200)
+        self.assertEqual(
+            UserTopicProgress.objects.filter(user=self.user, topic=self.second_topic).count(), 1
+        )

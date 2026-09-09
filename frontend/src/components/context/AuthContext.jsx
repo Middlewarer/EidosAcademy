@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { apiRequest, saveTokens, logoutSession } from "../api/apiRequest";
+import { apiRequest, saveTokens, logoutSession, getSessionId } from "../api/apiRequest";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -9,17 +9,22 @@ export function AuthProvider({ children }) {
         let active = true;
         const expired = () => setUser(null);
         const storageChanged = (event) => {
-            if (event.key === null || event.key === "access_token") expired();
+            if (event.key === null || event.key === "auth_session") {
+                expired();
+                setLoading(true);
+                checkAuth();
+            }
         };
         window.addEventListener("auth:expired", expired);
         window.addEventListener("storage", storageChanged);
         async function checkAuth() {
+            const session = getSessionId();
             try {
                 if (!localStorage.getItem("access_token") && !localStorage.getItem("refresh_token")) return;
                 const response = await apiRequest("/api/me/");
                 if (response.ok) {
                     const data = await response.json();
-                    if (active && localStorage.getItem("access_token")) setUser(data);
+                    if (active && session === getSessionId() && localStorage.getItem("access_token")) setUser(data);
                 }
             } catch (error) { console.error("Не удалось проверить авторизацию:", error); }
             finally { if (active) setLoading(false); }

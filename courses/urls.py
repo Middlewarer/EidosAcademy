@@ -19,5 +19,8 @@ urlpatterns = [
     path('me/', CurrentUserView.as_view(), name='me'),
     path('me/password/', ChangePasswordView.as_view(), name='change_password'),
     path('complete/', UserTopicProgressView.as_view(), name='progress_complete'),
+    path('progress/visit/', UserTopicProgressView.as_view(), name='progress_visit'),
+    path('progress/complete/', CompleteTopicView.as_view(), name='progress_complete_topic'),
+    path("assign/", AssignForCourseView.as_view(), name="assign_course")
 ]
 

@@ -2,26 +2,65 @@ import "../styles/CourseDetail.css";
 import Crumbs from "../components/Crumbs";
 import { useCallback, useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
-import { useParams } from "react-router-dom";
-import {Link } from "react-router-dom"
-import { Navigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../components/context/AuthContext";
+import { apiRequest } from "../components/api/apiRequest";
 
 function CourseDetail() {
+  const navigate = useNavigate();
     const [course, setCourse] = useState(null)
     const [error, setError] = useState(null)
     const { user, loading } = useAuth()
-    const API_URL = import.meta.env.VITE_API_URL;
     const [modules, setModules] = useState([])
+    const [continueModuleId, setContinueModuleId] = useState(null);
+    const [isAssigned, setIsAssigned] = useState(false);
+    const [isAssigning, setIsAssigning] = useState(false);
+    const [assignError, setAssignError] = useState(null);
 
     const { courseId } = useParams();
 
     const getCourse = useCallback(async () => {
-        const response = await fetch(`${API_URL}/api/courses/${courseId}/`)
+        const response = await apiRequest(`/api/courses/${courseId}/`)
+        if (!response.ok) {
+          throw new Error("Не удалось загрузить курс.");
+        }
         const data = await response.json()
-        console.log(data)
         return data
-    }, [API_URL, courseId]);
+    }, [courseId]);
+
+    const handleCourseAction = async () => {
+      if (!modules[0] || isAssigning) return;
+
+      const targetModuleId = continueModuleId || modules[0].id;
+
+      if (isAssigned) {
+        navigate(`/courses/${courseId}/modules/${targetModuleId}`);
+        return;
+      }
+
+      setIsAssigning(true);
+      setAssignError(null);
+
+      try {
+        const response = await apiRequest("/api/assign/", {
+          method: "POST",
+          body: JSON.stringify({ course_id: course.course_id }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || "Не удалось начать обучение.");
+        }
+
+        setIsAssigned(true);
+        setContinueModuleId(modules[0].id);
+        navigate(`/courses/${courseId}/modules/${modules[0].id}`);
+      } catch (err) {
+        setAssignError(err.message);
+      } finally {
+        setIsAssigning(false);
+      }
+    };
 
     useEffect(() => {
     const loadCourse = async () => {
@@ -30,6 +69,8 @@ function CourseDetail() {
             
             // Сохраняем курс
             setCourse(data);
+            setIsAssigned(data.is_assigned);
+            setContinueModuleId(data.continue_module_id);
             
             // Сохраняем модули (они внутри course)
             setModules(data.course.modules || []);
@@ -80,12 +121,12 @@ function CourseDetail() {
               </div>
               
               {modules[0] && (
-                <Link to={`/courses/${courseId}/modules/${modules[0].id}`}>
-                  <button type="button" className="course-detail-start-btn">
-                    Начать обучение
-                  </button>
-                </Link>
+                <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning}>
+                  {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : "Начать обучение"}
+                </button>
               )}
+              {modules.length === 0 && <p>В этом курсе пока нет модулей.</p>}
+              {assignError && <p role="alert">{assignError}</p>}
             </div>
 
             <div className="course-detail-cover">
@@ -132,14 +173,14 @@ function CourseDetail() {
         {/* CTA внизу */}
         <section className="course-detail-cta">
           <div className="container">
-            <h2>Готовы начать?</h2>
-            <p>Присоединяйтесь к курсу и начните учиться уже сегодня.</p>
+            <h2>{isAssigned ? "Продолжим обучение?" : "Готовы начать?"}</h2>
+            <p>{isAssigned
+              ? "Вернитесь к последнему открытому модулю."
+              : "Присоединяйтесь к курсу и начните учиться уже сегодня."}</p>
             {modules[0] && (
-              <Link to={`/courses/${courseId}/modules/${modules[0].id}`}>
-                <button type="button" className="course-detail-start-btn">
-                  Начать обучение
-                </button>
-              </Link>
+              <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning}>
+                {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : "Начать обучение"}
+              </button>
             )}
           </div>
         </section>

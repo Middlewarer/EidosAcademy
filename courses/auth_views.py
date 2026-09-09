@@ -7,6 +7,8 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.utils import get_md5_hash_password
 
+from .throttles import LoginRateThrottle
+
 
 class SessionRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
@@ -20,8 +22,7 @@ class SessionRefreshSerializer(TokenRefreshSerializer):
 
 
 class LoginView(TokenObtainPairView):
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = 'login'
+    throttle_classes = [LoginRateThrottle]
 
 
 class RefreshView(TokenRefreshView):

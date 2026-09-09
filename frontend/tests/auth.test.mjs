@@ -4,6 +4,14 @@ import { readFile } from 'node:fs/promises';
 const source = (await readFile(new URL('../src/components/api/apiRequest.jsx', import.meta.url), 'utf8')).replace('import.meta.env.VITE_API_URL', '"http://api.test"');
 let iteration = 0;
 async function setup() {
+    let queue = Promise.resolve();
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: {
+        locks: { request: (_name, action) => {
+            const result = queue.then(action);
+            queue = result.catch(() => {});
+            return result;
+        } },
+    } });
     const store = new Map();
     globalThis.localStorage = { getItem: k => store.get(k) ?? null, setItem: (k,v) => store.set(k,String(v)), removeItem: k => store.delete(k) };
     globalThis.window = new EventTarget();
@@ -55,4 +63,61 @@ test('logout revokes rotated token before clearing', async () => {
     const api=await setup(); let revoked;
     globalThis.fetch=async (_url,options)=> { revoked=JSON.parse(options.body).refresh;return reply(200); };
     await api.logoutSession();assert.equal(revoked,'refresh-old');assert.equal(localStorage.getItem('refresh_token'),null);
+});
+
+
+test('two tabs rotate once and keep the shared session', async () => {
+    const first = await setup();
+    const second = await import(`data:text/javascript;base64,${Buffer.from(source + '\n//tab' + iteration++).toString('base64')}`);
+    let refreshes = 0;
+    globalThis.fetch = async (url, options) => {
+        if (url.endsWith('/refresh/')) {
+            refreshes++;
+            await new Promise(resolve => setTimeout(resolve, 10));
+            return refreshes === 1 ? reply(200, {access:'new',refresh:'rotated'}) : reply(401);
+        }
+        return reply(options.headers.get('Authorization') === 'Bearer new' ? 200 : 401);
+    };
+    const session = first.getSessionId();
+    const responses = await Promise.all([first.apiRequest('/api/me/'),second.apiRequest('/api/me/')]);
+    assert.deepEqual(responses.map(r=>r.status),[200,200]);
+    assert.equal(refreshes,1);
+    assert.equal(localStorage.getItem('refresh_token'),'rotated');
+    assert.equal(first.getSessionId(),session);
+});
+
+test('old failed refresh cannot clear a newly signed-in account', async () => {
+    const first = await setup();
+    const second = await import(`data:text/javascript;base64,${Buffer.from(source + '\n//tab' + iteration++).toString('base64')}`);
+    let finish, started;
+    const ready = new Promise(resolve=>started=resolve);
+    globalThis.fetch = async url => {
+        if (url.endsWith('/refresh/')) { started(); return new Promise(resolve=>finish=resolve); }
+        return reply(401);
+    };
+    const request = first.apiRequest('/api/me/');
+    await ready;
+    second.saveTokens('account-b','refresh-b');
+    finish(reply(401));
+    await request;
+    assert.equal(localStorage.getItem('access_token'),'account-b');
+    assert.equal(localStorage.getItem('refresh_token'),'refresh-b');
+});
+
+test('logout in second tab waits for rotation and revokes latest refresh', async () => {
+    const first = await setup();
+    const second = await import(`data:text/javascript;base64,${Buffer.from(source + '\n//tab' + iteration++).toString('base64')}`);
+    let finish, started, revoked;
+    const ready=new Promise(resolve=>started=resolve);
+    globalThis.fetch=async (url,options)=> {
+        if(url.endsWith('/refresh/')) { started();return new Promise(resolve=>finish=resolve); }
+        if(url.endsWith('/logout/')) { revoked=JSON.parse(options.body).refresh;return reply(200); }
+        return reply(options.headers.get('Authorization')==='Bearer new'?200:401);
+    };
+    const pending=first.apiRequest('/api/me/'); await ready;
+    const logout=second.logoutSession();
+    finish(reply(200,{access:'new',refresh:'rotated'}));
+    await Promise.all([pending,logout]);
+    assert.equal(revoked,'rotated');
+    assert.equal(localStorage.getItem('access_token'),null);
 });

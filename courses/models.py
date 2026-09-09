@@ -131,6 +131,14 @@ class UserCourseProgress(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_progress")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    last_topic = models.ForeignKey(
+        Topic,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="last_opened_by",
+    )
 
 
     class Meta:
@@ -150,6 +158,7 @@ class UserTopicProgress(models.Model):
         related_name="user_progress",
         )
     completed = models.BooleanField(default=False)
+    last_visited_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("user", "topic")
