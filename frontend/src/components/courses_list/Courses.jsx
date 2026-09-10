@@ -6,17 +6,22 @@ import { getCourses } from "../api/courses/Courses"
 
 const Courses = () => {
   const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
 
 
   useEffect(() => {
       async function load() {
         try {
+          setError(null)
           const data = await getCourses();
           setCourses(data.courses)
         }
         catch (err) {
-          console.log(err)
+          setError(err.message)
+        } finally {
+          setLoading(false)
         }
       } 
       load();
@@ -45,6 +50,9 @@ const Courses = () => {
 
 
             <div className="course-grid">
+            {loading && <p role="status">Загрузка курсов…</p>}
+            {error && <p role="alert">{error}</p>}
+            {!loading && !error && courses.length === 0 && <p>Курсы скоро появятся.</p>}
             
             {courses.map((course) =>
               (<CourseCard

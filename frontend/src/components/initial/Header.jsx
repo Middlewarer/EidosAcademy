@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -23,10 +24,12 @@ function Header() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
-    logout();
-    navigate("/login");
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) { toast.error(error.message); }
   };
 
   return (
@@ -53,8 +56,8 @@ function Header() {
           <nav id="main-navigation" aria-label="Основная навигация">
             <NavLink to="/" end>Главная</NavLink>
             <NavLink to="/courses">Курсы</NavLink>
-          <a href="/#learning">Обучение</a>
-          <a href="/#reviews">Отзывы</a>
+            <a href="/#learning">Обучение</a>
+            <NavLink to="/feedback">Обратная связь</NavLink>
           </nav>
 
           <div className="header-actions">

@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class PublishedCourseManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=True)
+
+    def unpublished(self):
+        return super().get_queryset().filter(is_published=False)
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -52,12 +61,18 @@ class Course(CourseAndTimeStamp):
 
     is_published = models.BooleanField(default=False)
 
+    objects = models.Manager()
+
+    published = PublishedCourseManager()
+    
     def __str__(self):
         return self.title
     
     class Meta(CourseAndTimeStamp.Meta):
         verbose_name = 'Course'
         verbose_name_plural = 'Courses'
+
+    
 
 
 class Module(CourseAndTimeStamp):
@@ -116,6 +131,14 @@ class UserCourseProgress(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_progress")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    last_topic = models.ForeignKey(
+        Topic,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="last_opened_by",
+    )
 
 
     class Meta:
@@ -135,6 +158,12 @@ class UserTopicProgress(models.Model):
         related_name="user_progress",
         )
     completed = models.BooleanField(default=False)
+    last_visited_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "topic")
+
+    
 
 
 class Achievment(models.Model):
@@ -143,6 +172,42 @@ class Achievment(models.Model):
     small_description = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
     icon = models.ImageField(upload_to="achievment_icons/", null=True, blank=True)
+
+
+class Feedback(models.Model):
+    class Kind(models.TextChoices):
+        REVIEW = "review", "Отзыв"
+        IDEA = "idea", "Пожелание"
+        BUG = "bug", "Ошибка"
+
+    class Status(models.TextChoices):
+        NEW = "new", "Новое"
+        SEEN = "seen", "Просмотрено"
+        PLANNED = "planned", "Запланировано"
+        RESOLVED = "resolved", "Исправлено"
+        REJECTED = "rejected", "Отклонено"
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="feedback_entries",
+    )
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    name = models.CharField(max_length=80, blank=True)
+    contact = models.EmailField(blank=True)
+    message = models.TextField(max_length=2000)
+    page_url = models.URLField(max_length=500, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.NEW)
+    is_public = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.name or 'Аноним'}"
 
     
 

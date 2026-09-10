@@ -7,6 +7,9 @@ import ModulePage from "./pages/ModulePage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProfilePage from "./pages/ProfilePage";
+import ProfileSettings from "./pages/ProfileSettings";
+import FeedbackPage from "./pages/FeedbackPage";
+import NotFound from "./pages/NotFound";
 import { Toaster } from 'react-hot-toast'; // ✅ Правильный импорт
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/theme-overrides.css";
@@ -25,13 +28,16 @@ const App = () => {
                     {/* Публичные маршруты */}
                     <Route path="/" element={<Home />} />
                     <Route path="/courses" element={<Courses />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
                     
                     {/* Защищенные маршруты */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/courses/:courseId" element={<CourseDetail />} />
                         <Route path="/courses/:courseId/modules/:moduleId" element={<ModulePage />} />
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/settings" element={<ProfileSettings />} />
                     </Route>
+                    <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>
         </BrowserRouter>

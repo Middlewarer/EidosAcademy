@@ -1,91 +1,48 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { apiRequest } from "../api/apiRequest";
-const AuthContext = createContext(null)
+import { apiRequest, saveTokens, logoutSession, getSessionId } from "../api/apiRequest";
+const AuthContext = createContext(null);
 
-export function AuthProvider({children} ) {
+export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
-    async function checkAuth() {
-        const accessToken = localStorage.getItem("access_token");
-        const refreshToken = localStorage.getItem("refresh_token");
-        
-        // Если нет токенов — выходим
-        if (!accessToken || !refreshToken) {
-            setLoading(false);
-            return;
-        }
-
-        try {
-            // Пробуем получить профиль
-            let response = await apiRequest("/api/me/");
-            
-            if (response.ok) {
-                const data = await response.json();
-                setUser(data);
-                setLoading(false);
-                return;
+        let active = true;
+        const expired = () => setUser(null);
+        const storageChanged = (event) => {
+            if (event.key === null || event.key === "auth_session") {
+                expired();
+                setLoading(true);
+                checkAuth();
             }
-
-            // ✅ Если токен протух (401) — пробуем обновить
-            if (response.status === 401) {
-                const refreshResponse = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ refresh: refreshToken })
-                });
-
-                if (refreshResponse.ok) {
-                    const refreshData = await refreshResponse.json();
-                    
-                    // ✅ Сохраняем новый access_token
-                    localStorage.setItem("access_token", refreshData.access);
-                    
-                    // ✅ Повторяем запрос профиля с новым токеном
-                    response = await apiRequest("/api/me/");
-                    if (response.ok) {
-                        const data = await response.json();
-                        setUser(data);
-                    }
-                } else {
-                    localStorage.removeItem("access_token");
-                    localStorage.removeItem("refresh_token");
+        };
+        window.addEventListener("auth:expired", expired);
+        window.addEventListener("storage", storageChanged);
+        async function checkAuth() {
+            const session = getSessionId();
+            try {
+                if (!localStorage.getItem("access_token") && !localStorage.getItem("refresh_token")) return;
+                const response = await apiRequest("/api/me/");
+                if (response.ok) {
+                    const data = await response.json();
+                    if (active && session === getSessionId() && localStorage.getItem("access_token")) setUser(data);
                 }
-            }
+            } catch (error) { console.error("Не удалось проверить авторизацию:", error); }
+            finally { if (active) setLoading(false); }
         }
-        catch (error) {
-            console.error("Ошибка проверки авторизации:", error);
-        } finally {
-            setLoading(false);
-        }
+        checkAuth();
+        return () => {
+            active = false;
+            window.removeEventListener("auth:expired", expired);
+            window.removeEventListener("storage", storageChanged);
+        };
+    }, []);
+    function login(access, refresh, userData) {
+        saveTokens(access, refresh);
+        setUser(userData);
     }
-
-    checkAuth();
-}, []);
-
-
-function login(access, refresh, userData) {
-    localStorage.setItem("access_token", access);
-    localStorage.setItem("refresh_token", refresh);
-    setUser(userData);
+    async function logout() { await logoutSession(); setUser(null); }
+    return <AuthContext.Provider value={{ user, setUser, loading, login, logout }}>{children}</AuthContext.Provider>;
 }
-
-
-function logout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    setUser(null);
-}
-
-return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-
-}
-
-export function useAuth() {
-    return useContext(AuthContext)
-}
+// The existing public hook is kept here to preserve component imports.
+// eslint-disable-next-line react-refresh/only-export-components
+export function useAuth() { return useContext(AuthContext); }
