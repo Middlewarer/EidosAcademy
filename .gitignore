@@ -165,7 +165,10 @@ jspm_packages/
 
 # Gatsby files
 .cache/
-public
+/public
+
+# Server backups must never be committed.
+/backups/
 
 # Storybook build outputs
 .out
