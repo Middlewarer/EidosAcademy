@@ -91,7 +91,7 @@ class CoursesApiView(APIView):
                 return Response({"message": "Sorry, course was not published yet!"}, status=status.HTTP_404_NOT_FOUND)
 
             
-            serializer = CourseDetailSerializer(course)
+            serializer = CourseDetailSerializer(course, context={'request': request})
             module_counter = course.modules.count()
             topic_counter = Topic.objects.filter(module__course=course).count()
             topics = Topic.objects.filter(module__course=course).order_by("module__order", "order")
@@ -126,7 +126,7 @@ class CoursesApiView(APIView):
             })
         else:
             queryset = Course.objects.filter(is_published=True)
-            serializer = CourseListSerializer(queryset, many=True)
+            serializer = CourseListSerializer(queryset, many=True, context={'request': request})
             return Response({'courses': serializer.data})
 
 
@@ -227,7 +227,7 @@ class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated] 
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
     def patch(self, request):
@@ -235,7 +235,7 @@ class CurrentUserView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user, context={'request': request}).data)
 
 
 class ChangePasswordView(APIView):
@@ -363,10 +363,14 @@ class FeedbackView(APIView):
         serializer = CreateFeedbackSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         feedback = serializer.save(
-            user=request.user if request.user.is_authenticated else None
+            user=request.user if request.user.is_authenticated else None,
+            is_public=True,
         )
         return Response(
-            {'message': 'Спасибо! Сообщение отправлено.', 'id': feedback.id},
+            {
+                'message': 'Спасибо! Сообщение отправлено.',
+                'entry': FeedbackSerializer(feedback).data,
+            },
             status=status.HTTP_201_CREATED,
         )
 

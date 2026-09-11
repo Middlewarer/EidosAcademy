@@ -78,6 +78,9 @@ export default function FeedbackPage() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(getErrorMessage(data));
+      if (data.entry) {
+        setEntries((current) => [data.entry, ...current.filter((entry) => entry.id !== data.entry.id)]);
+      }
       setSent(true);
       setForm((current) => ({ ...current, message: "", page_url: "", website: "" }));
     } catch (requestError) {
@@ -160,7 +163,7 @@ export default function FeedbackPage() {
             <button className="feedback-submit" type="submit" disabled={submitting}>
               {submitting ? "Отправляем…" : "Отправить сообщение"}
             </button>
-            <p>Публичные записи появляются только после модерации.</p>
+            <p>Сообщение появится на открытой доске без вашей почты.</p>
           </div>
         </form>
 

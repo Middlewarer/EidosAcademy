@@ -129,9 +129,12 @@ function CourseDetail() {
               {assignError && <p role="alert">{assignError}</p>}
             </div>
 
-            <div className="course-detail-cover">
-              <div className="course-detail-cover-icon">PY</div>
-              <p>Обложка курса</p>
+            <div className={`course-detail-cover ${course?.course?.image ? "has-image" : ""}`}>
+              {course?.course?.image ? (
+                <img src={course.course.image} alt={`Обложка курса «${course.course.title}»`} />
+              ) : (
+                <><div className="course-detail-cover-icon">{course?.course?.title?.charAt(0) || "E"}</div><p>Обложка скоро появится</p></>
+              )}
             </div>
           </div>
         </section>

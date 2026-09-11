@@ -67,14 +67,14 @@ class ModuleDetailSerializer(ModelSerializer):
 class CourseListSerializer(ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'title', 'short_description', 'description', 'created_at']
+        fields = ['id', 'title', 'short_description', 'description', 'image', 'created_at']
 
 
 class CourseDetailSerializer(ModelSerializer):
     modules = ModuleSerializer(read_only=True, many=True)
     class Meta:
         model = Course
-        fields = ['title', 'short_description', 'created_at', 'modules']
+        fields = ['title', 'short_description', 'image', 'created_at', 'modules']
 
 class UserTopicProgressSerializer(ModelSerializer):
     class Meta:
@@ -146,6 +146,10 @@ class UserSerializer(ModelSerializer):
             'title': course.title,
             'short_description': course.short_description,
             'category': course.category.title,
+            'image': self.context['request'].build_absolute_uri(course.image.url)
+            if course.image and self.context.get('request') else (
+                course.image.url if course.image else None
+            ),
             'progress': int(100 * completed_topics / total_topics) if total_topics else 0,
             'continue_module_id': (
                 progress.last_topic.module_id if progress.last_topic_id else first_module_id

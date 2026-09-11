@@ -173,8 +173,10 @@ function ProfilePage() {
                   >
                   <div className="profile-course-card">
 
-                    <div className="profile-course-icon">
-                      PY
+                    <div className={`profile-course-icon ${user?.random_course?.image ? "has-image" : ""}`}>
+                      {user?.random_course?.image
+                        ? <img src={user.random_course.image} alt="" />
+                        : user?.random_course?.title?.charAt(0)}
                     </div>
 
                     <div className="profile-course-info">

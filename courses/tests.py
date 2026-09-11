@@ -246,8 +246,9 @@ class FeedbackTests(TestCase):
         feedback = Feedback.objects.get()
         self.assertIsNone(feedback.user)
         self.assertEqual(feedback.contact, 'tester@example.com')
-        self.assertFalse(feedback.is_public)
+        self.assertTrue(feedback.is_public)
         self.assertNotIn('contact', response.data)
+        self.assertEqual(response.data['entry']['message'], feedback.message)
 
     def test_authenticated_feedback_is_linked_to_user(self):
         user = User.objects.create_user(username='feedback-user', password='Strong!Pass42')

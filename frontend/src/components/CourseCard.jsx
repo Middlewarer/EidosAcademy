@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-const CourseCard = ({ title, description, id }) => {
+const CourseCard = ({ title, description, image, id }) => {
     return (
         <Link
           to={`/courses/${id}`}
@@ -9,7 +9,9 @@ const CourseCard = ({ title, description, id }) => {
         >
           <article className="course-card">
 
-            <div className="course-icon"></div>
+            <div className={`course-cover ${image ? "has-image" : ""}`}>
+              {image ? <img src={image} alt={`Обложка курса «${title}»`} loading="lazy" /> : <span aria-hidden="true">{title?.charAt(0)}</span>}
+            </div>
 
             <h3>{title}</h3>
 

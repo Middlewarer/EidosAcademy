@@ -57,7 +57,12 @@ class Course(CourseAndTimeStamp):
 
     short_description = models.CharField(max_length=300, default="This is the description of this course")
 
-    image = models.URLField(blank=True, null=True, help_text="Ссылка на обложку курса")
+    image = models.ImageField(
+        upload_to="course_covers/%Y/%m/",
+        blank=True,
+        null=True,
+        help_text="Обложка курса (рекомендуемое соотношение 16:9)",
+    )
 
     is_published = models.BooleanField(default=False)
 
