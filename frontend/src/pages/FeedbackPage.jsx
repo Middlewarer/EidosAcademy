@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
 import "../styles/FeedbackPage.css";
@@ -19,35 +19,43 @@ const statusClass = {
 
 function FeedbackEntry({ entry }) {
   const [expanded, setExpanded] = useState(false);
-  const isLong = entry.message.length > 260;
-  const formattedDate = new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(entry.created_at));
-
+  const [overflowing, setOverflowing] = useState(false);
+  const textRef = useRef(null);
+  useEffect(() => {
+    const element = textRef.current;
+    if (!element || expanded) return;
+    const measure = () => setOverflowing(element.scrollHeight > element.clientHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [expanded, entry.message]);
+  const author = entry.author || "Аноним";
   return (
-    <article className={`feedback-entry ${expanded ? "is-expanded" : ""}`}>
-      <div className="feedback-entry-meta">
-        <span className={`feedback-kind-badge ${entry.kind}`}>{entry.kind_label}</span>
-        <span className={`feedback-status ${statusClass[entry.status] || "neutral"}`}>{entry.status_label}</span>
+    <article className="community-message">
+      <div className={`community-avatar community-avatar--${entry.kind}`} aria-hidden="true">
+        {author.charAt(0).toUpperCase()}
       </div>
-      <div className="feedback-entry-body">
-        <span className="feedback-quote" aria-hidden="true">“</span>
-        <p className={expanded ? "is-expanded" : ""}>{entry.message}</p>
-        {isLong && (
-          <button type="button" className="feedback-entry-toggle" onClick={() => setExpanded((value) => !value)}>
-            {expanded ? "Свернуть" : "Читать полностью"}
+      <div className="community-message-content">
+        <div className="community-message-heading">
+          <div className="community-identity">
+            <strong>{author}</strong>
+            <time dateTime={entry.created_at}>{new Intl.DateTimeFormat("ru-RU", {
+              day: "numeric", month: "short", year: "numeric",
+            }).format(new Date(entry.created_at))}</time>
+          </div>
+          <span className={`community-status community-status--${statusClass[entry.status] || "neutral"}`}>
+            <span aria-hidden="true" />{entry.status_label}
+          </span>
+        </div>
+        <span className="community-type">{entry.kind_label}</span>
+        <p ref={textRef} id={`message-${entry.id}`} className={`community-text ${expanded ? "is-expanded" : ""}`}>{entry.message}</p>
+        {(overflowing || expanded) && (
+          <button type="button" className="community-expand" aria-expanded={expanded}
+            aria-controls={`message-${entry.id}`} onClick={() => setExpanded(!expanded)}>
+            {expanded ? "Свернуть сообщение ↑" : "Показать полностью ↓"}
           </button>
         )}
       </div>
-      <footer>
-        <span className="feedback-author-avatar" aria-hidden="true">{entry.author.charAt(0).toUpperCase()}</span>
-        <span className="feedback-author">
-          <strong>{entry.author}</strong>
-          <time dateTime={entry.created_at}>{formattedDate}</time>
-        </span>
-      </footer>
     </article>
   );
 }
@@ -64,6 +72,10 @@ export default function FeedbackPage() {
   const { user } = useAuth();
   const [entries, setEntries] = useState([]);
   const [feedLoading, setFeedLoading] = useState(true);
+  const [feedError, setFeedError] = useState(false);
+  const [reload, setReload] = useState(0);
+  const [filter, setFilter] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(6);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -84,16 +96,18 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     let active = true;
+    setFeedLoading(true);
+    setFeedError(false);
     apiRequest("/api/feedback/", { auth: false })
       .then(async (response) => {
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (active) setEntries(data.entries || []);
       })
-      .catch(() => {})
+      .catch(() => { if (active) setFeedError(true); })
       .finally(() => { if (active) setFeedLoading(false); });
     return () => { active = false; };
-  }, []);
+  }, [reload]);
 
   const change = (event) => {
     const { name, value } = event.target;
@@ -116,6 +130,8 @@ export default function FeedbackPage() {
       if (data.entry) {
         setEntries((current) => [data.entry, ...current.filter((entry) => entry.id !== data.entry.id)]);
       }
+      setFilter("all");
+      setVisibleCount(6);
       setSent(true);
       setForm((current) => ({ ...current, message: "", page_url: "", website: "" }));
     } catch (requestError) {
@@ -124,6 +140,8 @@ export default function FeedbackPage() {
       setSubmitting(false);
     }
   };
+
+  const filteredEntries = entries.filter((entry) => filter === "all" || entry.kind === filter);
 
   const currentKind = kinds.find((item) => item.value === form.kind);
 
@@ -141,7 +159,7 @@ export default function FeedbackPage() {
       </section>
 
       <section className="container feedback-workspace">
-        <form className="feedback-form" onSubmit={submit}>
+        <form id="feedback-form" className="feedback-form" onSubmit={submit}>
           <div className="feedback-form-heading">
             <span>01</span>
             <div>
@@ -214,23 +232,46 @@ export default function FeedbackPage() {
         </aside>
       </section>
 
-      <section className="feedback-community">
-        <div className="container">
-          <div className="feedback-section-heading">
-            <div><span className="feedback-eyebrow">Открытая доска</span><h2>Голос сообщества</h2></div>
-            <p>Опубликованные отзывы, идеи и ошибки, над которыми идёт работа.</p>
-          </div>
-          {feedLoading ? (
-            <p className="feedback-empty">Загружаем сообщения…</p>
-          ) : entries.length ? (
-            <div className="feedback-entry-grid">
-              {entries.map((entry) => (
-                <FeedbackEntry entry={entry} key={entry.id} />
-              ))}
+      <section className="community-board" aria-labelledby="community-title">
+        <div className="container community-container">
+          <div className="community-intro">
+            <div>
+              <span className="community-eyebrow">Сделаем обучение лучше. Вместе.</span>
+              <h2 id="community-title">Вы пишете — мы слышим.</h2>
+              <p>Впечатления от обучения, хорошие идеи и то, что стоит исправить.</p>
             </div>
-          ) : (
-            <p className="feedback-empty">Здесь скоро появятся первые сообщения. Можете стать первым.</p>
-          )}
+            <a className="community-write" href="#feedback-form">Оставить сообщение <span aria-hidden="true">↗</span></a>
+          </div>
+          <div className="community-panel">
+            <div className="community-toolbar">
+              <div className="community-filters" role="group" aria-label="Тип сообщений">
+                {[{value: "all", title: "Все"}, {value: "review", title: "Отзывы"},
+                  {value: "idea", title: "Идеи"}, {value: "bug", title: "Ошибки"}].map((item) => (
+                  <button key={item.value} type="button" aria-pressed={filter === item.value}
+                    onClick={() => { setFilter(item.value); setVisibleCount(6); }}>
+                    {item.title}<span>{entries.filter((entry) => item.value === "all" || entry.kind === item.value).length}</span>
+                  </button>
+                ))}
+              </div>
+              <span className="community-order">Сначала новые</span>
+            </div>
+            {feedLoading ? <div className="community-empty" role="status">Загружаем сообщения…</div>
+              : feedError ? <div className="community-empty" role="alert"><h3>Не удалось загрузить сообщения</h3>
+                <button type="button" className="community-expand" onClick={() => setReload(reload + 1)}>Попробовать снова</button></div>
+              : filteredEntries.length ? <>
+                <div className="community-list">
+                  {filteredEntries.slice(0, visibleCount).map((entry) => <FeedbackEntry entry={entry} key={entry.id} />)}
+                </div>
+                <div className="community-bottom">
+                  <span>Показано {Math.min(visibleCount, filteredEntries.length)} из {filteredEntries.length}</span>
+                  {visibleCount < filteredEntries.length && <button type="button" onClick={() => setVisibleCount(visibleCount + 6)}>Ещё сообщения ↓</button>}
+                </div>
+              </> : <div className="community-empty"><span aria-hidden="true">✦</span>
+                <h3>{filter === "all" ? "Здесь начинается разговор" : "Пока без сообщений"}</h3>
+                <p>{filter === "all" ? "Поделитесь первым впечатлением. Даже пара строк поможет нам." : "В этой категории ещё нет публикаций. Ваша может стать первой."}</p>
+                <a href="#feedback-form">Написать сообщение ↗</a>
+              </div>}
+          </div>
         </div>
       </section>
     </main>
