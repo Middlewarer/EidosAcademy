@@ -17,6 +17,41 @@ const statusClass = {
   rejected: "neutral",
 };
 
+function FeedbackEntry({ entry }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = entry.message.length > 260;
+  const formattedDate = new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(entry.created_at));
+
+  return (
+    <article className={`feedback-entry ${expanded ? "is-expanded" : ""}`}>
+      <div className="feedback-entry-meta">
+        <span className={`feedback-kind-badge ${entry.kind}`}>{entry.kind_label}</span>
+        <span className={`feedback-status ${statusClass[entry.status] || "neutral"}`}>{entry.status_label}</span>
+      </div>
+      <div className="feedback-entry-body">
+        <span className="feedback-quote" aria-hidden="true">“</span>
+        <p className={expanded ? "is-expanded" : ""}>{entry.message}</p>
+        {isLong && (
+          <button type="button" className="feedback-entry-toggle" onClick={() => setExpanded((value) => !value)}>
+            {expanded ? "Свернуть" : "Читать полностью"}
+          </button>
+        )}
+      </div>
+      <footer>
+        <span className="feedback-author-avatar" aria-hidden="true">{entry.author.charAt(0).toUpperCase()}</span>
+        <span className="feedback-author">
+          <strong>{entry.author}</strong>
+          <time dateTime={entry.created_at}>{formattedDate}</time>
+        </span>
+      </footer>
+    </article>
+  );
+}
+
 function getErrorMessage(data) {
   if (typeof data?.detail === "string") return data.detail;
   const first = Object.values(data || {})[0];
@@ -190,14 +225,7 @@ export default function FeedbackPage() {
           ) : entries.length ? (
             <div className="feedback-entry-grid">
               {entries.map((entry) => (
-                <article className="feedback-entry" key={entry.id}>
-                  <div className="feedback-entry-meta">
-                    <span className={`feedback-kind-badge ${entry.kind}`}>{entry.kind_label}</span>
-                    <span className={`feedback-status ${statusClass[entry.status] || "neutral"}`}>{entry.status_label}</span>
-                  </div>
-                  <p>“{entry.message}”</p>
-                  <footer><strong>{entry.author}</strong><time dateTime={entry.created_at}>{new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" }).format(new Date(entry.created_at))}</time></footer>
-                </article>
+                <FeedbackEntry entry={entry} key={entry.id} />
               ))}
             </div>
           ) : (
