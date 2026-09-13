@@ -1,10 +1,11 @@
 import { apiRequest } from "../components/api/apiRequest";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/Login.css";
 import {toast} from "react-hot-toast";
 import  {useNavigate}  from "react-router-dom";
 
 function Register() {
+  const location = useLocation();
   const navigator = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ function Register() {
 
 
       toast.success("Регистрация прошла успешно")
-      navigator('/login');  
+      navigator('/login', { state: location.state });  
     }
 
     registerUser().catch(() => toast.error("Не удалось связаться с сервером."));
@@ -62,7 +63,7 @@ function Register() {
 
           <form className="login-form" onSubmit={handleSubmit}>
             <label className="login-field">
-              <span>username</span>
+              <span>Имя пользователя</span>
               <input
                 type="text"
                 name="username"
@@ -98,7 +99,7 @@ function Register() {
 
           <p className="login-footer-text">
             Уже есть аккаунт?{" "}
-            <Link to="/login" className="login-link">
+            <Link to="/login" state={location.state} className="login-link">
               Войти
             </Link>
           </p>

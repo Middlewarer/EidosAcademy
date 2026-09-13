@@ -8,6 +8,7 @@ from .models import (
     Feedback,
     Module,
     Topic,
+    TopicLesson,
     UserCourseProgress,
     UserTopicProgress,
 )
@@ -146,6 +147,31 @@ class CourseLearningFlowTests(TestCase):
         self.second_topic = Topic.objects.create(
             module=self.second_module, title='Finish', description='Topic', order=0
         )
+
+        TopicLesson.objects.create(parent_topic=self.topic, content='Первый материал')
+        TopicLesson.objects.create(parent_topic=self.second_topic, content='Второй материал')
+
+    def test_public_course_and_all_lesson_materials(self):
+        self.client.force_authenticate(user=None)
+        detail = self.client.get(f'/api/courses/{self.course.id}/')
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(detail.data['course']['category_title'], 'Backend')
+        self.client.force_authenticate(self.user)
+        extra = TopicLesson.objects.create(parent_topic=self.topic, type='video',
+            video_url='https://example.com/lesson.mp4', content='Видео', order=2)
+        response = self.client.get(f'/api/modules/{self.module.id}/')
+        self.assertEqual(response.data['module']['course_id'], self.course.id)
+        lessons = response.data['module']['topics'][0]['lessons']
+        self.assertEqual(len(lessons), 2)
+        self.assertEqual(lessons[1]['id'], extra.id)
+        self.assertEqual(lessons[1]['type'], 'video')
+        self.assertEqual(lessons[1]['video_url'], extra.video_url)
+
+    def test_empty_topic_cannot_be_completed(self):
+        TopicLesson.objects.filter(parent_topic=self.topic).delete()
+        response = self.client.post('/api/progress/complete/', {'topic': self.topic.id})
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(UserTopicProgress.objects.filter(user=self.user, topic=self.topic, completed=True).exists())
 
     def test_assign_is_idempotent_and_course_reports_assignment(self):
         first = self.client.post('/api/assign/', {'course_id': self.course.id}, format='json')

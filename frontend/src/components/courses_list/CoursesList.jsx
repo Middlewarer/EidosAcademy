@@ -32,8 +32,8 @@ const CoursesList = (props) => {
     if (activeFilter === "All") {
         return true;
     }
-    return course.title.includes(activeFilter);
-}).filter((course) => course.title.includes(search));
+    return course.title.toLocaleLowerCase().includes(activeFilter.toLocaleLowerCase());
+}).filter((course) => course.title.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()));
 
     
 

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { apiRequest, saveTokens } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast"
 
 function Login() {
+    const location = useLocation();
+    const destination = location.state?.from;
+    const returnTo = typeof destination === "string" && destination.startsWith("/") && !destination.startsWith("//") && !destination.startsWith("/login") && !destination.startsWith("/register") ? destination : "/courses";
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { user } = useAuth();
@@ -45,7 +48,7 @@ function Login() {
     );
 
     toast.success("Вход выполнен!");
-    navigator("/courses");
+    navigator(returnTo, { replace: true });
 } else {
     toast.error(response.status === 429 ? "Слишком много попыток. Попробуйте позже." : "Не удалось войти. Проверь логин и пароль.");
 }
@@ -58,9 +61,9 @@ function Login() {
 
     useEffect(() => {
         if (user) {
-            return navigator("/courses")
+            return navigator(returnTo, { replace: true })
         }
-    }, [user, navigator])
+    }, [user, navigator, returnTo])
 
 
     return (
@@ -98,7 +101,7 @@ function Login() {
         </form>
 
         <p style={styles.registerText}>
-          Нет аккаунта? <Link to="/register" style={styles.registerLink}>Зарегистрироваться</Link>
+          Нет аккаунта? <Link to="/register" state={{ from: returnTo }} style={styles.registerLink}>Зарегистрироваться</Link>
         </p>
       </div>
     </div>

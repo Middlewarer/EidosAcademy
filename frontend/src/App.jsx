@@ -30,9 +30,10 @@ const App = () => {
                     <Route path="/courses" element={<Courses />} />
                     <Route path="/feedback" element={<FeedbackPage />} />
                     
+                    <Route path="/courses/:courseId" element={<CourseDetail />} />
                     {/* Защищенные маршруты */}
                     <Route element={<ProtectedRoute />}>
-                        <Route path="/courses/:courseId" element={<CourseDetail />} />
+
                         <Route path="/courses/:courseId/modules/:moduleId" element={<ModulePage />} />
                         <Route path="/profile" element={<ProfilePage />} />
                         <Route path="/settings" element={<ProfileSettings />} />
