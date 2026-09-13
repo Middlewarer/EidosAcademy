@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 
-const STATUS_LABELS = { not_started: "Не начат", in_progress: "В процессе", completed: "Пройден" };
+const STATUS_LABELS = { not_started: "Не начата", in_progress: "В процессе", completed: "Пройдена" };
 
 function updateOutlineTopic(outline, topicId, status) {
   return outline.map((moduleItem) => {

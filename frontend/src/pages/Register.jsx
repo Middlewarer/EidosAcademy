@@ -38,7 +38,7 @@ function Register() {
 
 
       toast.success("Регистрация прошла успешно")
-      navigator('/login', { state: location.state });  
+      navigator('/login', { state: location.state });
     }
 
     registerUser().catch(() => toast.error("Не удалось связаться с сервером."));
