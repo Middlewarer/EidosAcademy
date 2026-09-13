@@ -1,7 +1,8 @@
 import "../styles/ModulePage.css";
+import CourseOutline from "../components/CourseOutline";
 import MarkdownContent from "../components/MarkdownContent";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiRequest } from "../components/api/apiRequest";
 
 const STATUS_LABELS = { not_started: "Не начат", in_progress: "В процессе", completed: "Пройден" };
@@ -19,7 +20,10 @@ function updateOutlineTopic(outline, topicId, status) {
 function ModulePage() {
   const { courseId, moduleId } = useParams();
   const navigate = useNavigate();
-  const [selectedTopicId, setSelectedTopicId] = useState(null);
+  const [searchParams] = useSearchParams();
+  const requestedTopic = searchParams.get("topic");
+  const [lastTopicId, setLastTopicId] = useState(null);
+  const selectionRef = useRef(null);
   const [module, setModule] = useState(null);
   const [outline, setOutline] = useState([]);
   const [courseProgress, setCourseProgress] = useState(null);
@@ -51,22 +55,9 @@ function ModulePage() {
     setOutline((current) => updateOutlineTopic(current, topicId, status));
   }, []);
 
-  const openTopic = async (destination) => {
+  const openTopic = (destination) => {
     if (!destination) return;
-    setProgressError(null);
-    try {
-      const visit = await saveTopicVisit(destination.id);
-      if (destination.moduleId !== Number(moduleId)) {
-        navigate(`/courses/${courseId}/modules/${destination.moduleId}?topic=${destination.id}`);
-        return;
-      }
-      setSelectedTopicId(destination.id);
-      markTopicStatus(destination.id, visit.status);
-      navigate(`/courses/${courseId}/modules/${moduleId}?topic=${destination.id}`, { replace: true });
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (visitError) {
-      setProgressError(visitError.message);
-    }
+    navigate(`/courses/${courseId}/modules/${destination.moduleId}?topic=${destination.id}`);
   };
 
   useEffect(() => {
@@ -78,23 +69,14 @@ function ModulePage() {
         setProgressError(null);
         const data = await getModule();
         if (!active) return;
-        const requestedTopicId = Number(new URLSearchParams(window.location.search).get("topic"));
-        const initialTopic = data.module.topics?.find((topic) => topic.id === requestedTopicId)
-          ?? data.module.topics?.find((topic) => topic.id === data.last_topic_id)
-          ?? data.module.topics?.[0]
-          ?? null;
+        if (Number(data.module.course_id) !== Number(courseId)) {
+          throw new Error("Этот модуль не относится к выбранному курсу.");
+        }
         setModule(data.module);
         setOutline(data.course_outline ?? []);
         setCourseProgress(data.course_progress);
-        setSelectedTopicId(initialTopic?.id ?? null);
-        if (initialTopic) {
-          try {
-            const visit = await saveTopicVisit(initialTopic.id);
-            if (active) markTopicStatus(initialTopic.id, visit.status);
-          } catch (visitError) {
-            if (active) setProgressError(visitError.message);
-          }
-        }
+        setLastTopicId(data.last_topic_id);
+
       } catch (loadError) {
         if (active) setError(loadError.message);
       } finally {
@@ -103,11 +85,31 @@ function ModulePage() {
     }
     loadModule();
     return () => { active = false; };
-  }, [getModule, markTopicStatus, saveTopicVisit]);
+  }, [getModule, courseId]);
 
-  const topics = module?.topics ?? [];
-  const selectedTopic = topics.find((topic) => topic.id === selectedTopicId) ?? null;
-  const selectedLesson = selectedTopic?.lessons?.[0];
+  const topics = module?.id === Number(moduleId) ? module.topics ?? [] : [];
+  const selectedTopic = requestedTopic
+    ? topics.find((topic) => topic.id === Number(requestedTopic)) ?? null
+    : topics.find((topic) => topic.id === lastTopicId) ?? topics[0] ?? null;
+  const selectedTopicId = selectedTopic?.id;
+  selectionRef.current = `${moduleId}:${selectedTopicId}`;
+  const lessons = selectedTopic?.lessons ?? [];
+  const hasMaterial = lessons.some((lesson) => lesson.content?.trim() || lesson.video_url);
+  useEffect(() => {
+    if (isLoading || !selectedTopicId) return;
+    let active = true;
+    setProgressError(null);
+    setIsCompleting(false);
+    if (!requestedTopic) {
+      navigate(`/courses/${courseId}/modules/${moduleId}?topic=${selectedTopicId}`, { replace: true });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+    saveTopicVisit(selectedTopicId).then((visit) => {
+      if (active) markTopicStatus(selectedTopicId, visit.status);
+    }).catch((error) => { if (active) setProgressError(error.message); });
+    return () => { active = false; };
+  }, [selectedTopicId, isLoading, requestedTopic, courseId, moduleId, navigate, saveTopicVisit, markTopicStatus]);
   const flatTopics = useMemo(() => outline.flatMap((moduleItem) =>
     moduleItem.topics.map((topic) => ({ ...topic, moduleId: moduleItem.id, moduleTitle: moduleItem.title }))
   ), [outline]);
@@ -116,7 +118,8 @@ function ModulePage() {
   const nextTopic = currentIndex >= 0 ? flatTopics[currentIndex + 1] ?? null : null;
 
   const completeSelectedTopic = async () => {
-    if (!selectedTopic || selectedTopic.status === "completed" || isCompleting) return;
+    if (!hasMaterial || !selectedTopic || selectedTopic.status === "completed" || isCompleting) return;
+    const selection = selectionRef.current;
     setIsCompleting(true);
     setProgressError(null);
     try {
@@ -124,8 +127,9 @@ function ModulePage() {
         method: "POST",
         body: JSON.stringify({ topic: selectedTopic.id }),
       });
-      if (!response.ok) throw new Error("Не удалось отметить топик пройденным.");
+      if (!response.ok) throw new Error("Не удалось отметить тему пройденной.");
       const data = await response.json();
+      if (selection !== selectionRef.current) return;
       setOutline(data.course_outline);
       setCourseProgress(data.course_progress);
       setModule((current) => current ? {
@@ -134,9 +138,9 @@ function ModulePage() {
         topics: current.topics.map((topic) => topic.id === selectedTopic.id ? { ...topic, status: "completed" } : topic),
       } : current);
     } catch (completeError) {
-      setProgressError(completeError.message);
+      if (selection === selectionRef.current) setProgressError(completeError.message);
     } finally {
-      setIsCompleting(false);
+      if (selection === selectionRef.current) setIsCompleting(false);
     }
   };
 
@@ -160,55 +164,32 @@ function ModulePage() {
       </div></section>
 
       <section className="module-page-content"><div className="container module-page-grid">
-        <aside className="module-page-topics-sidebar" aria-label="Содержание курса">
-          <div className="course-outline-heading"><div><span>Содержание</span><h2>Модули курса</h2></div><strong>{courseProgress?.percent ?? 0}%</strong></div>
-          {outline.length === 0 ? <p>В курсе пока нет модулей.</p> : (
-            <ol className="course-outline">
-              {outline.map((moduleItem, moduleIndex) => (
-                <li key={moduleItem.id} className={`course-outline-module is-${moduleItem.status} ${moduleItem.id === Number(moduleId) ? "is-current" : ""}`}>
-                  <Link className="course-outline-module-link" to={`/courses/${courseId}/modules/${moduleItem.id}${moduleItem.topics[0] ? `?topic=${moduleItem.topics[0].id}` : ""}`}>
-                    <span className="course-outline-module-number">{moduleIndex + 1}</span>
-                    <span className="course-outline-module-copy"><strong>{moduleItem.title}</strong><small>{STATUS_LABELS[moduleItem.status]}</small></span>
-                    <span className="course-outline-status" aria-label={STATUS_LABELS[moduleItem.status]}>{moduleItem.status === "completed" ? "✓" : ""}</span>
-                  </Link>
-                  <ol className="module-page-topics">
-                    {moduleItem.topics.map((topic, topicIndex) => (
-                      <li key={topic.id} className={`is-${topic.status} ${topic.id === selectedTopicId ? "is-active" : ""}`}>
-                        {moduleItem.id === Number(moduleId) ? (
-                          <button type="button" onClick={() => openTopic({ ...topic, moduleId: moduleItem.id })} aria-current={topic.id === selectedTopicId ? "step" : undefined}>
-                            <span className="module-page-topic-number">{topic.status === "completed" ? "✓" : topicIndex + 1}</span>
-                            <span className="module-page-topic-copy"><strong>{topic.title}</strong><small>{STATUS_LABELS[topic.status]}</small></span>
-                          </button>
-                        ) : (
-                          <Link to={`/courses/${courseId}/modules/${moduleItem.id}?topic=${topic.id}`}>
-                            <span className="module-page-topic-number">{topic.status === "completed" ? "✓" : topicIndex + 1}</span>
-                            <span className="module-page-topic-copy"><strong>{topic.title}</strong><small>{STATUS_LABELS[topic.status]}</small></span>
-                          </Link>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
-                </li>
-              ))}
-            </ol>
-          )}
-        </aside>
+        <CourseOutline outline={outline} courseId={courseId} moduleId={Number(moduleId)}
+          topicId={selectedTopicId} progress={courseProgress} />
 
         <article className="module-page-lesson">
           {progressError && <p className="module-progress-error" role="alert">{progressError}</p>}
           {selectedTopic ? <>
             <div className="lesson-status-row"><span className="module-page-lesson-type">{selectedTopic.title}</span><span className={`lesson-status is-${selectedTopic.status}`}>{STATUS_LABELS[selectedTopic.status]}</span></div>
-            {selectedLesson ? <MarkdownContent content={selectedLesson.content} /> : <p>В этом топике пока нет материала.</p>}
-            <div className="topic-completion"><div><strong>{selectedTopic.status === "completed" ? "Топик пройден" : "Материал изучен?"}</strong><p>{selectedTopic.status === "completed" ? "Результат сохранён в вашем прогрессе." : "Отметьте топик пройденным, когда закончите изучение."}</p></div>
-              <button type="button" onClick={completeSelectedTopic} disabled={selectedTopic.status === "completed" || isCompleting}>{selectedTopic.status === "completed" ? "✓ Пройдено" : isCompleting ? "Сохраняем…" : "Завершить топик"}</button>
+            {hasMaterial ? lessons.map((lesson, index) => (
+              <section className="learning-material" key={lesson.id ?? index}>
+                {lesson.type === "equal" && <h2>Практическое задание</h2>}
+                {lesson.type === "video" && lesson.video_url && /^https?:\/\//i.test(lesson.video_url) && (
+                  <a className="learning-video" href={lesson.video_url} target="_blank" rel="noopener noreferrer">Открыть видео ↗ <small>В новой вкладке</small></a>
+                )}
+                {lesson.content && <MarkdownContent content={lesson.content} />}
+              </section>
+            )) : <p>Материалы этой темы ещё готовятся. Пока можно перейти к другой теме.</p>}
+            <div className="topic-completion"><div><strong>{selectedTopic.status === "completed" ? "Тема пройдена" : "Материал изучен?"}</strong><p>{selectedTopic.status === "completed" ? "Результат сохранён в вашем прогрессе." : "Отметьте тему пройденной, когда закончите изучение."}</p></div>
+              <button type="button" onClick={completeSelectedTopic} disabled={!hasMaterial || selectedTopic.status === "completed" || isCompleting}>{selectedTopic.status === "completed" ? "✓ Пройдено" : isCompleting ? "Сохраняем…" : "Завершить тему"}</button>
             </div>
-          </> : <p>В этом модуле пока нет топиков.</p>}
+          </> : <p>Выберите доступную тему в содержании курса.</p>}
 
-          {selectedTopic && <nav className="lesson-navigation" aria-label="Навигация между топиками">
-            <button type="button" className="lesson-navigation-button lesson-navigation-button--previous" onClick={() => openTopic(previousTopic)} disabled={!previousTopic}><span className="lesson-navigation-arrow" aria-hidden="true">←</span><span className="lesson-navigation-copy"><small>Предыдущий топик</small><strong>{previousTopic?.title ?? "Начало курса"}</strong></span></button>
-            <button type="button" className="lesson-navigation-button lesson-navigation-button--next" onClick={() => openTopic(nextTopic)} disabled={!nextTopic}><span className="lesson-navigation-copy"><small>Следующий топик</small><strong>{nextTopic?.title ?? "Курс завершён"}</strong></span><span className="lesson-navigation-arrow" aria-hidden="true">→</span></button>
+          {selectedTopic && <nav className="lesson-navigation" aria-label="Навигация между темами">
+            <button type="button" className="lesson-navigation-button lesson-navigation-button--previous" onClick={() => openTopic(previousTopic)} disabled={!previousTopic}><span className="lesson-navigation-arrow" aria-hidden="true">←</span><span className="lesson-navigation-copy"><small>Предыдущая тема</small><strong>{previousTopic?.title ?? "Начало курса"}</strong></span></button>
+            <button type="button" className="lesson-navigation-button lesson-navigation-button--next" onClick={() => openTopic(nextTopic)} disabled={!nextTopic}><span className="lesson-navigation-copy"><small>Следующая тема</small><strong>{nextTopic?.title ?? "Последняя тема курса"}</strong></span><span className="lesson-navigation-arrow" aria-hidden="true">→</span></button>
           </nav>}
-          {courseProgress?.status === "completed" && <div className="course-complete-message" role="status"><strong>Курс пройден!</strong><span>Все топики отмечены как завершённые.</span></div>}
+          {courseProgress?.status === "completed" && <div className="course-complete-message" role="status"><strong>Курс пройден!</strong><span>Все темы отмечены как завершённые.</span></div>}
         </article>
       </div></section>
     </main></div>

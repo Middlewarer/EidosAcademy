@@ -12,7 +12,7 @@ function Hero() {
 
 
               <div className="badge">
-                💡 Образование нового поколения
+                💡 EidosAcademy — учимся шаг за шагом
               </div>
 
 
@@ -34,13 +34,13 @@ function Hero() {
 
               <Link to={"/courses"}>
                 <button className="primary-btn">
-                  Начать обучение
+                  Выбрать курс
                 </button>
               </Link>
 
-                <Link to={"/courses"} >
+                <Link to="/feedback" >
                 <button className="secondary-btn">
-                  Все курсы
+                  Задать вопрос
                 </button>
                 </Link>
 
@@ -48,30 +48,9 @@ function Hero() {
 
 
               <div className="hero-info">
-
-                <div>
-                  <strong>
-                    1000+
-                  </strong>
-                  студентов
-                </div>
-
-
-                <div>
-                  <strong>
-                    Много
-                  </strong>
-                  проектов
-                </div>
-
-
-                <div>
-                  <strong>
-                    Куча
-                  </strong>
-                  направлений :)
-                </div>
-
+                <div><strong>В своём темпе</strong>без расписания</div>
+                <div><strong>По темам</strong>понятная программа</div>
+                <div><strong>С прогрессом</strong>продолжайте с места остановки</div>
               </div>
 
 

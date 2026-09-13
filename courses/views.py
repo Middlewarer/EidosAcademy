@@ -293,6 +293,8 @@ class CompleteTopicView(APIView):
         serializer = TopicVisitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         topic = serializer.validated_data['topic']
+        if not any(lesson.content.strip() or lesson.video_url for lesson in topic.topiclesson_set.all()):
+            return Response({'detail': 'В этой теме пока нет материалов.'}, status=400)
 
         topic_progress, _ = UserTopicProgress.objects.get_or_create(
             user=request.user,

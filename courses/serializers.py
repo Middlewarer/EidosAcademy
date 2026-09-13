@@ -31,14 +31,13 @@ class ModuleSerializer(ModelSerializer):
 class TopicLessonSerializer(ModelSerializer):
     class Meta:
         model = TopicLesson
-        fields = ['content']
+        fields = ['id', 'type', 'content', 'video_url', 'order']
 
 class TopicDetailSerializer(ModelSerializer):
-    lessons = TopicLessonSerializer(
-        source='topiclesson_set',
-        many=True,
-        read_only=True
-    )
+    lessons = serializers.SerializerMethodField()
+
+    def get_lessons(self, obj):
+        return TopicLessonSerializer(obj.topiclesson_set.order_by('order', 'id'), many=True).data
     class Meta:
         model = Topic
         fields = ['id', 'title', 'description', 'order', 'lessons']
@@ -50,7 +49,7 @@ class ModuleDetailSerializer(ModelSerializer):
 
     class Meta:
         model = Module
-        fields = ['id', 'title', 'description', 'order', 'course_title', 'topics', 'next_module_id']
+        fields = ['id', 'title', 'description', 'order', 'course_id', 'course_title', 'topics', 'next_module_id']
 
     def get_next_module_id(self, obj):
         obj_id = (
@@ -71,10 +70,11 @@ class CourseListSerializer(ModelSerializer):
 
 
 class CourseDetailSerializer(ModelSerializer):
+    category_title = serializers.CharField(source="category.title", read_only=True)
     modules = ModuleSerializer(read_only=True, many=True)
     class Meta:
         model = Course
-        fields = ['title', 'short_description', 'image', 'created_at', 'modules']
+        fields = ['title', 'description', 'category_title', 'short_description', 'image', 'created_at', 'modules']
 
 class UserTopicProgressSerializer(ModelSerializer):
     class Meta:

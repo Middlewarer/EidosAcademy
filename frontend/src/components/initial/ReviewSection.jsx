@@ -1,91 +1,23 @@
-const ReviewSection = () => {
-    return (
-        <section id="reviews" className="reviews">
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { apiRequest } from "../api/apiRequest";
 
-
-          <div className="container">
-
-
-            <div className="section-title">
-
-              <span>
-                Отзывы
-              </span>
-
-
-              <h2>
-                Что говорят наши студенты
-              </h2>
-
-
-            </div>
-
-
-
-
-            <div className="reviews-grid">
-
-
-              <div className="review">
-
-                <p>
-                  "После курса я смог собрать
-                  свой первый полноценный backend
-                  проект на Django."
-                </p>
-
-
-                <strong>
-                  Алексей
-                </strong>
-
-
-              </div>
-
-
-
-              <div className="review">
-
-                <p>
-                  "Понравился подход через практику.
-                  Теория сразу превращается в код."
-                </p>
-
-
-                <strong>
-                  Мария
-                </strong>
-
-
-              </div>
-
-
-
-              <div className="review">
-
-                <p>
-                  "Хорошая структура обучения.
-                  Понятно, куда двигаться дальше."
-                </p>
-
-
-                <strong>
-                  Дмитрий
-                </strong>
-
-
-              </div>
-
-
-
-            </div>
-
-
-          </div>
-
-
-        </section>
-    )
+export default function ReviewSection() {
+  const [reviews, setReviews] = useState([]);
+  useEffect(() => {
+    let active = true;
+    apiRequest("/api/feedback/", { auth: false }).then(async (response) => {
+      if (!response.ok) return;
+      const data = await response.json();
+      if (active) setReviews((data.entries || []).filter((entry) => entry.kind === "review").slice(0, 3));
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
+  return <section id="reviews" className="reviews"><div className="container">
+    <div className="section-title"><span>Обратная связь</span><h2>Впечатления учеников</h2></div>
+    {reviews.length > 0 ? <div className="reviews-grid">{reviews.map((review) =>
+      <article className="review" key={review.id}><p style={{ overflowWrap: "anywhere", whiteSpace: "pre-wrap" }}>{review.message.length > 220 ? `${review.message.slice(0, 220)}…` : review.message}</p><strong>{review.author}</strong></article>
+    )}</div> : <p>Уже попробовали учиться? Поделитесь впечатлением — это поможет улучшить курсы.</p>}
+    <Link to="/feedback" className="community-write">Отзывы и вопросы →</Link>
+  </div></section>;
 }
-
-export default ReviewSection

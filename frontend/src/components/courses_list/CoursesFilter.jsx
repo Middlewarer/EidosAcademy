@@ -9,7 +9,7 @@ const CoursesFilter = (props) => {
         <section className="courses-filters">
           <div className="container courses-filters-list">
             {
-                filters.map((filter) => (<Button key={filter} className={activeFilter === filter ? "is-active" : ""} onClick={() => setActiveFilter(filter)}> {filter} </Button>))
+                filters.map((filter) => (<Button key={filter} className={activeFilter === filter ? "is-active" : ""} onClick={() => setActiveFilter(filter)}> {filter === "All" ? "Все курсы" : filter} </Button>))
             }
           </div>
         </section>

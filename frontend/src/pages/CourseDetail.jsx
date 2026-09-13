@@ -1,4 +1,5 @@
 import "../styles/CourseDetail.css";
+import MarkdownContent from "../components/MarkdownContent";
 import Crumbs from "../components/Crumbs";
 import { useCallback, useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
@@ -31,6 +32,10 @@ function CourseDetail() {
     const handleCourseAction = async () => {
       if (!modules[0] || isAssigning) return;
 
+      if (!user) {
+        navigate("/login", { state: { from: `/courses/${courseId}` } });
+        return;
+      }
       const targetModuleId = continueModuleId || modules[0].id;
 
       if (isAssigned) {
@@ -63,10 +68,14 @@ function CourseDetail() {
     };
 
     useEffect(() => {
+    let active = true;
+    setCourse(null);
+    setError(null);
     const loadCourse = async () => {
         try {
             const data = await getCourse();  // Здесь приходит ВЕСЬ ответ
             
+            if (!active) return;
             // Сохраняем курс
             setCourse(data);
             setIsAssigned(data.is_assigned);
@@ -76,16 +85,16 @@ function CourseDetail() {
             setModules(data.course.modules || []);
             
         } catch (err) {
-            setError(err.message);
+            if (active) setError(err.message);
         }
     };
     
     loadCourse();
+    return () => { active = false; };
 }, [getCourse]);
 
-  if (loading) return <p role="status">Загрузка курса…</p>;
-  if (error) return <p role="alert">{error}</p>;
-  if (user) {
+  if (error) return <div className="course-detail-page"><Crumbs /><p role="alert">{error}</p></div>;
+  if (loading || !course) return <p className="module-page-state" role="status">Загрузка курса…</p>;
   return (
     
     <div className="course-detail-page">
@@ -97,7 +106,7 @@ function CourseDetail() {
         <section className="course-detail-hero">
           <div className="container course-detail-hero-grid">
             <div className="course-detail-info">
-              <span className="course-detail-label">Python</span>
+              <span className="course-detail-label">{course.course.category_title}</span>
 
               <h1>{course?.course?.title}</h1>
 
@@ -112,17 +121,14 @@ function CourseDetail() {
                 </div>
                 <div>
                   <strong>{course?.topic_counter}</strong>
-                  <span>уроков</span>
+                  <span>тем</span>
                 </div>
-                <div>
-                  <strong>~20 ч</strong>
-                  <span>обучения</span>
-                </div>
+
               </div>
               
               {modules[0] && (
-                <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning}>
-                  {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : "Начать обучение"}
+                <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning || loading}>
+                  {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : user ? "Начать обучение" : "Войти и начать обучение"}
                 </button>
               )}
               {modules.length === 0 && <p>В этом курсе пока нет модулей.</p>}
@@ -139,20 +145,9 @@ function CourseDetail() {
           </div>
         </section>
 
-        {/* Чему научитесь */}
-        {/*<section className="course-detail-learn">
-          <div className="container">
-            <h2>Чему вы научитесь</h2>
-
-            <ul className="course-detail-learn-list">
-              <li>Писать программы на Python с нуля</li>
-              <li>Работать с переменными, условиями и циклами</li>
-              <li>Создавать и использовать функции</li>
-              <li>Читать и записывать файлы</li>
-              <li>Решать практические задачи после каждого модуля</li>
-            </ul>
-          </div>
-        </section> */}
+        {course.course.description && <section className="course-detail-learn"><div className="container">
+          <h2>О курсе</h2><MarkdownContent content={course.course.description} />
+        </div></section>}
 
         {/* Программа курса */}
         <section className="course-detail-program">
@@ -181,8 +176,8 @@ function CourseDetail() {
               ? "Вернитесь к последнему открытому модулю."
               : "Присоединяйтесь к курсу и начните учиться уже сегодня."}</p>
             {modules[0] && (
-              <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning}>
-                {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : "Начать обучение"}
+              <button type="button" className="course-detail-start-btn" onClick={handleCourseAction} disabled={isAssigning || loading}>
+                {isAssigning ? "Добавляем курс…" : isAssigned ? "Вернуться к курсу" : user ? "Начать обучение" : "Войти и начать обучение"}
               </button>
             )}
           </div>
@@ -190,11 +185,6 @@ function CourseDetail() {
       </main>
     </div>
   );
-}
-
-return (
-  <div>Загрузка...</div>
-)
 }
 
 export default CourseDetail;

@@ -59,6 +59,7 @@ const Courses = () => {
               key={course.id}
               id={course.id}
               title={course.title}
+              image={course.image}
               description={ course.description.length > 120 ? course.description.slice(0, 120) + "..." : course.description} />))}
             </div>
 
