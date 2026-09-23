@@ -1,5 +1,6 @@
 import "../styles/ModulePage.css";
 import CourseOutline from "../components/CourseOutline";
+import Crumbs from "../components/Crumbs";
 import MarkdownContent from "../components/MarkdownContent";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -151,7 +152,7 @@ function ModulePage() {
     <div className="module-page"><main>
       <section className="module-page-top"><div className="container">
         <Link to={`/courses/${courseId}`} className="module-page-back">← Назад к курсу</Link>
-        <div className="module-page-breadcrumbs"><span>{module?.course_title}</span><span>/</span><span>{module?.title}</span></div>
+        <Crumbs items={[{ label: "Курсы", to: "/courses" }, { label: module?.course_title, to: `/courses/${courseId}` }, { label: module?.title }]} />
       </div></section>
 
       <section className="module-page-header"><div className="container">

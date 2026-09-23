@@ -1,0 +1,66 @@
+.learning-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--ink)!important;font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s}
+.learning-button:hover,.learning-button[aria-pressed="true"]{background:var(--blue-soft);border-color:var(--blue)}
+.learning-button--primary{background:var(--blue);color:var(--paper)!important;border-color:var(--blue)}
+.learning-button:disabled{opacity:.45;cursor:default}
+.learning-button:focus-visible,.learning-card__link:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.learning-card{height:100%;min-width:0;display:flex;flex-direction:column}
+.learning-card__link{display:flex;flex-direction:column;flex:1;color:inherit;text-decoration:none}
+.learning-card__link p{overflow-wrap:anywhere}
+.learning-card__actions,.learning-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.learning-card .learning-card__actions .learning-button{margin:0;padding:10px 12px;background:var(--paper);border:1px solid var(--line)}
+.learning-card .learning-card__actions .learning-button[aria-pressed="true"]{background:var(--blue-soft);border-color:var(--blue)}
+.learning-crumbs{padding-block:25px;font-size:13px;color:var(--muted)}
+.learning-crumbs ol{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.learning-crumbs li{display:flex;gap:8px;overflow-wrap:anywhere}
+.learning-crumbs li+li:before{content:"/";color:var(--muted)}
+.learning-crumbs a{color:var(--blue);text-decoration:none}
+.learning-crumbs a:hover{text-decoration:underline}
+.learning-intro{padding-block:24px}
+.learning-intro h1{font-size:clamp(28px,5vw,46px)}
+.learning-intro p{max-width:680px;line-height:1.7;color:var(--muted)}
+.learning-input,.learning-toolbar select{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--white);color:var(--ink);max-width:100%;font:inherit}
+.learning-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.learning-toolbar .courses-count{margin:0}
+.learning-pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:32px}
+#catalog-results{scroll-margin-top:100px}
+.learning-empty{padding:40px 24px;border:1px dashed var(--line);border-radius:20px;text-align:center;background:var(--white)}
+.learning-empty p{color:var(--muted)}
+.learning-empty a{color:var(--blue)}
+.course-preview{padding:0;width:min(600px,calc(100% - 32px));max-height:85dvh;border:1px solid var(--line);border-radius:24px;background:var(--white);color:var(--ink);box-shadow:0 25px 100px #0004}
+.course-preview::backdrop{background:#10172899;backdrop-filter:blur(4px)}
+.course-preview__body{padding:28px;line-height:1.7;overflow-wrap:anywhere}
+.course-preview__body h2{font-size:26px;margin:20px 0 12px}
+.course-preview__body ol{padding-left:22px}
+.course-preview__body li+li{margin-top:8px}
+body:has(.course-preview[open]){overflow:hidden}
+.course-skeleton{padding:28px;border:1px solid var(--line);border-radius:20px;background:var(--white);min-width:0}
+.course-skeleton__cover,.course-skeleton__line{background:var(--line);border-radius:10px;animation:learning-pulse 1.5s ease-in-out infinite}
+.course-skeleton__cover{aspect-ratio:16/9;margin-bottom:24px}
+.course-skeleton__line{height:18px;margin-top:12px}
+.course-skeleton__line--short{width:65%}
+@keyframes learning-pulse{50%{opacity:.35}}
+.learning-helper{position:fixed;right:24px;bottom:20px;z-index:90;display:flex;align-items:flex-end;flex-direction:column;gap:12px}
+.learning-helper__panel{width:min(380px,calc(100vw - 32px));max-height:calc(100dvh - 160px);overflow:auto;background:var(--white);color:var(--ink);padding:22px;border:1px solid var(--line);border-radius:22px;box-shadow:0 15px 60px #0003}
+.learning-helper__panel p{font-size:13px;line-height:1.6;color:var(--muted)}
+.learning-helper__panel label{display:block;font-size:12px;margin-top:16px}
+.learning-helper__panel .learning-actions{margin-top:8px;flex-wrap:nowrap}
+.learning-helper__panel input{min-width:0;width:100%}
+.learning-helper__log{max-height:230px;overflow:auto;overscroll-behavior:contain}
+.learning-helper__message{padding:14px;background:var(--paper);border-radius:12px;margin-bottom:12px;font-size:13px;overflow-wrap:anywhere}
+.learning-helper__message a{color:var(--blue)}
+.learning-helper__suggestions{display:flex;flex-wrap:wrap;gap:6px}
+.learning-helper__suggestions button{font-size:12px;padding:8px}
+.learning-path{padding:32px;border:1px solid var(--line);border-radius:24px;background:var(--white);color:var(--ink);margin-block:24px 48px}
+.learning-path__heading{font-size:clamp(24px,3vw,34px);margin:12px 0}
+.learning-path__content{min-height:145px}
+.learning-path p{color:var(--muted);line-height:1.7;max-width:680px}
+.learning-path__controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.learning-path__dot{width:12px;height:12px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0}
+.learning-path__dot[aria-current="true"]{background:var(--blue)}
+.learning-path{scroll-margin-top:100px}
+@media(min-width:901px) and (max-width:1180px){
+  .nav-toggle{display:block}.nav-panel{position:absolute;top:calc(100% + 8px);left:24px;right:24px;padding:18px;display:none;align-items:stretch;flex-direction:column;gap:16px;border:1px solid var(--line);border-radius:18px;background:var(--white);box-shadow:0 24px 60px #0002}
+  .nav-panel.is-open{display:flex}.nav nav{flex-direction:column;gap:4px}.nav nav a{padding:11px 10px;border-radius:10px}.nav nav a:after{display:none}.header-actions{padding-top:14px;border-top:1px solid var(--line)}
+}
+@media(max-width:600px){.learning-helper{right:16px;bottom:12px}.learning-helper>button{font-size:12px}.course-preview__body{padding:20px}.learning-path{padding:22px}.learning-intro label{display:grid;gap:8px}.footer{padding-bottom:85px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.course-skeleton__cover,.course-skeleton__line{animation:none}.learning-card,.learning-button{transition:none}}

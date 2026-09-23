@@ -5,11 +5,12 @@ import "./styles/global.css"
 import "./styles/variables.css"
 import { AuthProvider } from './components/context/AuthContext.jsx'
 import App from './App.jsx'
+import { FavoritesProvider } from './components/context/FavoritesContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-    <App />
+    <FavoritesProvider><App /></FavoritesProvider>
   </AuthProvider>
   </StrictMode>,
 )

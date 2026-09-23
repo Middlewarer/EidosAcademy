@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom"
+import { useState } from "react";
+import FavoriteButton from "./FavoriteButton";
+import CoursePreview from "./CoursePreview";
 
 const CourseCard = ({ title, description, image, id }) => {
+    const [preview, setPreview] = useState(false);
     return (
+        <article className="course-card learning-card">
         <Link
           to={`/courses/${id}`}
-          className="course-card-link"
+          className="learning-card__link"
           aria-label={`Подробнее о курсе «${title}»`}
         >
-          <article className="course-card">
 
             <div className={`course-cover ${image ? "has-image" : ""}`}>
               {image ? <img src={image} alt={`Обложка курса «${title}»`} loading="lazy" /> : <span aria-hidden="true">{title?.charAt(0)}</span>}
@@ -21,8 +25,13 @@ const CourseCard = ({ title, description, image, id }) => {
               Подробнее
               <span aria-hidden="true">→</span>
             </span>
-          </article>
         </Link>
+        <div className="learning-card__actions">
+          <FavoriteButton id={id} />
+          <button className="learning-button" type="button" onClick={() => setPreview(true)}>Быстрый просмотр</button>
+        </div>
+        {preview && <CoursePreview course={{ id, title, description }} onClose={() => setPreview(false)} />}
+        </article>
     )
 }
 
