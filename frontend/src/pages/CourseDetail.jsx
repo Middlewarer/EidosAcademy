@@ -1,6 +1,7 @@
 import "../styles/CourseDetail.css";
 import MarkdownContent from "../components/MarkdownContent";
 import Crumbs from "../components/Crumbs";
+import FavoriteButton from "../components/FavoriteButton";
 import { useCallback, useEffect, useState } from "react";
 import Module from "../components/course_detail/Module";
 import { useNavigate, useParams } from "react-router-dom";
@@ -100,7 +101,7 @@ function CourseDetail() {
     <div className="course-detail-page">
       <main>
         {/* Хлебные крошки + назад */}
-        < Crumbs/>
+        <Crumbs items={[{ label: "Курсы", to: "/courses" }, { label: course.course.title }]} />
 
         {/* Шапка курса */}
         <section className="course-detail-hero">
@@ -109,6 +110,7 @@ function CourseDetail() {
               <span className="course-detail-label">{course.course.category_title}</span>
 
               <h1>{course?.course?.title}</h1>
+              <FavoriteButton id={courseId} />
 
               <p className="course-detail-description">
                 {course?.course?.short_description}

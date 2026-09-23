@@ -1,4 +1,5 @@
 import CourseCard from "../CourseCard"
+import CourseSkeleton from "../CourseSkeleton";
 import { useEffect, useState } from "react"
 
 import { getCourses } from "../api/courses/Courses"
@@ -50,7 +51,7 @@ const Courses = () => {
 
 
             <div className="course-grid">
-            {loading && <p role="status">Загрузка курсов…</p>}
+            {loading && [1, 2, 3].map((id) => <CourseSkeleton key={id} />)}
             {error && <p role="alert">{error}</p>}
             {!loading && !error && courses.length === 0 && <p>Курсы скоро появятся.</p>}
             
@@ -60,7 +61,7 @@ const Courses = () => {
               id={course.id}
               title={course.title}
               image={course.image}
-              description={ course.description.length > 120 ? course.description.slice(0, 120) + "..." : course.description} />))}
+              description={(course.short_description || course.description || "").slice(0, 160)} />))}
             </div>
 
 

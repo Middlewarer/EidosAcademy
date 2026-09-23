@@ -2,8 +2,10 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 function Header() {
+  const { ids } = useFavorites();
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,6 +58,7 @@ function Header() {
           <nav id="main-navigation" aria-label="Основная навигация">
             <NavLink to="/" end>Главная</NavLink>
             <NavLink to="/courses">Курсы</NavLink>
+            <NavLink to="/favorites">Избранное{ids.length > 0 ? ` (${ids.length})` : ""}</NavLink>
             <a href="/#learning">Обучение</a>
             <NavLink to="/feedback">Обратная связь</NavLink>
           </nav>
