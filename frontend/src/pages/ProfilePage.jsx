@@ -45,39 +45,32 @@ function ProfilePage() {
 
     if (loading) {
     return (
-      <header className="header">
-        <div className="container nav">
-          <Link to="/" className="logo">
-            <span className="bulb">💡</span>
-            Eidos<span>Academy</span>
-          </Link>
-
-          <div>Загрузка...</div>
-        </div>
-      </header>
+      <main className="profile-page profile-page--loading" aria-busy="true">
+        <div className="container profile-loading" role="status">Загружаем профиль…</div>
+      </main>
     );
   }
   return (
     <div className="profile-page">
       <main>
-        <Crumbs />
+        <Crumbs items={[{ label: "Профиль" }]} />
 
         {/* PROFILE HERO */}
         <section className="profile-hero">
           <div className="container">
             <div className="profile-hero-card">
               
-              <div className="profile-avatar">
-                A
+              <div className="profile-avatar" aria-hidden="true">
+                {(user?.first_name || user?.username || "У").charAt(0).toUpperCase()}
               </div>
 
               <div className="profile-main-info">
                 <span className="profile-label">Профиль ученика</span>
 
-                <h1>{user?.first_name} {user?.last_name}</h1>
+                <h1>{[user?.first_name, user?.last_name].filter(Boolean).join(" ") || user?.username || "Ученик"}</h1>
 
                 <p>
-                  {user?.email}
+                  {user?.email || "Почта пока не указана"}
                 </p>
 
                 <span className="profile-member">
@@ -85,11 +78,7 @@ function ProfilePage() {
                 </span>
               </div>
 
-              <Link to="/settings">
-                <button className="profile-edit-btn">
-                  Редактировать профиль
-                </button>
-              </Link>
+              <Link to="/settings" className="profile-edit-btn">Редактировать профиль</Link>
 
             </div>
           </div>
@@ -101,12 +90,12 @@ function ProfilePage() {
             <div className="profile-stats-grid">
 
               <div className="profile-stat-card">
-                <strong>{user?.courses_count}</strong>
+                <strong>{user?.courses_count ?? 0}</strong>
                 <span>Курса</span>
               </div>
 
               <div className="profile-stat-card">
-                <strong>{user?.topics_count}</strong>
+                <strong>{user?.topics_count ?? 0}</strong>
                 <span>Уроков пройдено</span>
               </div>
 
@@ -229,12 +218,12 @@ function ProfilePage() {
 
                     <div className="profile-info-item">
                       <span>Имя</span>
-                      <strong>{user?.first_name} {user?.last_name}</strong>
+                      <strong>{[user?.first_name, user?.last_name].filter(Boolean).join(" ") || user?.username || "Не указано"}</strong>
                     </div>
 
                     <div className="profile-info-item">
                       <span>Email</span>
-                      <strong>{user?.email}</strong>
+                      <strong>{user?.email || "Не указано"}</strong>
                     </div>
 
                     <div className="profile-info-item">
@@ -275,11 +264,7 @@ function ProfilePage() {
                 </p>
               </div>
 
-              <Link to="/courses">
-                <button className="profile-cta-btn">
-                  Перейти к курсам
-                </button>
-              </Link>
+              <Link to="/courses" className="profile-cta-btn">Перейти к курсам</Link>
 
             </div>
           </div>

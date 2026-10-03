@@ -1,5 +1,4 @@
-import { Router, Link } from "react-router-dom"
-import Button from "../Button"
+import { Link } from "react-router-dom"
 
 function Hero() {
     return (
@@ -32,17 +31,9 @@ function Hero() {
 
               <div className="hero-buttons">
 
-              <Link to={"/courses"}>
-                <button className="primary-btn">
-                  Выбрать курс
-                </button>
-              </Link>
+              <Link to="/courses" className="primary-btn">Выбрать курс</Link>
 
-                <Link to="/feedback" >
-                <button className="secondary-btn">
-                  Задать вопрос
-                </button>
-                </Link>
+              <Link to="/feedback" className="secondary-btn">Задать вопрос</Link>
 
               </div>
 
@@ -72,7 +63,7 @@ function Hero() {
 
 
                 <h3>
-                  Идея - Навык- Профессия
+                  Идея — навык — профессия
                 </h3>
 
 

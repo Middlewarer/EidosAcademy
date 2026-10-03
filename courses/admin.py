@@ -18,3 +18,11 @@ class FeedbackAdmin(admin.ModelAdmin):
     search_fields = ('name', 'contact', 'message')
     readonly_fields = ('user', 'created_at')
     list_editable = ('status', 'is_public')
+
+
+@admin.register(LegalAcceptance)
+class LegalAcceptanceAdmin(admin.ModelAdmin):
+    list_display = ('kind', 'document_version', 'user', 'feedback', 'accepted_at')
+    list_filter = ('kind', 'document_version')
+    search_fields = ('user__username', 'ip_address')
+    readonly_fields = ('kind', 'document_version', 'user', 'feedback', 'ip_address', 'user_agent', 'accepted_at')

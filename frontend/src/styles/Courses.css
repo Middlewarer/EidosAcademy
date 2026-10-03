@@ -256,3 +256,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Search controls must not inherit the legacy yellow submit-button theme. */
+.courses-search.search-with-history{display:block;position:relative;max-width:560px}
+.courses-search .search-input-wrap{display:flex;position:relative;width:100%}
+.courses-search .search-input-wrap input{width:100%;padding-left:46px;padding-right:46px;border-color:var(--line);border-radius:14px;background:var(--white);color:var(--ink)}
+.courses-search .search-option,.courses-search .search-clear,.courses-search .search-remove{border:0;background:transparent;color:var(--ink);box-shadow:none}
+.courses-search .search-option{padding:11px 10px;border-radius:10px;font-weight:600}
+.courses-search .search-option:hover,.courses-search .search-option:focus-visible{background:var(--blue-soft);color:var(--blue)}
+.courses-search .search-clear,.courses-search .search-remove{padding:0;border-radius:9px;color:var(--muted)}
+.courses-search .search-clear:hover,.courses-search .search-remove:hover{background:var(--blue-soft);color:var(--blue)}
+.courses-search .search-popover{background:var(--white);border-color:var(--line)}

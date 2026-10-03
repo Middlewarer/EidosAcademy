@@ -126,6 +126,9 @@ jspm_packages/
 
 # TypeScript cache
 *.tsbuildinfo
+# Personal HH snapshots and bootstrap imports (never commit account data).
+/learning_tracker/inbox/
+/learning_tracker/local_jobs/
 
 # Optional npm cache directory
 .npm

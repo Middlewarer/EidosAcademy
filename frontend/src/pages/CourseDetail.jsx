@@ -94,7 +94,7 @@ function CourseDetail() {
     return () => { active = false; };
 }, [getCourse]);
 
-  if (error) return <div className="course-detail-page"><Crumbs /><p role="alert">{error}</p></div>;
+  if (error) return <div className="course-detail-page"><Crumbs items={[{ label: "Курсы", to: "/courses" }]} /><p role="alert">{error}</p></div>;
   if (loading || !course) return <p className="module-page-state" role="status">Загрузка курса…</p>;
   return (
     

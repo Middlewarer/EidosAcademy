@@ -1,47 +1,26 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import CourseCard from "../CourseCard"
 import CourseSkeleton from "../CourseSkeleton";
 import { useFavorites } from "../context/FavoritesContext";
 import { Link } from "react-router-dom";
 
-import { getCourses } from "../api/courses/Courses.jsx"
-
 const CoursesList = (props) => {
-  const {activeFilter, search, favoritesOnly} = props
+  const {activeFilter, search, favoritesOnly, courses, loading, error, onRetry} = props
   const { ids } = useFavorites();
   const [pagination, setPagination] = useState({ key: "", page: 1 });
   const [pageSize, setPageSize] = useState(6);
-
-    const [courses, setCourses] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [reloadKey, setReloadKey] = useState(0);
-
-    useEffect(() => {
-      let active = true;
-      async function load() {
-        try {
-          setLoading(true);
-          setError(null);
-          const data = await getCourses();
-          if (active) setCourses(data.courses)
-        } catch (err) {
-          if (active) setError(err.message)
-        } finally {
-          if (active) setLoading(false);
-        }
-      }
-
-      load();
-      return () => { active = false; };
-    }, [reloadKey]);
 
     const filteredCourses = courses.filter((course) => {
     if (activeFilter === "All") {
         return true;
     }
     return course.title.toLocaleLowerCase().includes(activeFilter.toLocaleLowerCase());
-}).filter((course) => course.title.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()))
+}).filter((course) => {
+  const query = search.trim().toLocaleLowerCase("ru-RU");
+  const searchable = [course.title, course.category, course.short_description, course.description]
+    .filter(Boolean).join(" ").toLocaleLowerCase("ru-RU");
+  return searchable.includes(query);
+})
   .filter((course) => !favoritesOnly || ids.includes(course.id));
     const paginationKey = `${activeFilter}:${search}:${favoritesOnly}:${pageSize}`;
     const totalPages = Math.max(1, Math.ceil(filteredCourses.length / pageSize));
@@ -68,7 +47,7 @@ const CoursesList = (props) => {
             {error && (
               <div role="alert">
                 <p>{error}</p>
-                <button type="button" onClick={() => setReloadKey((value) => value + 1)}>
+                <button type="button" className="learning-button learning-button--primary" onClick={onRetry}>
                   Попробовать снова
                 </button>
               </div>

@@ -56,10 +56,9 @@ function Header() {
 
         <div className={`nav-panel ${menuOpen ? "is-open" : ""}`}>
           <nav id="main-navigation" aria-label="Основная навигация">
-            <NavLink to="/" end>Главная</NavLink>
             <NavLink to="/courses">Курсы</NavLink>
             <NavLink to="/favorites">Избранное{ids.length > 0 ? ` (${ids.length})` : ""}</NavLink>
-            <a href="/#learning">Обучение</a>
+            <Link to="/#learning">Обучение</Link>
             <NavLink to="/feedback">Обратная связь</NavLink>
           </nav>
 

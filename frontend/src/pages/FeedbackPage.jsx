@@ -93,6 +93,8 @@ export default function FeedbackPage() {
     message: "",
     page_url: "",
     website: "",
+    personal_data_consent: false,
+    publication_consent: false,
   });
 
   useEffect(() => {
@@ -117,8 +119,8 @@ export default function FeedbackPage() {
   }, [reload]);
 
   const change = (event) => {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    const { name, value, checked, type } = event.target;
+    setForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
     setError("");
     setSent(false);
   };
@@ -140,7 +142,7 @@ export default function FeedbackPage() {
       setFilter("all");
       setVisibleCount(6);
       setSent(true);
-      setForm((current) => ({ ...current, message: "", page_url: "", website: "" }));
+      setForm((current) => ({ ...current, message: "", page_url: "", website: "", personal_data_consent: false, publication_consent: false }));
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -210,6 +212,17 @@ export default function FeedbackPage() {
               <input type="url" name="page_url" value={form.page_url} onChange={change} maxLength="500" placeholder="https://eidosacademy.ru/courses/..." />
             </label>
           )}
+
+          <div className="feedback-legal-consents">
+            <label className="legal-checkbox">
+              <input type="checkbox" name="personal_data_consent" required checked={form.personal_data_consent} onChange={change} />
+              <span>Даю отдельное <a href="/legal/consent" target="_blank" rel="noreferrer">согласие на обработку персональных данных</a>.</span>
+            </label>
+            <label className="legal-checkbox">
+              <input type="checkbox" name="publication_consent" required checked={form.publication_consent} onChange={change} />
+              <span>Даю отдельное <a href="/legal/publication" target="_blank" rel="noreferrer">согласие на публикацию текста и указанного имени</a> на открытой доске.</span>
+            </label>
+          </div>
 
           <label className="feedback-honeypot" aria-hidden="true">
             Не заполняйте это поле

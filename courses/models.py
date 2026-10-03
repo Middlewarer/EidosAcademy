@@ -214,6 +214,34 @@ class Feedback(models.Model):
     def __str__(self):
         return f"{self.get_kind_display()}: {self.name or 'Аноним'}"
 
+
+class LegalAcceptance(models.Model):
+    class Kind(models.TextChoices):
+        PERSONAL_DATA = "personal_data", "Согласие на обработку персональных данных"
+        TERMS = "terms", "Пользовательское соглашение"
+        PUBLICATION = "publication", "Согласие на публикацию сообщения"
+
+    kind = models.CharField(max_length=20, choices=Kind.choices)
+    document_version = models.CharField(max_length=20)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="legal_acceptances",
+    )
+    feedback = models.ForeignKey(
+        Feedback, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="legal_acceptances",
+    )
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=500, blank=True)
+    accepted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-accepted_at"]
+        indexes = [models.Index(fields=["kind", "accepted_at"])]
+
+    def __str__(self):
+        return f"{self.get_kind_display()} · {self.accepted_at:%d.%m.%Y %H:%M}"
+
     
 
         
