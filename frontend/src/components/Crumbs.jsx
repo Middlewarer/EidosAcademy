@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 
-const Crumbs = ({ items = [{ label: "Курсы", to: "/courses" }] }) => {
+const Crumbs = ({ items = [] }) => {
     return (
         <nav className="learning-crumbs container" aria-label="Хлебные крошки">
-          <ol><li><Link to="/">Главная</Link></li>
-            {items.map((item, index) => <li key={index}>
+          <ol>
+            {items.map((item, index) => <li key={`${item.label}-${index}`}>
               {item.to ? <Link to={item.to}>{item.label}</Link> : <span aria-current="page">{item.label}</span>}
             </li>)}
           </ol>

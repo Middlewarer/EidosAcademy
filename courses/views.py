@@ -19,6 +19,19 @@ from .throttles import (
     FeedbackRateThrottle,
 )
 
+LEGAL_DOCUMENT_VERSION = "2026-10-02"
+
+
+def record_legal_acceptance(request, kind, *, user=None, feedback=None):
+    LegalAcceptance.objects.create(
+        kind=kind,
+        document_version=LEGAL_DOCUMENT_VERSION,
+        user=user,
+        feedback=feedback,
+        ip_address=request.META.get("REMOTE_ADDR") or None,
+        user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:500],
+    )
+
 
 def course_learning_state(course, user):
     progress_by_topic = {
@@ -212,10 +225,13 @@ class RegisterUserApiView(APIView):
     throttle_classes = [RegisterRateThrottle]
     permission_classes = [NotAuthenticated]
 
+    @transaction.atomic
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            record_legal_acceptance(request, LegalAcceptance.Kind.PERSONAL_DATA, user=user)
+            record_legal_acceptance(request, LegalAcceptance.Kind.TERMS, user=user)
             return Response({
                 "message": "User Created"
             }, status=status.HTTP_201_CREATED)
@@ -361,12 +377,22 @@ class FeedbackView(APIView):
         entries = Feedback.objects.filter(is_public=True)[:30]
         return Response({'entries': FeedbackSerializer(entries, many=True).data})
 
+    @transaction.atomic
     def post(self, request):
         serializer = CreateFeedbackSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         feedback = serializer.save(
             user=request.user if request.user.is_authenticated else None,
             is_public=True,
+        )
+        consent_user = request.user if request.user.is_authenticated else None
+        record_legal_acceptance(
+            request, LegalAcceptance.Kind.PERSONAL_DATA,
+            user=consent_user, feedback=feedback,
+        )
+        record_legal_acceptance(
+            request, LegalAcceptance.Kind.PUBLICATION,
+            user=consent_user, feedback=feedback,
         )
         return Response(
             {

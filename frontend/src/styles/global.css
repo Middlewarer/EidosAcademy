@@ -4,3 +4,6 @@
 
 html[data-theme="dark"]{--ink:#eef1f8;--paper:#0f1420;--white:#171e2c;--blue:#8297ff;--blue-dark:#9cafff;--blue-soft:#202a48;--accent:#ffc36b;--muted:#a3adbf;--line:#2a3446}
 body{transition:background-color .3s ease,color .3s ease}
+button,input,select,textarea{font:inherit}
+a,button{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--blue) 30%,transparent);outline-offset:3px}

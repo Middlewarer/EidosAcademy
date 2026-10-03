@@ -10,7 +10,7 @@ const CourseCard = ({ title, description, image, id }) => {
         <Link
           to={`/courses/${id}`}
           className="learning-card__link"
-          aria-label={`Подробнее о курсе «${title}»`}
+          aria-label={`Открыть курс «${title}»`}
         >
 
             <div className={`course-cover ${image ? "has-image" : ""}`}>
@@ -21,14 +21,10 @@ const CourseCard = ({ title, description, image, id }) => {
 
             <p>{description}</p>
 
-            <span className="course-card-cta">
-              Подробнее
-              <span aria-hidden="true">→</span>
-            </span>
         </Link>
         <div className="learning-card__actions">
           <FavoriteButton id={id} />
-          <button className="learning-button" type="button" onClick={() => setPreview(true)}>Быстрый просмотр</button>
+          <button className="learning-button learning-button--primary" type="button" onClick={() => setPreview(true)}>Быстрый просмотр</button>
         </div>
         {preview && <CoursePreview course={{ id, title, description }} onClose={() => setPreview(false)} />}
         </article>

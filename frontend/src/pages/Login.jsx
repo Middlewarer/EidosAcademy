@@ -1,193 +1,103 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { apiRequest, saveTokens } from "../components/api/apiRequest";
 import { useAuth } from "../components/context/AuthContext";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import toast from "react-hot-toast"
+import "../styles/Login.css";
 
 function Login() {
-    const location = useLocation();
-    const destination = location.state?.from;
-    const returnTo = typeof destination === "string" && destination.startsWith("/") && !destination.startsWith("//") && !destination.startsWith("/login") && !destination.startsWith("/register") ? destination : "/courses";
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const { user } = useAuth();
-    const navigator = useNavigate();
-    const { login } = useAuth();
-    async function handleSubmit(e) {
-        e.preventDefault();
-        try {
-            const response = await apiRequest(`/api/token/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json",},
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
-            });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, login } = useAuth();
+  const destination = location.state?.from;
+  const returnTo = typeof destination === "string"
+    && destination.startsWith("/")
+    && !destination.startsWith("//")
+    && !destination.startsWith("/login")
+    && !destination.startsWith("/register")
+    ? destination
+    : "/courses";
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-            const data = await response.json()
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
 
+    try {
+      const response = await apiRequest("/api/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+      const data = await response.json();
 
-        if (response.ok && data.access && data.refresh) {
+      if (!response.ok || !data.access || !data.refresh) {
+        toast.error(response.status === 429
+          ? "Слишком много попыток. Попробуйте позже."
+          : "Не удалось войти. Проверьте логин и пароль.");
+        return;
+      }
 
-    saveTokens(data.access, data.refresh);
-
-    const meResponse = await apiRequest("/api/me/");
-
-    if (!meResponse.ok) {
+      saveTokens(data.access, data.refresh);
+      const meResponse = await apiRequest("/api/me/");
+      if (!meResponse.ok) {
         toast.error("Не удалось загрузить профиль.");
         return;
+      }
+
+      const userData = await meResponse.json();
+      login(data.access, data.refresh, userData);
+      toast.success("Вход выполнен!");
+      navigate(returnTo, { replace: true });
+    } catch {
+      toast.error("Не удалось связаться с сервером. Попробуйте ещё раз.");
+    } finally {
+      setSubmitting(false);
     }
+  }
 
-    const userData = await meResponse.json();
+  useEffect(() => {
+    if (user) navigate(returnTo, { replace: true });
+  }, [user, navigate, returnTo]);
 
-    login(
-        localStorage.getItem("access_token"),
-        localStorage.getItem("refresh_token"),
-        userData,
-    );
+  return (
+    <main className="login-page">
+      <section className="login-main" aria-labelledby="login-title">
+        <div className="login-card">
+          <header className="login-card-header">
+            <Link to="/" className="login-logo" aria-label="Eidos Academy — главная">
+              <span className="login-logo-icon" aria-hidden="true">💡</span>
+              Eidos<span>Academy</span>
+            </Link>
+            <h1 id="login-title">Вход</h1>
+            <p>Продолжите обучение с того места, где остановились.</p>
+          </header>
 
-    toast.success("Вход выполнен!");
-    navigator(returnTo, { replace: true });
-} else {
-    toast.error(response.status === 429 ? "Слишком много попыток. Попробуйте позже." : "Не удалось войти. Проверь логин и пароль.");
-}
+          <form className="login-form" onSubmit={handleSubmit}>
+            <label className="login-field">
+              <span>Логин</span>
+              <input type="text" name="username" placeholder="Введите логин" autoComplete="username" required autoFocus maxLength={150} value={username} onChange={(event) => setUsername(event.target.value)} />
+            </label>
+            <label className="login-field">
+              <span>Пароль</span>
+              <input type="password" name="password" placeholder="Введите пароль" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} />
+            </label>
+            <button type="submit" className="login-submit" disabled={submitting}>
+              {submitting ? "Входим…" : "Войти"}
+            </button>
+          </form>
 
-        } catch (error) {
-                console.error('Ошибка запроса:', error);
-                alert('Не удалось выполнить запрос');
-        }
-    }
-
-    useEffect(() => {
-        if (user) {
-            return navigator(returnTo, { replace: true })
-        }
-    }, [user, navigator, returnTo])
-
-
-    return (
-    <div className="auth-page" style={styles.page}>
-      <div className="auth-card" style={styles.card}>
-        <h1 style={styles.title}>Вход</h1>
-        <p style={styles.subtitle}>Войдите в свой аккаунт</p>
-
-        <form style={styles.form} onSubmit={handleSubmit}>
-          <div style={styles.field}>
-            <label style={styles.label}>Username</label>
-            <input
-              type="username"
-              placeholder="username"
-              style={styles.input}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-
-          <div style={styles.field}>
-            <label style={styles.label}>Пароль</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              style={styles.input}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <button type="submit" style={styles.button}>
-            Войти
-          </button>
-        </form>
-
-        <p style={styles.registerText}>
-          Нет аккаунта? <Link to="/register" state={{ from: returnTo }} style={styles.registerLink}>Зарегистрироваться</Link>
-        </p>
-      </div>
-    </div>
+          <p className="login-footer-text">
+            Нет аккаунта?{" "}
+            <Link to="/register" state={{ from: returnTo }} className="login-link">Зарегистрироваться</Link>
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'radial-gradient(circle at 75% 20%, #eef1ff, transparent 35%), #f7f8fb',
-    fontFamily: 'Manrope, sans-serif',
-  },
-  card: {
-    background: '#FFFFFF',
-    borderRadius: '24px',
-    padding: '46px 40px',
-    width: '100%',
-    maxWidth: '400px',
-    boxShadow: '0 24px 65px rgba(34, 46, 80, .12)',
-    border: '1px solid #e3e7ef',
-  },
-  title: {
-    margin: '0 0 8px',
-    fontSize: '28px',
-    fontWeight: '700',
-    color: '#172033',
-    textAlign: 'center',
-  },
-  subtitle: {
-    margin: '0 0 32px',
-    fontSize: '15px',
-    color: '#6d7688',
-    textAlign: 'center',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
-  label: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: '#172033',
-  },
-  input: {
-    padding: '12px 14px',
-    fontSize: '15px',
-    borderRadius: '16px',
-    border: '1px solid #e3e7ef',
-    outline: 'none',
-    transition: 'border-color 0.2s',
-    background: '#f7f8fb',
-  },
-  button: {
-    marginTop: '8px',
-    padding: '14px',
-    fontSize: '16px',
-    fontWeight: '600',
-    color: '#FFFFFF',
-    background: '#4f6df5',
-    border: 'none',
-    borderRadius: '13px',
-    cursor: 'pointer',
-    boxShadow: '0 12px 30px rgba(79,109,245,.22)',
-  },
-  registerText: {
-    margin: '24px 0 0',
-    paddingTop: '20px',
-    borderTop: '1px solid #e3e7ef',
-    color: '#6d7688',
-    fontSize: '14px',
-    textAlign: 'center',
-  },
-  registerLink: {
-    color: '#4f6df5',
-    fontWeight: '700',
-    textDecoration: 'none',
-  },
-};
 
 export default Login;

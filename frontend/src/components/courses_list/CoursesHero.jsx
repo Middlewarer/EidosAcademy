@@ -1,7 +1,7 @@
 import Search from "../Search"
 
 const CoursesHero = (props) => {
-  const {search, setSearch} = props
+  const {search, setSearch, suggestions} = props
     return (
         <section className="courses-hero">
           <div className="container">
@@ -14,7 +14,7 @@ const CoursesHero = (props) => {
               реальные проекты и понятные объяснения.
             </p>
 
-            <Search search={search} setSearch={setSearch} />
+            <Search search={search} setSearch={setSearch} suggestions={suggestions} />
           </div>
         </section>
     )

@@ -103,11 +103,19 @@ class AuthFlowTests(TestCase):
         self.assertEqual(self.client.post('/api/token/', {'username': 'authlearner', 'password': 'New!Ocean83Cloud'}).status_code, 200)
 
     def test_registration_validation_and_hash(self):
+        consent = {'personal_data_consent': True, 'terms_accepted': True}
         for password in ['123', 'password', '123456789012']:
-            self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':password,'password2':password}).status_code, 400)
-        self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':'New!Ocean83Cloud','password2':'different'}).status_code, 400)
-        self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':'New!Ocean83Cloud','password2':'New!Ocean83Cloud'}).status_code, 201)
-        self.assertTrue(User.objects.get(username='newlearner').check_password('New!Ocean83Cloud'))
+            self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':password,'password2':password, **consent}).status_code, 400)
+        self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':'New!Ocean83Cloud','password2':'different', **consent}).status_code, 400)
+        self.assertEqual(self.client.post('/api/register/', {'username':'newlearner','password':'New!Ocean83Cloud','password2':'New!Ocean83Cloud', **consent}).status_code, 201)
+        user = User.objects.get(username='newlearner')
+        self.assertTrue(user.check_password('New!Ocean83Cloud'))
+        self.assertEqual(user.legal_acceptances.count(), 2)
+
+    def test_registration_requires_separate_legal_acceptances(self):
+        payload = {'username':'newlearner','password':'New!Ocean83Cloud','password2':'New!Ocean83Cloud'}
+        self.assertEqual(self.client.post('/api/register/', payload).status_code, 400)
+        self.assertFalse(User.objects.filter(username='newlearner').exists())
 
     def test_throttle_limits(self):
         from django.core.cache import cache
@@ -264,6 +272,8 @@ class FeedbackTests(TestCase):
                 'contact': 'tester@example.com',
                 'message': 'На странице курса не открывается первый урок.',
                 'page_url': 'https://eidosacademy.ru/courses/1',
+                'personal_data_consent': True,
+                'publication_consent': True,
             },
             format='json',
         )
@@ -282,12 +292,14 @@ class FeedbackTests(TestCase):
 
         response = self.client.post(
             '/api/feedback/',
-            {'kind': 'idea', 'message': 'Добавьте заметки рядом с каждым уроком.'},
+            {'kind': 'idea', 'message': 'Добавьте заметки рядом с каждым уроком.', 'personal_data_consent': True, 'publication_consent': True},
             format='json',
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Feedback.objects.get().user, user)
+        feedback = Feedback.objects.get()
+        self.assertEqual(feedback.user, user)
+        self.assertEqual(feedback.legal_acceptances.count(), 2)
 
     def test_public_board_only_exposes_moderated_entries(self):
         Feedback.objects.create(
@@ -311,13 +323,22 @@ class FeedbackTests(TestCase):
 
     def test_short_message_and_honeypot_are_rejected(self):
         short = self.client.post(
-            '/api/feedback/', {'kind': 'review', 'message': 'Мало'}, format='json'
+            '/api/feedback/', {'kind': 'review', 'message': 'Мало', 'personal_data_consent': True, 'publication_consent': True}, format='json'
         )
         bot = self.client.post(
             '/api/feedback/',
-            {'kind': 'review', 'message': 'Сообщение достаточной длины', 'website': 'spam'},
+            {'kind': 'review', 'message': 'Сообщение достаточной длины', 'website': 'spam', 'personal_data_consent': True, 'publication_consent': True},
             format='json',
         )
 
         self.assertEqual(short.status_code, 400)
         self.assertEqual(bot.status_code, 400)
+
+    def test_feedback_requires_separate_consents(self):
+        response = self.client.post(
+            '/api/feedback/',
+            {'kind': 'idea', 'message': 'Добавьте больше практических заданий.'},
+            format='json',
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Feedback.objects.exists())
