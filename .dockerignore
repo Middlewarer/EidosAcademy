@@ -11,3 +11,17 @@ frontend/node_modules
 frontend/dist
 media
 staticfiles
+
+# Local learning projects, personal documents, and generated artifacts
+learning_tracker/
+learning_labs/
+eidos-focus/
+output/
+tmp/
+backups/
+docs/
+start-*.cmd
+**/node_modules
+**/__pycache__
+**/*.before-*.py
+**/*.before_*.py

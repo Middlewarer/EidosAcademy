@@ -12,9 +12,10 @@ import time
 import tkinter as tk
 import webbrowser
 import weakref
+from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
-from tkinter import messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
 
 from daily_plan import TRACK_PRIORITY, build_daily_plan
 from career_readiness import (
@@ -26,6 +27,7 @@ from preparation import discipline, migrate, CHECKPOINTS
 from interview_lab import InterviewLabWindow
 from mastery_curriculum import CURRICULUM, all_task_ids
 from progress_insights import calendar_day, completed_topics, interview_prompt, overdue_tasks, weekly_summary
+import resume_track
 
 
 BG = "#07111F"
@@ -219,6 +221,22 @@ class Store:
         }
         self.save()
 
+    def save_resume_step(self, step_id, values):
+        """Keep this lane independent; roll back memory on a failed/conflicting save."""
+        previous = self.data.get("resume_track")
+        updated = deepcopy(previous) if previous is not None else {"version": resume_track.VERSION, "records": {}}
+        records = updated.setdefault("records", {})
+        records[step_id] = resume_track.make_record(step_id, records.get(step_id, {}), values)
+        self.data["resume_track"] = updated
+        try:
+            self.save()
+        except Exception:
+            if previous is None:
+                self.data.pop("resume_track", None)
+            else:
+                self.data["resume_track"] = previous
+            raise
+
     def add_application(self, company, role, url, status, note, **extra):
         item = {
             "id": f'app-{int(time.time() * 1000)}',
@@ -410,10 +428,19 @@ class LearningApp(tk.Tk):
         for column in range(2):
             grid.grid_columnconfigure(column, weight=1, uniform="tracks")
         ordered_tracks = sorted(CURRICULUM, key=lambda item: CAREER_TRACK_ORDER[item["id"]])
+        resume_stats = resume_track.summary(self.store.data)
+        resume_card = tk.Frame(grid, bg=PANEL, padx=22, pady=16,
+                               highlightbackground=BLUE, highlightthickness=1)
+        resume_card.grid(row=0, column=0, columnspan=2, sticky="ew", padx=8, pady=(4, 10))
+        button(resume_card, "Открыть трек", self.open_resume_track, primary=True).pack(side="right", padx=(12, 0))
+        label(resume_card, f"ПРАКТИКА ПО РЕЗЮМЕ · {resume_stats['done']}/{resume_stats['total']}",
+              color=BLUE, bold=True, pack={"anchor": "w"})
+        label(resume_card, "Технологии, команда, рабочие задачи и рассказ о решении. Отдельный прогресс.",
+              color=MUTED, wrap=650, pack={"anchor": "w", "pady": (4, 0)})
         label(grid, "БАЗА ЗНАНИЙ ПО НАПРАВЛЕНИЯМ", size=9, color=MUTED, bold=True,
-              pack=None).grid(row=0, column=0, columnspan=2, sticky="w", padx=8, pady=(4, 6))
+              pack=None).grid(row=1, column=0, columnspan=2, sticky="w", padx=8, pady=(4, 6))
         for index, track in enumerate(ordered_tracks):
-            self.track_card(grid, track, index // 2 + 1, index % 2)
+            self.track_card(grid, track, index // 2 + 2, index % 2)
 
     def track_card(self, parent, track, row, column):
         card = tk.Frame(parent, bg=PANEL, padx=22, pady=18, highlightbackground=BORDER, highlightthickness=1)
@@ -519,6 +546,14 @@ class LearningApp(tk.Tk):
             current.lift()
             return
         self.windows["resume-lab"] = ResumeLabWindow(self, self.store, self.refresh)
+
+    def open_resume_track(self):
+        current = self.windows.get("resume-track")
+        if current and current.winfo_exists():
+            current.deiconify()
+            current.lift()
+            return
+        self.windows["resume-track"] = ResumeTrackWindow(self, self.store, self.refresh)
 
     def open_applications(self):
         current = self.windows.get("applications")
@@ -682,6 +717,9 @@ class LearningApp(tk.Tk):
             self.timer_after = self.after(200, self.tick_timer)
 
     def destroy(self):
+        resume_window = self.windows.get("resume-track")
+        if resume_window and resume_window.winfo_exists() and not resume_window.persist():
+            return
         self.pause_timer()
         super().destroy()
 
@@ -1118,7 +1156,8 @@ class ProjectProofWindow(tk.Toplevel):
             completed = records.get(project["id"], {})
             count = sum(bool(completed.get(item_id, {}).get("evidence")) for item_id, _title, _desc in project["milestones"])
             label(card, project["title"], size=16, bold=True, pack={"anchor": "w"})
-            label(card, f'{count}/{len(project["milestones"])} доказательств · {project["description"]}',
+            progress_kind = "проектных шагов" if not project.get("counts_for_readiness", True) else "доказательств"
+            label(card, f'{count}/{len(project["milestones"])} {progress_kind} · {project["description"]}',
                   color=MUTED, wrap=930, pack={"anchor": "w", "pady": (4, 10)})
             for item_id, title, description in project["milestones"]:
                 done = bool(completed.get(item_id, {}).get("evidence"))
@@ -1130,8 +1169,24 @@ class ProjectProofWindow(tk.Toplevel):
                       bold=True, bg=PANEL_2, pack={"anchor": "w"})
                 label(info, description, size=9, color=MUTED, bg=PANEL_2, wrap=760,
                       pack={"anchor": "w", "pady": (3, 0)})
+                if project["id"].startswith("practical-"):
+                    button(row, "Изучить шаг", lambda t=title, d=description: self.copy_practical_step(t, d)).pack(side="right", padx=(8, 0))
                 button(row, "Доказательство", lambda p=project, mid=item_id, t=title: self.open_evidence(p, mid, t),
                        primary=not done).pack(side="right", padx=(10, 0))
+
+    def copy_practical_step(self, title, description):
+        prompt = f"""Я последовательно создаю Practical Eidos и сейчас работаю над шагом «{title}».
+
+План шага:
+{description}
+
+Сначала дай мне связный урок только по перечисленным для изучения понятиям: ментальная модель, один минимальный пример, ограничения, риски и типичная ошибка. Не пиши реализацию Practical Eidos за меня и не расширяй объём шага.
+
+После теории задай три коротких вопроса по одному, чтобы проверить понимание. Когда я отвечу и явно подтвержу готовность к разработке, помоги разложить реализацию на маленькие проверяемые действия, но оставь написание кода мне. Критерий завершения из плана не смягчай."""
+        self.clipboard_clear()
+        self.clipboard_append(prompt)
+        self.update()
+        messagebox.showinfo("Готово", "Учебный план шага скопирован.", parent=self)
 
     def open_evidence(self, project, milestone_id, title):
         EvidenceWindow(self, self.store, project["id"], milestone_id, title, self.after_save)
@@ -1169,6 +1224,218 @@ class EvidenceWindow(tk.Toplevel):
         self.store.save_project_evidence(self.project_id, self.milestone_id, evidence)
         self.on_saved()
         self.destroy()
+
+
+class ResumeTrackWindow(tk.Toplevel):
+    def __init__(self, master, store, on_change):
+        super().__init__(master)
+        self.store, self.on_change = store, on_change
+        self.title("Job Search OS · Практика по резюме")
+        self.geometry("1180x850")
+        self.minsize(940, 660)
+        self.configure(bg=BG)
+        self.protocol("WM_DELETE_WINDOW", self.close)
+        self.bind("<Control-s>", lambda _event: self.save())
+        next_id = resume_track.summary(store.data)["next_id"]
+        self.index = next((i for i, s in enumerate(resume_track.STEPS) if s["id"] == next_id), 0)
+        header = tk.Frame(self, bg=BG, padx=24, pady=16)
+        header.pack(fill="x")
+        label(header, "Практика по резюме", size=23, bold=True, pack={"anchor": "w"})
+        label(header, "Balanced · 2 страницы · самостоятельная практика и разбор опыта", color=MUTED,
+              pack={"anchor": "w", "pady": (3, 8)})
+        self.progress_label = label(header, "", color=ACCENT, pack={"anchor": "w"})
+        actions = tk.Frame(header, bg=BG)
+        actions.pack(fill="x", pady=(8, 0))
+        button(actions, "Сохранить · Ctrl+S", self.save).pack(side="left")
+        button(actions, "История шага", self.open_history).pack(side="left", padx=8)
+        button(actions, "Экспорт отчёта", self.export).pack(side="right")
+        body = tk.Frame(self, bg=BG)
+        body.pack(fill="both", expand=True, padx=18, pady=(0, 16))
+        sidebar = tk.Frame(body, bg=PANEL, width=295)
+        sidebar.pack(side="left", fill="y", padx=(0, 14))
+        sidebar.pack_propagate(False)
+        label(sidebar, "20 ШАГОВ · ВСЕ ТЕМЫ ДОСТУПНЫ", size=9, color=MUTED,
+              pack={"anchor": "w", "padx": 12, "pady": 12})
+        nav = ScrollFrame(sidebar, bg=PANEL)
+        nav.pack(fill="both", expand=True)
+        self.step_buttons = []
+        last_group = None
+        for i, item in enumerate(resume_track.STEPS):
+            if item["group"] != last_group:
+                label(nav.inner, item["group"], size=9, color=BLUE, bold=True,
+                      pack={"anchor": "w", "padx": 10, "pady": (12, 4)})
+                last_group = item["group"]
+            b = button(nav.inner, item["title"], lambda index=i: self.select(index))
+            b.configure(anchor="w", justify="left", wraplength=235, font=(FONT, 9), padx=10, pady=9)
+            b.pack(fill="x", padx=5, pady=3)
+            self.step_buttons.append(b)
+        self.content = ScrollFrame(body, bg=BG)
+        self.content.pack(side="left", fill="both", expand=True)
+        self.render_step()
+
+    @property
+    def item(self):
+        return resume_track.STEPS[self.index]
+
+    def text_block(self, title, text):
+        parent = self.content.inner
+        label(parent, title, size=11, bold=True, color=BLUE, pack={"anchor": "w", "pady": (15, 5)})
+        widget = label(parent, text, wrap=700, pack={"fill": "x"})
+        widget.bind("<Configure>", lambda e: widget.configure(wraplength=max(240, e.width - 12)))
+
+    def render_step(self):
+        for w in self.content.inner.winfo_children():
+            w.destroy()
+        item = self.item
+        saved = resume_track.records(self.store.data).get(item["id"], {})
+        parent = self.content.inner
+        self.text_block(item["title"], f"Ориентир: {item['minutes']} минут. При пробелах времени потребуется больше.")
+        self.text_block("Связь с резюме", item["claim"])
+        self.text_block("Повторить и понять", item["learn"])
+        self.text_block("Учебная рабочая задача", item["ticket"])
+        self.text_block("Критерии приёмки", "\n".join("• " + a for a in item["acceptance"]))
+        self.text_block("Вопросы для рассказа", "\n".join("• " + q for q in item["questions"]))
+        base = tk.Frame(parent, bg=BG)
+        base.pack(fill="x", pady=(14, 6))
+        label(base, "База для повторения:", color=MUTED, pack={"anchor": "w"})
+        for track_id in item["tracks"]:
+            track = next(t for t in CURRICULUM if t["id"] == track_id)
+            button(base, track["title"], lambda t=track: self.master.open_track(t)).pack(anchor="w", pady=2)
+        actions = tk.Frame(parent, bg=BG)
+        actions.pack(fill="x", pady=10)
+        button(actions, "Промпт урока", lambda: self.copy_prompt("learn")).pack(side="left", padx=(0, 6))
+        button(actions, "Промпт проверки", lambda: self.copy_prompt("interview")).pack(side="left")
+        label(parent, "Промпт копируется вручную в нейросеть. Трекер не отправляет заметки в сеть.",
+              color=MUTED, wrap=650, pack={"anchor": "w"})
+        self.text_block("Мой отчёт", "Сохраняй путь или ссылку на код, команду проверки и фактический результат. "
+                        "Для рассказа: задача → моё решение → проверка → результат → следующий шаг.")
+        self.origin = ttk.Combobox(parent, values=resume_track.ORIGINS, state="readonly", width=35)
+        self.origin.set(saved.get("origin", resume_track.ORIGINS[0]))
+        self.origin.pack(anchor="w", pady=6)
+        self.fields = {}
+        for key, title in (("evidence", "Практика: артефакт, команда, результат"),
+                           ("report", "Мой рассказ и ответы на вопросы"),
+                           ("gaps", "Что повторить / вопросы и блокеры")):
+            label(parent, title, color=MUTED, pack={"anchor": "w", "pady": (9, 3)})
+            box = tk.Text(parent, height=5, bg=PANEL, fg=TEXT, insertbackground=TEXT,
+                          font=(FONT, 10), wrap="word", relief="flat", padx=10, pady=8, undo=True)
+            box.insert("1.0", saved.get(key, ""))
+            box.pack(fill="x", padx=(0, 8))
+            self.fields[key] = box
+        self.checks = {}
+        for key, title in resume_track.STAGES:
+            var = tk.BooleanVar(value=bool(saved.get(key)))
+            self.checks[key] = var
+            tk.Checkbutton(parent, text=title, variable=var, bg=BG, fg=TEXT,
+                           selectcolor=PANEL_2, activebackground=BG, activeforeground=TEXT).pack(anchor="w", pady=3)
+        label(parent, "Завершение: три отметки + практика и рассказ. Это самооценка с артефактами.",
+              color=MUTED, wrap=650, pack={"anchor": "w", "pady": 8})
+        footer = tk.Frame(parent, bg=BG)
+        footer.pack(fill="x", pady=(6, 20))
+        button(footer, "Сохранить", self.save, primary=True).pack(side="left", padx=(0, 8))
+        button(footer, "Следующий незавершённый", self.next_step).pack(side="left")
+        self.status = label(parent, "", color=SUCCESS, pack={"anchor": "w", "pady": (0, 15)})
+        self.baseline = self.values()
+        self.update_progress()
+        self.content.top()
+
+    def values(self):
+        return {**{key: var.get() for key, var in self.checks.items()},
+                **{key: box.get("1.0", "end").strip() for key, box in self.fields.items()},
+                "origin": self.origin.get()}
+
+    def persist(self):
+        values = self.values()
+        if values == self.baseline:
+            return True
+        try:
+            self.store.save_resume_step(self.item["id"], values)
+        except (ValueError, OSError, RuntimeError) as exc:
+            messagebox.showerror("Не удалось сохранить", str(exc), parent=self)
+            return False
+        self.baseline = values
+        self.on_change()
+        self.update_progress()
+        return True
+
+    def update_progress(self):
+        stats = resume_track.summary(self.store.data)
+        self.progress_label.configure(text=f"{stats['done']}/{stats['total']} шагов · {stats['percent']}% · "
+                                      f"около {stats['minutes'] / 60:.0f} ч практики · отдельно от основной программы")
+        for i, item in enumerate(resume_track.STEPS):
+            r = resume_track.records(self.store.data).get(item["id"], {})
+            prefix = "✓ " if resume_track.complete(r) else ""
+            self.step_buttons[i].configure(text=prefix + item["title"],
+                                           bg=PANEL_2 if i != self.index else "#174C55")
+
+    def save(self):
+        if self.persist():
+            self.status.configure(text="Сохранено. История попыток и старый учебный прогресс сохранены.")
+
+    def select(self, index):
+        if index == self.index or not self.persist():
+            return
+        self.index = index
+        self.render_step()
+
+    def next_step(self):
+        if not self.persist():
+            return
+        next_id = resume_track.summary(self.store.data)["next_id"]
+        if next_id is None:
+            self.status.configure(text="Все шаги завершены. Можно повторить проверку или экспортировать отчёт.")
+        else:
+            self.select(next(i for i, item in enumerate(resume_track.STEPS) if item["id"] == next_id))
+
+    def copy_prompt(self, mode):
+        if not self.persist():
+            return
+        self.clipboard_clear()
+        self.clipboard_append(resume_track.prompt(self.item, mode, self.values()))
+        self.status.configure(text="Промпт скопирован. Вставь его в выбранную нейросеть.")
+
+    def export(self):
+        if not self.persist():
+            return
+        path = filedialog.asksaveasfilename(parent=self, title="Сохранить отчёт по резюме",
+                                          defaultextension=".md", initialfile="resume-track-report.md",
+                                          filetypes=[("Markdown", "*.md")])
+        if not path:
+            return
+        try:
+            Path(path).write_text(resume_track.export_report(self.store.data), encoding="utf-8")
+        except OSError as exc:
+            messagebox.showerror("Не удалось экспортировать", str(exc), parent=self)
+            return
+        self.status.configure(text=f"Отчёт сохранён: {path}")
+
+    def open_history(self):
+        if not self.persist():
+            return
+        history = tk.Toplevel(self)
+        history.title("История · " + self.item["title"])
+        history.geometry("760x540")
+        scrollbar = ttk.Scrollbar(history)
+        scrollbar.pack(side="right", fill="y")
+        text = tk.Text(history, wrap="word", bg=PANEL, fg=TEXT, padx=16, pady=14,
+                       yscrollcommand=scrollbar.set)
+        text.pack(fill="both", expand=True)
+        scrollbar.configure(command=text.yview)
+        attempts = resume_track.records(self.store.data).get(self.item["id"], {}).get("attempts", [])
+        if not attempts:
+            text.insert("end", "Сохранённых попыток пока нет.")
+        for record in reversed(attempts):
+            text.insert("end", f"{record['updated_at']} · {record['origin']}\n")
+            text.insert("end", "; ".join(f"{title}: {'да' if record.get(key) else 'нет'}"
+                                       for key, title in resume_track.STAGES) + "\n")
+            for key, title in (("evidence", "Практика"), ("report", "Рассказ"), ("gaps", "Повторить")):
+                text.insert("end", f"{title}: {record.get(key) or 'Не заполнено.'}\n")
+            text.insert("end", "\n")
+        text.configure(state="disabled")
+
+    def close(self):
+        if self.persist():
+            self.destroy()
 
 
 class ResumeLabWindow(tk.Toplevel):

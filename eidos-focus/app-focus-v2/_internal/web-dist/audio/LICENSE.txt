@@ -1,0 +1,33 @@
+Eidos Focus ambient audio
+
+Source: Mixkit Sound Effects (https://mixkit.co/free-sound-effects/)
+License: Mixkit Free License (https://mixkit.co/license/)
+Downloaded: 2026-10-23
+
+rain-long.mp3
+  Mixkit “Long rain ambience” (asset 1247)
+  https://assets.mixkit.co/active_storage/sfx/1247/1247-preview.mp3
+
+campfire-night.mp3
+  Mixkit “Campfire night wind” (asset 1736)
+  https://assets.mixkit.co/active_storage/sfx/1736/1736-preview.mp3
+
+ocean-waves.mp3
+  Mixkit “Sea waves loop” (asset 1196)
+  https://assets.mixkit.co/active_storage/sfx/1196/1196-preview.mp3
+
+The files are bundled for offline playback in Eidos Focus. Attribution is not
+required by Mixkit, but source information is retained here for provenance.
+
+User-provided ambience (added 2026-10-23)
+
+rain-focus.mp3
+  Original filename: дождь.mp3
+  Duration: 15:13
+
+campfire-focus.mp3
+  Original filename: les-groza-koster-priroda.mp3
+  Duration: 03:00
+
+These two files were supplied by the user from their Downloads folder. Their
+original files remain untouched.

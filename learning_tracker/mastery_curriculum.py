@@ -359,7 +359,9 @@ def build_curriculum():
     return tracks
 
 
-CURRICULUM = build_curriculum()
+from career_tracks import EXTRA_CAREER_TRACKS
+
+CURRICULUM = build_curriculum() + EXTRA_CAREER_TRACKS
 
 
 def all_task_ids():

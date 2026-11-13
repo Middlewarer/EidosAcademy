@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
@@ -12,8 +12,6 @@ import FeedbackPage from "./pages/FeedbackPage";
 import NotFound from "./pages/NotFound";
 import { Toaster } from 'react-hot-toast'; // ✅ Правильный импорт
 import ProtectedRoute from "./components/ProtectedRoute";
-import LegalPage from "./pages/LegalPage";
-import LegalNotice from "./components/LegalNotice";
 import "bootstrap/dist/css/bootstrap-utilities.min.css";
 import "./styles/theme-overrides.css";
 import "./styles/learning-tools.css";
@@ -34,7 +32,7 @@ const App = () => {
                     <Route path="/courses" element={<Courses key="catalog" />} />
                     <Route path="/favorites" element={<Courses key="favorites" favoritesOnly />} />
                     <Route path="/feedback" element={<FeedbackPage />} />
-                    <Route path="/legal/:document" element={<LegalPage />} />
+                    <Route path="/legal/*" element={<Navigate to="/" replace />} />
                     
                     <Route path="/courses/:courseId" element={<CourseDetail />} />
                     {/* Защищенные маршруты */}
@@ -47,7 +45,6 @@ const App = () => {
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>
-            <LegalNotice />
         </BrowserRouter>
     );
 }

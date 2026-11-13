@@ -169,21 +169,15 @@ class UserSerializer(ModelSerializer):
 
 class UserRegistrationSerializer(ModelSerializer):
     password2 = serializers.CharField(style={'input_type': "password"}, write_only=True)
-    personal_data_consent = serializers.BooleanField(write_only=True)
-    terms_accepted = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'password2', 'personal_data_consent', 'terms_accepted']
+        fields = ['username', 'password', 'password2']
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def validate(self, attrs):
-        if not attrs.get('personal_data_consent'):
-            raise serializers.ValidationError({'personal_data_consent': 'Необходимо отдельное согласие на обработку персональных данных.'})
-        if not attrs.get('terms_accepted'):
-            raise serializers.ValidationError({'terms_accepted': 'Необходимо принять пользовательское соглашение.'})
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Пароли не совпадают."})
 
@@ -195,8 +189,6 @@ class UserRegistrationSerializer(ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        validated_data.pop('personal_data_consent')
-        validated_data.pop('terms_accepted')
         validated_data.pop('password2')
         user = User.objects.create_user(
             username=validated_data['username'],
@@ -261,20 +253,17 @@ class FeedbackSerializer(ModelSerializer):
 
 class CreateFeedbackSerializer(ModelSerializer):
     website = serializers.CharField(write_only=True, required=False, allow_blank=True)
-    personal_data_consent = serializers.BooleanField(write_only=True)
     publication_consent = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = Feedback
-        fields = ['kind', 'name', 'contact', 'message', 'page_url', 'website', 'personal_data_consent', 'publication_consent']
+        fields = ['kind', 'name', 'contact', 'message', 'page_url', 'website', 'publication_consent']
 
     def validate(self, attrs):
         if attrs.pop('website', ''):
             raise serializers.ValidationError({'message': 'Не удалось отправить сообщение.'})
-        if not attrs.pop('personal_data_consent'):
-            raise serializers.ValidationError({'personal_data_consent': 'Необходимо согласие на обработку персональных данных.'})
         if not attrs.pop('publication_consent'):
-            raise serializers.ValidationError({'publication_consent': 'Для открытой доски требуется отдельное согласие на публикацию.'})
+            raise serializers.ValidationError({'publication_consent': 'Подтвердите публикацию текста и имени на открытой доске.'})
         attrs['name'] = attrs.get('name', '').strip()
         attrs['message'] = attrs['message'].strip()
         if len(attrs['message']) < 10:

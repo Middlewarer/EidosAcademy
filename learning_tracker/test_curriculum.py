@@ -11,7 +11,8 @@ from daily_plan import (
     TRACK_PRIORITY,
 )
 from app import Store
-from career_readiness import readiness_summary, topic_verified
+from career_readiness import PROJECTS, project_progress, readiness_summary, topic_verified
+from practical_eidos import PRACTICAL_EIDOS_TRACKS, practical_step_count
 from progress_insights import calendar_day, completed_topics, interview_prompt, overdue_tasks, weekly_summary
 
 
@@ -95,9 +96,21 @@ class CurriculumTests(unittest.TestCase):
                     self.assertEqual(kinds, ["theory", "code"])
                 else:
                     self.assertEqual(kinds, ["theory", "code"])
-                if track["id"] != "algorithms":
-                    self.assertEqual(topic["practice_links"], [])
+                if topic["practice_links"] and track["id"] != "algorithms":
+                    self.assertIn(track["id"], {"python", "sql"})
+                    for item in topic["practice_links"]:
+                        self.assertTrue(item["url"].startswith("https://leetcode.com/problems/"))
+                        self.assertIn(item["difficulty"], {"easy", "medium", "hard"})
+                        self.assertTrue(item["target"])
             self.assertIn("exam", track["topics"][-1])
+
+        optional = [
+            item
+            for track in CURRICULUM if track["id"] != "algorithms"
+            for topic in track["topics"]
+            for item in topic["practice_links"]
+        ]
+        self.assertEqual(len(optional), 16)
 
     def test_start_date_and_existing_progress_are_preserved(self):
         self.assertEqual(START_DATE, date(2026, 10, 2))
@@ -112,7 +125,7 @@ class CurriculumTests(unittest.TestCase):
 
     def test_daily_plan_is_complete_and_skips_sundays(self):
         plan = build_daily_plan()
-        self.assertGreater(len(plan), 50)
+        self.assertGreater(len(plan), 30)
         self.assertLess(len(plan), 130)
         self.assertTrue(all(day["topics"] for day in plan))
         self.assertTrue(all(0 <= len(day["task_ids"]) <= 14 for day in plan))
@@ -154,6 +167,7 @@ class CurriculumTests(unittest.TestCase):
             self.assertEqual(sorted(order), list(range(1, 25)))
         self.assertEqual([phase["id"] for phase in ROADMAP_PHASES], [
             "foundation", "backend-start", "working-backend", "production-specialization",
+            "interview-readiness",
         ])
         for track in CURRICULUM:
             numbers = [topic["number"] for _day, item, topic in flattened if item["id"] == track["id"]]
@@ -164,7 +178,17 @@ class CurriculumTests(unittest.TestCase):
         self.assertLess(positions["django-01"], positions["python-17"])
         self.assertLess(positions["sql-04"], positions["django-01"])
         self.assertLess(positions["http-04"], positions["django-01"])
-        self.assertLess(positions["testing-04"], positions["django-01"])
+        first_late_topic = min(
+            positions[topic_id]
+            for topic_id in positions
+            if topic_id.startswith("testing-")
+        )
+        last_backend_topic = max(
+            positions[topic_id]
+            for topic_id in positions
+            if not topic_id.startswith("testing-")
+        )
+        self.assertLess(last_backend_topic, first_late_topic)
         self.assertLess(positions["django-16"], positions["django-17"])
         self.assertLess(positions["docker-12"], positions["docker-13"])
         first_async = positions["async-01"]
@@ -251,6 +275,37 @@ class CurriculumTests(unittest.TestCase):
             self.assertEqual(completed_topics(store, CURRICULUM[0]), [topic])
             store.save_verification(topic["id"], 85, "tests/test_topic.py: verified output", "")
             self.assertTrue(topic_verified(store, topic["id"]))
+
+    def test_practical_eidos_is_a_separate_dependency_driven_project_lane(self):
+        self.assertEqual(len(PRACTICAL_EIDOS_TRACKS), 2)
+        self.assertEqual(practical_step_count(), 16)
+        self.assertEqual(
+            [track["id"] for track in PRACTICAL_EIDOS_TRACKS],
+            [
+                "practical-sandbox",
+                "practical-integration",
+            ],
+        )
+        milestone_ids = []
+        for track in PRACTICAL_EIDOS_TRACKS:
+            self.assertFalse(track["counts_for_readiness"])
+            self.assertEqual(len(track["milestones"]), 8)
+            for milestone_id, _title, description in track["milestones"]:
+                milestone_ids.append(milestone_id)
+                self.assertIn("Изучить:", description)
+                self.assertIn("Реализовать самостоятельно:", description)
+                self.assertIn("Результат шага:", description)
+        self.assertEqual(len(milestone_ids), len(set(milestone_ids)))
+        self.assertTrue(all(any(project["id"] == track["id"] for project in PROJECTS)
+                            for track in PRACTICAL_EIDOS_TRACKS))
+
+        with tempfile.TemporaryDirectory() as folder:
+            store = Store(Path(folder) / "progress.json")
+            self.assertEqual(project_progress(store), (0, 5))
+            first_track = PRACTICAL_EIDOS_TRACKS[0]
+            first_step = first_track["milestones"][0][0]
+            store.save_project_evidence(first_track["id"], first_step, "Проверяемый артефакт Practical Eidos: docs/product-brief.md")
+            self.assertEqual(project_progress(store), (0, 5))
 
 
 if __name__ == "__main__":

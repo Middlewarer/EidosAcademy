@@ -45,7 +45,7 @@ Production-окружение поднимается одним Compose-прое
 | Backend | Python 3.13, Django 6, Django REST Framework |
 | Auth | Simple JWT, token rotation, blacklist |
 | Data | PostgreSQL 17, Redis 7, Django ORM |
-| Frontend | React 19, React Router, Vite 7 |
+| Frontend | React 19, React Router, Vite 7, Tailwind CSS 4, обычный CSS |
 | Content | react-markdown, remark-gfm, Pillow |
 | Production | Docker Compose, Gunicorn, Nginx, Caddy, HTTPS |
 | Tests | Django TestCase, DRF APIClient, Node.js Test Runner |

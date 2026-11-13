@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "../../styles/Legal.css";
 
 const Footer = () => {
     return (
@@ -23,11 +24,7 @@ const Footer = () => {
 
             <div className="footer-meta">
               <p>Создаем будущее через знания.</p>
-              <nav className="footer-legal" aria-label="Юридическая информация">
-                <Link to="/legal/privacy">Политика данных</Link>
-                <Link to="/legal/terms">Соглашение</Link>
-                <Link to="/legal/cookies">Cookie и хранилище</Link>
-              </nav>
+
             </div>
 
             <Link className="footer-feedback-link" to="/feedback">Отзыв, идея или ошибка →</Link>

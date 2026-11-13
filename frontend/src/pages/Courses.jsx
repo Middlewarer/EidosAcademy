@@ -1,4 +1,3 @@
-import "../styles/Courses.css";
 import CoursesHero from "../components/courses_list/CoursesHero";
 import CoursesFilter from "../components/courses_list/CoursesFilter";
 import CoursesList from "../components/courses_list/CoursesList";
@@ -37,13 +36,15 @@ function Courses({ favoritesOnly = false }) {
 
   const searchSuggestions = [...new Set(courses.flatMap((course) => [course.title, course.category]).filter(Boolean))];
   return (
-    <div className="courses-page">
+    <div className="min-h-screen bg-[var(--paper)] pt-[74px] text-[var(--ink)]">
       <main>
         <Crumbs items={[{ label: favoritesOnly ? "Избранные курсы" : "Курсы" }]} />
-        {favoritesOnly ? <section className="container learning-intro"><h1>Избранные курсы</h1>
-          <p>Сохраните интересные направления и возвращайтесь, когда будете готовы учиться. Список хранится в этом браузере.</p>
-          {ids.length > 0 && <p><button className="learning-button" onClick={clear}>Очистить избранное ({ids.length})</button></p>}
-          <Search className="courses-search courses-search--favorites" search={search} setSearch={setSearch}
+        {favoritesOnly ? <section className="mx-auto w-[min(1200px,calc(100%_-_48px))] py-12 max-sm:w-[calc(100%_-_28px)]">
+          <span className="text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--blue)]">Личная подборка</span>
+          <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Избранные курсы</h1>
+          <p className="mt-4 max-w-2xl leading-7 text-[var(--muted)]">Сохраните интересные направления и возвращайтесь, когда будете готовы учиться. Список хранится в этом браузере.</p>
+          {ids.length > 0 && <button className="mt-6 rounded-xl border border-[var(--line)] bg-[var(--white)] px-4 py-2.5 font-bold text-[var(--ink)] transition hover:-translate-y-0.5 hover:border-[var(--blue)]" onClick={clear}>Очистить избранное ({ids.length})</button>}
+          <Search className="mt-7 max-w-2xl" search={search} setSearch={setSearch}
             suggestions={searchSuggestions} placeholder="Поиск в избранном..." storageKey="eidos-recent-favorite-searches" />
         </section> : <CoursesHero search={search} setSearch={setSearch} suggestions={searchSuggestions} />}
 

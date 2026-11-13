@@ -7,8 +7,8 @@
 | Требование | Реализация / где показать |
 | --- | --- |
 | React SPA | React + React Router, переходы без перезагрузки документа |
-| CSS-фреймворк, JS-библиотеки | Bootstrap 5 utilities для flex-раскладки; React Router, react-markdown. Bootstrap подключён без глобального сброса стилей и JS, чтобы сохранить дизайн |
-| БЭМ | Новые блоки: `learning-card__actions`, `course-skeleton__line--short`, `learning-helper__panel` и другие. Старые стили целиком не переписывались |
+| CSS-фреймворк, JS-библиотеки | Tailwind CSS 4 через официальный Vite-плагин используется в каталоге, поиске, карточках, фильтрах, пагинации и preview. React Router отвечает за маршруты. Bootstrap utilities и обычный CSS сохранены на существующих сложных страницах |
+| БЭМ | Обычные CSS-компоненты используют БЭМ (`learning-helper__panel` и другие). В переведённых на Tailwind компонентах оформление задаётся utility-классами прямо в JSX, поэтому отдельные БЭМ-селекторы им не нужны |
 | Гостевой каталог | `/courses`, поиск и фильтры доступны без входа |
 | Меню, подвал, навигация | Существующие Header/Footer, новое избранное в меню, мобильное меню |
 | Карточки с описанием | Каталог, главная, `/courses/:id` с программой и материалами |
@@ -53,8 +53,17 @@
 - [Базовые принципы React](https://proglib.io/p/nastolnyy-spravochnik-po-bazovym-principam-react-2020-01-27)
 - [Каркасные экраны в React](https://proglib.io/p/karkasnye-ekrany-realizaciya-v-react-2020-10-07)
 
-Skeleton адаптирован к карточкам Eidos собственным CSS-компонентом; устаревшие
-инструкции по Create React App из статьи не переносились в существующий Vite-проект.
+Skeleton адаптирован к карточкам Eidos и оформлен Tailwind-классами `animate-pulse`,
+`aspect-video` и адаптивными utility-классами. Устаревшие инструкции по Create
+React App из статьи не переносились в существующий Vite-проект.
+
+## Tailwind CSS
+
+Tailwind подключён как build-time инструмент, а не через CDN: пакет
+`@tailwindcss/vite` добавлен в `vite.config.js`, а `@import "tailwindcss"` — в
+`src/styles/tailwind.css`. Vite сканирует JSX-классы и включает используемые
+utilities в production CSS. Такой подход совместим с существующим чистым CSS:
+каталог мигрирован на Tailwind, остальные страницы можно переводить постепенно.
 
 ## Проверка
 

@@ -1,0 +1,71 @@
+Alexey
+Python Backend Developer
+Bălți, Moldova | Remote
+github.com/Middlewarer
+Python developer with 3 years of experience in B2B SaaS. Develop and maintain REST APIs, work with PostgreSQL,
+service integrations and background tasks. Main stack: Django and Django REST Framework. Contribute to testing
+and releases.
+Technical skills
+Backend: Python, Django, Django REST Framework, FastAPI, REST API, HTTP, JWT.
+Data: PostgreSQL, SQL, Django ORM, Redis.
+Background tasks: Celery, RabbitMQ.
+Testing: pytest, unit and integration tests, mocking external APIs.
+Tools: Git, Linux, Docker, Docker Compose, GitHub Actions.
+Additional: JavaScript and React for interface development.
+Experience
+Python Backend Developer | B2B SaaS Company
+September 2023 - September 2026 | 3 years
+A platform with user accounts, access management and external integrations. Worked on backend feature
+updates, bug fixes and maintenance of existing services.
+Main responsibilities
+Developed and updated REST APIs with Django/DRF: request handling, data validation, access permissions,
+filtering and pagination. Maintained individual FastAPI endpoints.
+Worked with Django ORM models and queries, wrote SQL queries for PostgreSQL and created migrations. Used
+Redis for data caching.
+Integrated external APIs and maintained Celery background tasks. Handled request errors, configured timeouts
+and retries.
+Wrote tests, took part in code reviews and task discussions. Checked changes before releases, investigated
+errors through logs and updated documentation.
+Selected improvements
+Optimized catalog queries by removing unnecessary database calls, loading related objects efficiently and using
+indexes for common queries.
+Added checks for access permissions and external API failures. Extended tests after bug fixes to cover those
+scenarios in future changes.
+Contributed to build and check configuration with Docker and GitHub Actions. Maintained application startup
+commands and migration steps.
+Alexey | Python Backend Developer
+1 / 2
+
+
+Alexey | Python Backend Developer
+Experience: task details
+Python Backend Developer | B2B SaaS Company
+September 2023 - September 2026 | 3 years
+APIs and data
+Updated endpoints for user accounts and access management. Validated input, returned clear error responses
+and checked user permissions when reading or changing data.
+Updated models and database schemas through migrations. Reviewed related-object queries, removed
+unnecessary database calls and investigated slow API responses.
+Maintained Redis caching with expiration times and cache updates when source data changed. Documented
+changes to request and response formats.
+Integrations and background tasks
+Maintained requests to external services: checked HTTP status codes and response formats, handled timeouts
+and recorded errors in logs.
+Moved long-running processing to Celery and configured bounded retries for temporary failures. Stored
+processing status and exposed it through an API endpoint.
+Checked event identifiers when processing webhooks and accounted for repeated delivery. Used transactions
+and uniqueness constraints for related database changes.
+Testing and support
+Wrote business-logic and API tests with pytest. Covered successful requests, invalid input and insufficient
+permissions; mocked external service responses in tests.
+Checked changes locally and in CI. Reviewed logs and API availability after releases, reproduced reported bugs
+and added regression checks after fixes.
+Education
+Kostroma State University
+Information Systems and Technologies | Bachelor's degree in progress, third year
+Personal project
+EidosAcademy. A learning platform built with Django/DRF, PostgreSQL and React. Implemented APIs, authentication and
+progress tracking; configured tests, CI and deployment.
+eidosacademy.ru | github.com/Middlewarer/EidosAcademy
+Alexey | Python Backend Developer
+2 / 2

@@ -41,18 +41,14 @@ def main():
             assert lab.prompt and "по одному" in lab.prompt
         lab.mode.current(1)
         lab.generate()
-        for field in lab.scores:
-            field.insert(0, "23")
-        lab.questions.insert("1.0", "Объекты и ссылки; изменяемость; тесты краёв")
+        lab.score.insert(0, "92")
         lab.notes.insert("1.0", "Независимый пример и проверенный результат: ссылка на код")
-        lab.mistakes.insert("1.0", "Ошибка границы списка: исправил и проверил пустой список")
-        with patch("interview_lab.messagebox.showinfo"):
-            lab.save()
+        lab.save()
         root.update()
         assert lab.winfo_exists()
         assert len(root.store.data["interview_sessions"]) == 2
-        assert root.store.data["interview_sessions"][-1]["qualified"]
-        assert len(root.store.data["interview_sessions"][-1]["reviews"]) == 3
+        assert root.store.data["interview_sessions"][-1]["score"] == 92
+        assert not root.store.data["interview_sessions"][-1]["qualified"]
         assert not root.store.data["verification_records"]
         with patch("interview_lab.messagebox.showerror") as error:
             lab.save()
@@ -61,7 +57,7 @@ def main():
         root.open_plan()
         root.update()
         root.windows["daily-plan"].withdraw()
-        specialization = next(d for d in build_daily_plan() if d["phase"]["id"] == "async-specialization")
+        specialization = next(d for d in build_daily_plan() if d["phase"]["id"] == "production-specialization")
         with patch("app.calendar_day", return_value=(specialization, None)):
             root.open_today()
             root.update()

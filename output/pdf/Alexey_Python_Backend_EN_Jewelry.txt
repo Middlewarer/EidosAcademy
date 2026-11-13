@@ -1,0 +1,67 @@
+Alexey
+Python Backend Developer
+Bălți, Moldova | Remote
+github.com/Middlewarer
+Python developer with 3 years of experience. Independently developed and maintained an internal
+lead-management system for a jewelry design company. Main stack: Django, Django REST Framework and
+PostgreSQL. Worked on APIs, integrations, background tasks and releases.
+Technical skills
+Backend: Python, Django, Django REST Framework, FastAPI, REST API, HTTP, JWT.
+Data: PostgreSQL, SQL, Django ORM, Redis.
+Background tasks: Celery, RabbitMQ.
+Testing: pytest, unit and integration tests, mocking external APIs.
+Tools: Git, Linux, Docker, Docker Compose, GitHub Actions.
+Additional: JavaScript and React for interface development.
+Experience
+Python Backend Developer | Jewelry Company
+September 2023 - September 2026 | 3 years
+An internal system for tracking leads and customer inquiries. Handled development independently: clarified
+business needs, updated the backend, tested changes and maintained the application after releases.
+Selected results
+Reduced SQL queries per catalog request from 74 to 11 and p95 latency from 920 to 240 ms under the same
+load and dataset. Removed N+1 queries and tuned indexes using EXPLAIN ANALYZE.
+Reached 87% line coverage of application backend code with pytest. Added tests for access permissions,
+duplicate requests and external API failures.
+Cut typical release time from 40 to 10 minutes by automating builds and releases with Docker and GitHub
+Actions, including tests, migrations and health checks.
+Main responsibilities
+Developed Django/DRF REST APIs to create and update leads, store contact details and change inquiry
+statuses. Added validation, search, filtering and pagination.
+Worked with Django ORM models and PostgreSQL: updated schemas through migrations, wrote SQL queries
+and reviewed data retrieval. Used Redis for caching.
+Integrated external APIs to exchange inquiry data. Maintained individual FastAPI endpoints and Celery
+background tasks with error handling, timeouts and retries.
+Independently tested and released changes: wrote tests, used Docker and GitHub Actions, applied migrations,
+investigated errors through logs and updated documentation.
+Alexey | Python Backend Developer
+1 / 2
+
+
+Alexey | Python Backend Developer
+Experience: task details
+Python Backend Developer | Jewelry Company
+September 2023 - September 2026 | 3 years
+Leads, inquiries and data
+Developed APIs for lead records containing contact details, customer inquiry information and processing
+status. Validated input and checked permissions when reading or updating records.
+Updated search and filters for inquiry lists. Changed models and relationships through migrations, reviewed
+Django ORM queries and removed unnecessary PostgreSQL calls.
+Used Redis to cache frequently requested data, configured expiration times and refreshed cached data after
+changes. Documented API request and response formats.
+Integrations and background tasks
+Maintained incoming and outgoing inquiry data exchange through external APIs. Checked HTTP status codes
+and response formats, handled timeouts and logged errors.
+Moved long-running processing to Celery with RabbitMQ. Configured bounded retries for temporary failures
+and stored processing status for checking through the API.
+Checked webhook event identifiers to prevent repeated delivery from creating duplicate records. Used
+transactions and uniqueness constraints.
+Independent development and support
+Clarified required changes to inquiry workflows, broke updates into small tasks and checked the relevant
+scenario before release. Managed code in Git and documented changes.
+Wrote API and business-logic tests with pytest and mocked external responses. Checked builds and tests in CI,
+reviewed logs after deployment and fixed reported errors.
+Education
+Kostroma State University
+Information Systems and Technologies | Bachelor's degree in progress, third year
+Alexey | Python Backend Developer
+2 / 2

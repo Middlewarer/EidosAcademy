@@ -12,7 +12,7 @@ function readRecent(storageKey) {
 }
 
 export default function Search({
-  className = "courses-search",
+  className = "",
   type = "search",
   search = "",
   placeholder = "Поиск курса...",
@@ -90,10 +90,11 @@ export default function Search({
   }, [search, open]);
 
   return (
-    <div className={`${className} search-with-history`} ref={rootRef}>
-      <div className="search-input-wrap">
-        <span className="search-icon" aria-hidden="true">⌕</span>
+    <div className={`relative ${className}`} ref={rootRef}>
+      <div className="relative flex items-center">
+        <span className="pointer-events-none absolute left-4 text-xl text-[var(--muted)]" aria-hidden="true">⌕</span>
         <input
+          className="w-full rounded-2xl border border-[var(--line)] bg-[var(--white)] py-4 pr-12 pl-12 text-[var(--ink)] shadow-[0_10px_30px_rgba(34,46,80,.07)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--blue)] focus:ring-4 focus:ring-blue-500/10"
           type={type}
           value={search}
           aria-label="Поиск курса"
@@ -128,25 +129,25 @@ export default function Search({
           }}
         />
         {search && (
-          <button type="button" className="search-clear" aria-label="Очистить поиск" onClick={() => { setSearch(""); setOpen(true); }}>
+          <button type="button" className="absolute right-3 grid h-9 w-9 place-items-center rounded-lg text-xl text-[var(--muted)] transition hover:bg-[var(--paper)] hover:text-[var(--ink)]" aria-label="Очистить поиск" onClick={() => { setSearch(""); setOpen(true); }}>
             ×
           </button>
         )}
       </div>
 
       {(showRecent || showMatches) && (
-        <div className="search-popover" id={listId} role="listbox">
-          <div className="search-popover-title">{showRecent ? "Недавние запросы" : "Предложения"}</div>
+        <div className="absolute inset-x-0 top-[calc(100%_+_8px)] z-40 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--white)] p-2 shadow-[0_24px_60px_rgba(15,23,42,.18)]" id={listId} role="listbox">
+          <div className="px-3 py-2 text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">{showRecent ? "Недавние запросы" : "Предложения"}</div>
           {showRecent && recent.map((item, index) => (
-            <div className="search-recent-row" key={item}>
-              <button type="button" id={`${listId}-${index}`} className="search-option" role="option" aria-selected={activeIndex === index} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
+            <div className="flex items-center gap-1" key={item}>
+              <button type="button" id={`${listId}-${index}`} className={`flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--ink)] transition ${activeIndex === index ? "bg-[var(--blue-soft)] text-[var(--blue)]" : "hover:bg-[var(--paper)]"}`} role="option" aria-selected={activeIndex === index} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
                 <span aria-hidden="true">↶</span>{item}
               </button>
-              <button type="button" className="search-remove" aria-label={`Удалить запрос «${item}»`} onClick={() => removeRecent(item)}>×</button>
+              <button type="button" className="grid h-9 w-9 flex-none place-items-center rounded-lg text-[var(--muted)] hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/30" aria-label={`Удалить запрос «${item}»`} onClick={() => removeRecent(item)}>×</button>
             </div>
           ))}
           {showMatches && matches.map((item, index) => (
-            <button type="button" id={`${listId}-${index}`} className="search-option" role="option" aria-selected={activeIndex === index} key={item} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
+            <button type="button" id={`${listId}-${index}`} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--ink)] transition ${activeIndex === index ? "bg-[var(--blue-soft)] text-[var(--blue)]" : "hover:bg-[var(--paper)]"}`} role="option" aria-selected={activeIndex === index} key={item} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
               <span aria-hidden="true">⌕</span>{item}
             </button>
           ))}

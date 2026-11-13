@@ -8,8 +8,6 @@ import { useState } from "react";
 function Register() {
   const location = useLocation();
   const navigator = useNavigate();
-  const [personalDataConsent, setPersonalDataConsent] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,9 +30,7 @@ function Register() {
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({"username": username,
             "password": password,
-            "password2": password2,
-            "personal_data_consent": personalDataConsent,
-            "terms_accepted": termsAccepted
+            "password2": password2
           })
         })
 
@@ -107,17 +103,6 @@ function Register() {
 
             <p className="login-password-hint">Минимум 8 символов. Не используйте распространённый пароль или только цифры.</p>
 
-            <div className="login-legal-group">
-              <label className="legal-checkbox">
-                <input type="checkbox" required checked={personalDataConsent} onChange={(event) => setPersonalDataConsent(event.target.checked)} />
-                <span>Даю отдельное <Link to="/legal/consent" target="_blank" rel="noreferrer">согласие на обработку персональных данных</Link>.</span>
-              </label>
-
-              <label className="legal-checkbox">
-                <input type="checkbox" required checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
-                <span>Принимаю <Link to="/legal/terms" target="_blank" rel="noreferrer">пользовательское соглашение</Link>.</span>
-              </label>
-            </div>
 
             <button type="submit" className="login-submit" disabled={submitting}>
               {submitting ? "Создаём аккаунт…" : "Создать аккаунт"}

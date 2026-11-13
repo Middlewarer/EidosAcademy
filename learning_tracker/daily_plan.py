@@ -100,13 +100,12 @@ ROADMAP_PHASES = [
     {
         "id": "foundation",
         "title": "Быстрый фундамент",
-        "goal": "Основной Python и только необходимые стартовые части SQL, HTTP, тестирования, Git и Linux.",
+        "goal": "Основной Python и необходимые стартовые части SQL, HTTP, Git и Linux без раннего углубления в тестирование.",
         "milestone": "Писать небольшие программы и понимать базовый путь данных и запроса до начала Django.",
         "segments": [
             ("python", 1, 12),
             ("sql", 1, 4),
             ("http", 1, 4),
-            ("testing", 1, 4),
             ("git", 1, 6),
             ("linux", 1, 6),
         ],
@@ -114,13 +113,12 @@ ROADMAP_PHASES = [
     {
         "id": "backend-start",
         "title": "Python и первый Django параллельно",
-        "goal": "Продолжать Python Core и одновременно применять SQL, HTTP, pytest и первые компоненты Django/Docker.",
+        "goal": "Продолжать Python Core и одновременно применять SQL, HTTP и первые компоненты Django/Docker.",
         "milestone": "Собрать первые модели и API, понимая используемые конструкции Python и границы HTTP/БД.",
         "segments": [
             ("python", 13, 20),
             ("sql", 5, 12),
             ("http", 5, 12),
-            ("testing", 5, 10),
             ("django", 1, 8),
             ("docker", 1, 4),
             ("git", 7, 12),
@@ -136,7 +134,6 @@ ROADMAP_PHASES = [
             ("python", 21, 24),
             ("sql", 13, 18),
             ("http", 13, 18),
-            ("testing", 11, 16),
             ("django", 9, 18),
             ("docker", 5, 16),
             ("git", 13, 16),
@@ -151,13 +148,21 @@ ROADMAP_PHASES = [
         "segments": [
             ("sql", 19, 24),
             ("http", 19, 24),
-            ("testing", 17, 24),
             ("django", 19, 24),
             ("docker", 17, 24),
             ("algorithms", 1, 24),
             ("git", 17, 24),
             ("linux", 17, 24),
             ("async", 1, 24),
+        ],
+    },
+    {
+        "id": "interview-readiness",
+        "title": "Тестирование и подготовка к собеседованиям",
+        "goal": "После сборки и администрирования основного backend-стека углубить pytest параллельно с резюме, интервью и техническими проверками.",
+        "milestone": "Уметь системно тестировать готовый backend и уверенно защищать решения на собеседовании.",
+        "segments": [
+            ("testing", 1, 24),
         ],
     },
 ]

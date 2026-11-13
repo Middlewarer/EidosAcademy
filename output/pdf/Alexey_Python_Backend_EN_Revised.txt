@@ -1,0 +1,46 @@
+Alexey
+
+Python Backend Developer
+
+Bălți, Moldova | Remote | github.com/Middlewarer
+
+Python backend developer with 3 years of experience in B2B SaaS. Build REST APIs with Django/DRF and FastAPI, optimize PostgreSQL queries, and implement integrations and background processing. Own changes from requirements and design through release and production support.
+
+Experience
+
+Python Backend Developer | B2B SaaS Company
+
+September 2023 - September 2026 | 3 years
+
+A platform with user accounts, access management and external integrations. Responsible for backend features, service integrations and support for released functionality.
+
+- API performance: reduced SQL queries per catalog request from 74 to 11 and p95 latency from 920 to 240 ms under the same load and dataset. Removed N+1 queries and tuned indexes using EXPLAIN ANALYZE.
+
+- Background processing and integrations: moved long-running operations to Celery/RabbitMQ with timeouts, bounded retries and task-status endpoints. Prevented duplicate webhook processing using transactions and unique keys.
+
+- Testing: reached 87% line coverage of application backend code with pytest. Added unit and integration tests for access permissions, duplicate requests, timeouts and invalid external API responses.
+
+- Release automation: cut typical release time from 40 to 10 minutes. Automated builds and releases with Docker and GitHub Actions, including tests, migrations and health checks.
+
+Responsibilities. Designed data models, authorization and Pydantic validation; developed APIs with Django/DRF and FastAPI. Worked with Redis, PostgreSQL transactions and migrations, preserving schema and API compatibility during updates. Clarified requirements, estimated tasks, reviewed code, investigated failures through logs and added regression tests.
+
+Technical skills
+
+Backend: Python, Django, Django REST Framework (DRF), FastAPI, asyncio, Pydantic, REST API, HTTP, JWT.
+
+Data and messaging: PostgreSQL, SQL, Django ORM, SQLAlchemy, Redis, Celery, RabbitMQ.
+
+Testing and infrastructure: pytest, unit/integration tests, Git, Linux, Docker, Docker Compose, GitHub Actions, CI/CD.
+
+Additional: JavaScript, React.
+
+Personal project
+
+EidosAcademy. A learning platform built with Django/DRF, PostgreSQL and React. Implemented APIs, authentication and progress tracking; configured tests, CI and deployment.
+
+eidosacademy.ru | github.com/Middlewarer/EidosAcademy
+
+Education
+
+Kostroma State University
+Information Systems and Technologies | Bachelor's degree in progress, third year

@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* The existing theme switch uses data-theme instead of a .dark class. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

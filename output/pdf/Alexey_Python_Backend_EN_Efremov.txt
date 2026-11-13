@@ -1,0 +1,60 @@
+Alexey
+Python Backend Developer
+Bălți, Moldova | Remote
+leha.grabchuk@bk.ru | +7 961 007 97 73
+Telegram: @Middlewarer | github.com/Middlewarer
+Profile
+Python Backend Developer with nearly 2 years of commercial development using Django/DRF and PostgreSQL.
+Domain: lead and customer inquiry automation in the jewelry industry. Reduced SQL queries per catalog request
+from 74 to 11 and p95 latency from 920 to 240 ms; reached 87% line coverage of backend code. Seeking a
+remote Python backend development role.
+Technical skills
+Backend: Python, Django, Django REST Framework, FastAPI, REST API, HTTP, JWT.
+Data: PostgreSQL, SQL, Django ORM, Redis.
+Background tasks: Celery, RabbitMQ.
+Testing: pytest, unit and integration tests, mocking external APIs.
+Tools: Git, Linux, Docker, Docker Compose, GitHub Actions.
+Additional: JavaScript and React for interface development.
+Experience
+Python Backend Developer | EFREMOV, Jewelry Company, Yaroslavl
+August 2024 - April 2026
+Independent development and maintenance of the backend for an internal lead and customer inquiry
+management system.
+Selected results
+Reduced SQL queries per catalog request from 74 to 11 and p95 latency from 920 to 240 ms under the same
+load and dataset. Removed N+1 queries and tuned indexes using EXPLAIN ANALYZE.
+Reached 87% line coverage of application backend code with pytest. Added tests for access permissions,
+duplicate requests and external API failures.
+Cut typical release time from 40 to 10 minutes by automating builds and releases with Docker and GitHub
+Actions, including tests, migrations and health checks.
+Alexey | Python Backend Developer
+1 / 2
+
+
+Alexey | Python Backend Developer
+Responsibilities and technical scope
+APIs and business logic. Developed Django/DRF REST APIs for lead records, contact details and inquiry
+statuses. Added search, filtering, pagination, validation and access checks; maintained individual FastAPI
+endpoints.
+Database and caching. Worked with PostgreSQL, SQL and Django ORM on models, relationships, migrations
+and queries. Configured Redis caching with expiration times and updates when source data changed.
+Integrations. Connected external APIs to exchange inquiry data. Validated HTTP status codes and response
+formats, handled timeouts and logged errors.
+Background processing. Moved long-running work to Celery/RabbitMQ with bounded retries and task-status
+endpoints. Prevented duplicate webhook processing using event identifiers, transactions and uniqueness
+constraints.
+Testing. Wrote unit and integration tests with pytest and mocked external services. Tested business logic,
+invalid input and permissions; added regression scenarios after bug fixes.
+Releases and support. Clarified requirements, broke changes into tasks and managed code in Git. Checked
+changes locally and in CI, used Docker and GitHub Actions, applied migrations and verified availability after
+releases. Documented APIs and investigated errors through logs.
+Education
+Kostroma State University
+Information Systems and Technologies
+Bachelor's degree in progress (third year).
+Languages
+Russian: native.
+English: B2.
+Romanian: A2.
+Alexey | Python Backend Developer
+2 / 2

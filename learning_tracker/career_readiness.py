@@ -8,6 +8,7 @@ from daily_plan import ROADMAP_PHASES, TRACK_PRIORITY
 from mastery_curriculum import CURRICULUM
 from manual_applications import is_submitted
 from preparation import TARGET
+from practical_eidos import practical_eidos_projects
 
 
 DEADLINE = TARGET
@@ -26,33 +27,11 @@ PROJECTS = [
             ("operations", "Эксплуатация", "Runbook деплоя, healthcheck, backup/restore и диагностика одного искусственного сбоя."),
         ],
     },
-    {
-        "id": "order-service",
-        "title": "Order Service: транзакционный backend",
-        "description": "Небольшой сервис, который доказывает SQL, API, транзакции, идемпотентность и тестирование независимо от EidosAcademy.",
-        "milestones": [
-            ("contract", "Контракт и модель", "OpenAPI, схема данных, ограничения и явные бизнес-инварианты заказа."),
-            ("transaction", "Конкурентный сценарий", "Резервирование товара без oversell, повтор запроса без дубля и объяснение блокировок."),
-            ("tests", "Набор проверок", "Unit и integration-тесты, включая конфликт, повтор, rollback и чужой ресурс."),
-            ("delivery", "Запуск", "Docker Compose, миграции, healthcheck, README и одна воспроизводимая команда проверки."),
-        ],
-    },
-    {
-        "id": "async-integration",
-        "title": "Async Integration Service",
-        "description": "Финальный проект для Asyncio/FastAPI после подтверждения основного Django-backend стека.",
-        "milestones": [
-            ("concurrency", "Управление конкурентностью", "Timeout, cancellation, semaphore/backpressure и отсутствие потерянных задач."),
-            ("reliability", "Надёжная интеграция", "Ограниченные retries, backoff, идемпотентность и обработка частичного отказа."),
-            ("observability", "Наблюдаемость", "Request ID, структурированные логи, метрики и сценарий диагностики."),
-            ("tests", "Async-тесты", "Проверки timeout, cancellation, ошибки внешнего API и корректного завершения."),
-        ],
-    },
-]
+] + practical_eidos_projects()
 
 
 RESUME_CHECKLIST = [
-    ("one_page", "Резюме укладывается в одну страницу и начинается с целевой роли."),
+    ("one_page", "Резюме занимает 1–2 страницы и начинается с целевой роли."),
     ("facts", "Каждый сильный тезис подтверждён ссылкой, цифрой, тестом или конкретным решением."),
     ("project_case", "EidosAcademy описан как задача → решение → результат, а не перечень технологий."),
     ("links", "GitHub, рабочий сайт и контакты открываются без запроса доступа."),
@@ -128,9 +107,10 @@ def verification_prompt(track, topic):
 
 def project_progress(store):
     records = store.data.get("project_records", {})
-    total = sum(len(project["milestones"]) for project in PROJECTS)
+    measured_projects = [project for project in PROJECTS if project.get("counts_for_readiness", True)]
+    total = sum(len(project["milestones"]) for project in measured_projects)
     done = 0
-    for project in PROJECTS:
+    for project in measured_projects:
         completed = records.get(project["id"], {})
         done += sum(bool(completed.get(item_id, {}).get("evidence")) for item_id, _title, _description in project["milestones"])
     return done, total

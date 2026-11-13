@@ -1,0 +1,70 @@
+.widget-mode {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #0c0f14;
+}
+
+.pomodoro-widget {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #141820, #0c0f14 70%);
+  border: 1px solid #303741;
+  color: #f4f5f7;
+  padding: 12px 14px;
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+
+.widget-glow {
+  position: absolute;
+  width: 150px;
+  height: 120px;
+  right: -35px;
+  bottom: -55px;
+  background: rgba(141, 245, 199, .13);
+  filter: blur(35px);
+  pointer-events: none;
+}
+
+.widget-head {
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #242a32;
+  color: #8f98a5;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.45px;
+}
+
+.widget-head span { display: flex; align-items: center; gap: 7px; }
+.widget-head i { width: 6px; height: 6px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 9px var(--mint); }
+.widget-head button { border: 0; background: transparent; color: #6f7783; font-size: 20px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.widget-body { display: flex; align-items: center; gap: 16px; padding-top: 11px; }
+
+.widget-ring {
+  --widget-progress: 0deg;
+  width: 104px;
+  height: 104px;
+  flex: 0 0 104px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(var(--mint) var(--widget-progress), #272d35 0);
+  position: relative;
+}
+
+.widget-ring:before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #10141a; }
+.widget-ring > div { position: relative; text-align: center; }
+.widget-ring strong { font: 400 24px Georgia; display: block; letter-spacing: .5px; }
+.widget-ring small { font-size: 8px; color: #727b88; text-transform: uppercase; letter-spacing: 1px; }
+.widget-copy { min-width: 0; flex: 1; }
+.widget-copy > span { font-size: 8px; color: var(--mint); text-transform: uppercase; letter-spacing: 1.3px; }
+.widget-copy h2 { font: 400 16px Georgia; margin: 5px 0 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.widget-controls { display: flex; gap: 6px; }
+.widget-controls button { height: 32px; border: 1px solid #303741; border-radius: 8px; background: #1b2028; color: #aab1bb; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.widget-controls button svg { width: 14px; }
+.widget-controls .widget-play { border: 0; background: var(--mint); color: #07130e; padding: 0 12px; font-size: 10px; font-weight: 800; gap: 6px; }
+.widget-controls button:not(.widget-play) { width: 32px; }
